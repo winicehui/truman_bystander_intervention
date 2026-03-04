@@ -1,0 +1,22 @@
+-----------NEW-----------
+{"role": "student", "message": "start", "id": 0, "timestamp": "2025-04-04T20:17:57.321Z"}
+{"detection class id": "dc-1"}
+{"role": "chatbot", "message": "Would you consider reaching out to Alex privately to offer your support and let them know they\u2019re not alone?", "timestamp": "2025-04-04 16:17:58.597440", "current_comment": ""}
+{"role": "student", "message": "I could do that.", "id": 2, "timestamp": "2025-04-04T20:20:21.117Z"}
+{"detection class id": "dc-7"}
+{"role": "chatbot", "message": "What do you think your comment should say to make a positive impact?", "timestamp": "2025-04-04 16:20:22.177379", "current_comment": ""}
+{"role": "student", "message": "I think I could say something about how I can be here to support and stand behind Alex no matter what other people say.", "id": 4, "timestamp": "2025-04-04T20:20:48.525Z"}
+{"detection class id": "dc-8"}
+{"role": "student", "message": "I can say: \"I've got your back Alex, you always have my support! I believe in you and don't believe anyone who says otherwise.\"", "id": 6, "timestamp": "2025-04-04T20:21:22.095Z"}
+{"role": "student", "message": "I posted it!", "id": 8, "timestamp": "2025-04-04T20:21:36.558Z"}
+{"role": "student", "message": "I hope that Alex takes it to heart, I think it's horrible what that people are saying things like this to her and I hope it can help her feel better.", "id": 10, "timestamp": "2025-04-04T20:23:12.609Z"}
+{"role": "student", "message": "To the comment?", "id": 12, "timestamp": "2025-04-04T20:23:20.668Z"}
+{"role": "student", "message": "I've already posted the comment, but I guess I can say something about encouraging other people to stand up as well.", "id": 14, "timestamp": "2025-04-04T20:23:46.672Z"}
+{"role": "student", "message": "I can privately message our friends to encourage her, showing that there's a lot of people who don't care what the bullies think and stand for her.", "id": 16, "timestamp": "2025-04-07T05:25:55.013Z"}
+{"role": "student", "message": "I'd say something like \"Guys, look at what this Leslie person is saying to Alex, we need to let her know that she's got us and make sure she ignores this stupid comment.\"", "id": 18, "timestamp": "2025-04-07T05:26:45.174Z"}
+{"role": "student", "message": "But it's a private message to my friends, so I think it'd be fine.", "id": 20, "timestamp": "2025-04-07T05:27:03.664Z"}
+{"role": "student", "message": "I can say something about how all of our friends all think the same as me, maybe tag them so that they can join in.", "id": 22, "timestamp": "2025-04-07T05:41:49.540Z"}
+{"role": "student", "message": "Something like \"We're all here for you\" as an additional comment and then tagging everyone.", "id": 24, "timestamp": "2025-04-07T05:42:19.196Z"}
+{"role": "student", "message": "That sounds great!", "id": 26, "timestamp": "2025-04-07T05:42:27.261Z"}
+{"role": "student", "message": "I did!", "id": 28, "timestamp": "2025-04-07T05:42:31.412Z"}
+{"role": "student", "message": "It makes me feel really nice, that I've been able to at least do something to help my friend out in a tricky situation and whatnot. I feel like I've definitely made a difference.", "id": 30, "timestamp": "2025-04-07T05:43:23.829Z"}

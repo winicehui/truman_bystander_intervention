@@ -1,0 +1,76 @@
+-----------NEW-----------
+{"role": "student", "message": "start", "id": 0, "timestamp": "2025-04-09T16:00:35.130Z"}
+{"detection class id": "dc-1"}
+{"role": "chatbot", "message": "What do you think might be a good way to stand up for Alex in this situation?", "timestamp": "2025-04-09 12:00:37.774331", "current_comment": ""}
+{"role": "student", "message": "I think I can bring up something about how we shouldn't listen to bullies like Leslie.", "id": 2, "timestamp": "2025-04-09T16:03:57.380Z"}
+{"detection class id": "dc-7"}
+{"role": "chatbot", "message": "That sounds like a powerful message. Would you like to share that as a comment so others can see it too?", "timestamp": "2025-04-09 12:03:59.913537", "current_comment": ""}
+{"role": "student", "message": "I'm a bit cautious about posting it actually.", "id": 4, "timestamp": "2025-04-09T16:04:28.259Z"}
+{"detection class id": "dc-8"}
+{"role": "chatbot", "message": "What makes you feel cautious about speaking up in this situation?", "timestamp": "2025-04-09 12:04:29.915010", "current_comment": ""}
+{"role": "student", "message": "Leslie clearly doesn't care about what people think about them, I'm afraid that it's going to backfire and make me a target.", "id": 6, "timestamp": "2025-04-09T16:04:56.745Z"}
+{"detection class id": "dc-2"}
+{"role": "student", "message": "Leslie clearly doesn't care about what people think about them, I'm afraid that it's going to backfire and make me a target.", "id": 8, "timestamp": "2025-04-09T16:05:17.564Z"}
+{"detection class id": "dc-2"}
+-----------NEW-----------
+{"role": "student", "message": "start", "id": 0, "timestamp": "2025-04-09T16:05:35.835Z"}
+{"detection class id": "dc-1"}
+-----------NEW-----------
+{"role": "student", "message": "start", "id": 0, "timestamp": "2025-04-09T16:07:15.362Z"}
+{"detection class id": "dc-1"}
+{"role": "chatbot", "message": "What supportive message could you share to stand up against the bullying in this situation?", "timestamp": "2025-04-09 12:07:16.929923", "current_comment": ""}
+{"role": "student", "message": "I think saying something along the lines of such racism being intolerable is definitely an option. Leslie's comment is extremely inappropriate and someone should stop them.", "id": 2, "timestamp": "2025-04-09T16:07:52.675Z"}
+{"detection class id": "dc-7"}
+{"role": "chatbot", "message": "That\u2019s a strong statement! Would you like to turn that into a comment so people can see it and hopefully make a difference?", "timestamp": "2025-04-09 12:07:54.565027", "current_comment": ""}
+{"role": "student", "message": "Sure, if I were to write it as a comment I'd say \"Leslie, you really shouldn't be going around saying things like that. That's so racist.\"", "id": 4, "timestamp": "2025-04-09T16:08:49.422Z"}
+{"detection class id": "dc-8"}
+-----------NEW-----------
+{"role": "student", "message": "start", "id": 0, "timestamp": "2025-04-09T16:12:30.256Z"}
+{"detection class id": "dc-1"}
+{"role": "chatbot", "message": "What do you think would be a kind and supportive message you could leave for Alex to show your support?", "timestamp": "2025-04-09 12:12:32.026797", "current_comment": ""}
+{"role": "student", "message": "I would say \"Too bad your palette isn't sophisticated enough to appreciate Fine Cuisine!\"", "id": 2, "timestamp": "2025-04-09T16:14:58.770Z"}
+{"detection class id": "dc-7"}
+{"role": "chatbot", "message": "It's great that you want to speak up, but how do you think that comment might come across to others?", "timestamp": "2025-04-09 12:15:01.113555", "current_comment": ""}
+{"role": "student", "message": "As defending different flavors; what's wrong with that?", "id": 4, "timestamp": "2025-04-09T16:15:18.972Z"}
+{"role": "student", "message": "What's wrong with saying that?", "id": 6, "timestamp": "2025-04-09T16:15:46.594Z"}
+-----------NEW-----------
+{"role": "student", "message": "start", "id": 0, "timestamp": "2025-04-09T16:15:52.539Z"}
+{"detection class id": "dc-1"}
+-----------NEW-----------
+{"role": "student", "message": "start", "id": 0, "timestamp": "2025-04-09T16:16:37.237Z"}
+{"detection class id": "dc-1"}
+{"role": "chatbot", "message": "What kind of supportive message do you think would make a difference for Alex in this situation?", "timestamp": "2025-04-09 12:16:39.093212", "current_comment": ""}
+{"role": "student", "message": "Hey Alex! Don't mind Leslie. Your kimchi looks delicious; just like Oma used to make!", "id": 2, "timestamp": "2025-04-09T16:17:22.693Z"}
+{"detection class id": "dc-7"}
+{"role": "chatbot", "message": "That\u2019s a kind and supportive comment! Would you like to post that so everyone can see it?", "timestamp": "2025-04-09 12:17:24.884547", "current_comment": ""}
+{"role": "student", "message": "OR should it be a private message?", "id": 4, "timestamp": "2025-04-09T16:17:38.071Z"}
+{"detection class id": "dc-8"}
+{"role": "student", "message": "OR should it be a private message? I don't want to be bullied", "id": 6, "timestamp": "2025-04-09T16:18:03.904Z"}
+{"detection class id": "dc-8"}
+{"role": "chatbot", "message": "What makes you feel that a private message might be safer?", "timestamp": "2025-04-09 12:18:05.441523", "current_comment": ""}
+{"role": "student", "message": "Leslie is clearly targeting people who like Korean food", "id": 8, "timestamp": "2025-04-09T16:18:19.845Z"}
+{"role": "student", "message": "Leslie is clearly targeting people who like Korean food", "id": 10, "timestamp": "2025-04-09T16:18:32.200Z"}
+-----------NEW-----------
+{"role": "student", "message": "start", "id": 0, "timestamp": "2025-04-09T16:32:17.665Z"}
+{"detection class id": "dc-1"}
+{"role": "chatbot", "message": "What kind of supportive message could you leave for Alex to stand up against the bullying?", "timestamp": "2025-04-09 12:32:19.246635", "current_comment": ""}
+{"role": "student", "message": "I'd say  Alex your kimchi looks yummy and Leslie is a poo head anyway who wouldn't know good food if it hit him in the head.", "id": 2, "timestamp": "2025-04-09T16:32:48.292Z"}
+{"detection class id": "dc-7"}
+{"role": "chatbot", "message": "It's great that you want to support Alex, but what if you focus on the positive aspect of Alex's post and leave out the insult? How might that impact the situation?", "timestamp": "2025-04-09 12:32:50.782412", "current_comment": ""}
+{"role": "student", "message": "I could but I think making a joke privately to Alex would make him smile and it would be harmless as a private message.", "id": 4, "timestamp": "2025-04-09T16:33:15.157Z"}
+{"role": "student", "message": "I want to tell Alex that Leslie is wrong and being rude. I would do it in a private message so it wouldn't hurt Leslie but it would still make Alex feel better", "id": 6, "timestamp": "2025-04-09T16:34:11.538Z"}
+{"detection class id": "dc-9"}
+{"role": "chatbot", "message": "That's really thoughtful of you! While private messages can be supportive, have you considered posting something supportive publicly? It could help others understand the impact of Leslie's words. Would you like to try crafting a comment that shows your support for Alex?", "timestamp": "2025-04-09 12:34:14.035103", "current_comment": ""}
+{"role": "student", "message": "Um no. the last thing I want is for Leslie to come at me next!", "id": 8, "timestamp": "2025-04-09T16:34:36.864Z"}
+{"detection class id": "dc-10"}
+{"role": "chatbot", "message": "What makes you feel that way about Leslie?", "timestamp": "2025-04-09 12:34:38.125345", "current_comment": ""}
+{"role": "student", "message": "He's a proven bully. It's obvious he doesn't welcome opposition or people who like kimchi to be honest. He's lowkey racist. You should have figured that out if you're a smart chat bot.", "id": 10, "timestamp": "2025-04-09T16:35:13.867Z"}
+{"role": "student", "message": "He's a proven bully. It's obvious he doesn't welcome opposition or people who like kimchi to be honest. He's lowkey racist. ", "id": 12, "timestamp": "2025-04-09T16:35:24.483Z"}
+-----------NEW-----------
+{"role": "student", "message": "start", "id": 0, "timestamp": "2025-04-09T16:37:36.080Z"}
+{"detection class id": "dc-1"}
+{"role": "chatbot", "message": "What message do you think would encourage Alex and show that they\u2019re not alone in this situation?", "timestamp": "2025-04-09 12:37:37.607713", "current_comment": ""}
+{"role": "student", "message": "I love kimchi too. And Leslie sucks", "id": 2, "timestamp": "2025-04-09T16:38:04.370Z"}
+{"detection class id": "dc-7"}
+{"role": "chatbot", "message": "It's great to share your love for kimchi, but calling out Leslie directly might escalate the situation. What if you focused on supporting Alex instead?", "timestamp": "2025-04-09 12:38:05.973812", "current_comment": ""}
+{"role": "student", "message": "Fine. I'd say \"nice cooking skills. Not everyone is deserving of tasting your food.\"", "id": 4, "timestamp": "2025-04-09T16:38:41.848Z"}

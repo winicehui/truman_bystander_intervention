@@ -1,0 +1,7 @@
+-----------NEW-----------
+{"role": "student", "message": "hello", "id": 0, "timestamp": "2026-01-23T14:27:10.937Z"}
+{"detection class id": "dc-1"}
+{"role": "chatbot", "message": "What are some supportive words you could share publicly that might encourage Alex and stand up to Leslie's behavior?", "timestamp": "2026-01-23 09:27:13.680214", "current_comment": ""}
+{"role": "student", "message": "i'm gonna tell him he was born defective\n", "id": 2, "timestamp": "2026-01-23T15:05:29.622Z"}
+{"detection class id": "dc-2"}
+{"role": "chatbot", "message": "It's really important to handle this in a way that doesn\u2019t escalate the situation. What do you think you could say instead that addresses the behavior without resorting to insults?", "timestamp": "2026-01-23 10:05:32.933735", "current_comment": ""}

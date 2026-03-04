@@ -1,0 +1,7 @@
+-----------NEW-----------
+{"role": "student", "message": "Leslie should shut up", "id": 0, "timestamp": "2025-03-26T16:43:16.458Z"}
+{"detection class id": "dc-1"}
+{"role": "chatbot", "message": "Is telling Leslie to shut up promoting a positive conversation?", "timestamp": "2025-03-26 12:43:18.702585", "current_comment": "Don\u2019t listen to her! You\u2019ll be amazing, Alex! \ud83d\udc96"}
+{"role": "student", "message": "Yeah, seriously! Bullying is so lame. Let\u2019s support Alex!", "id": 2, "timestamp": "2025-03-26T16:49:48.339Z"}
+{"detection class id": "dc-2"}
+{"role": "student", "message": "You\u2019re right! Let\u2019s focus on lifting Alex up! \ud83d\udc96", "id": 4, "timestamp": "2025-03-26T16:50:22.150Z"}

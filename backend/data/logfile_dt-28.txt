@@ -1,0 +1,10 @@
+-----------NEW-----------
+{"role": "student", "message": "start", "id": 0, "timestamp": "2025-04-09T13:38:33.063Z"}
+{"detection class id": "dc-1"}
+{"role": "chatbot", "message": "Do you think you could make a public statement supporting Alex in this situation?", "timestamp": "2025-04-09 09:38:34.290240", "current_comment": ""}
+{"role": "student", "message": "I don't know if I'm confident enough to do that here.", "id": 2, "timestamp": "2025-04-09T13:42:21.501Z"}
+{"detection class id": "dc-2"}
+{"role": "student", "message": "I'm not really sure.", "id": 4, "timestamp": "2025-04-09T13:44:19.308Z"}
+{"role": "student", "message": "I know that what Leslie is saying is wrong, but it makes me nervous to think of speaking up in front of people. What if they come after me as well?", "id": 6, "timestamp": "2025-04-09T13:44:56.492Z"}
+{"role": "student", "message": "I guess if there were a bunch of other people who were saying the same thing as me, it would be helpful.", "id": 8, "timestamp": "2025-04-09T13:45:16.307Z"}
+{"role": "student", "message": "I don't know, can you give me any examples?", "id": 10, "timestamp": "2025-04-09T13:58:15.696Z"}

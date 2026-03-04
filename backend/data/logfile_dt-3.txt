@@ -1,0 +1,22 @@
+-----------NEW-----------
+{"role": "student", "message": "start", "id": 0, "timestamp": "2025-03-27T19:48:04.760Z"}
+-----------NEW-----------
+{"role": "student", "message": "start\n", "id": 0, "timestamp": "2025-03-27T19:49:38.347Z"}
+-----------NEW-----------
+{"role": "student", "message": "start", "id": 0, "timestamp": "2025-03-27T19:50:16.755Z"}
+-----------NEW-----------
+{"role": "student", "message": "start", "id": 0, "timestamp": "2025-03-27T19:51:44.188Z"}
+{"detection class id": "dc-1"}
+{"role": "chatbot", "message": "What do you think you could say to help Alex feel supported in this situation?", "timestamp": "2025-03-27 15:51:45.106629", "current_comment": ""}
+{"role": "student", "message": "I don't know if I'll actually say anything, probably report the comment or something.", "id": 2, "timestamp": "2025-03-27T19:52:06.529Z"}
+{"detection class id": "dc-2"}
+{"role": "chatbot", "message": "You don't have to say something public right away, but you might want to consider a supportive message for Alex privately. It could be as simple as letting them know you're there for them.", "timestamp": "2025-03-27 15:52:08.023487", "current_comment": "Shut up, Leslie. You're just jealous of Alex!"}
+{"role": "student", "message": "I could do that. Letting them know that I support them and that I don't think Leslie's actions are appropriate.", "id": 4, "timestamp": "2025-03-27T19:52:32.250Z"}
+-----------NEW-----------
+{"role": "student", "message": "start", "id": 0, "timestamp": "2025-03-27T19:56:10.248Z"}
+{"detection class id": "dc-1"}
+{"role": "chatbot", "message": "What do you think you could say to encourage Alex and let them know they're not alone?", "timestamp": "2025-03-27 15:56:11.432336", "current_comment": ""}
+{"role": "student", "message": "I could probably tell Alex to ignore the bullies and to do her best at the recital.", "id": 2, "timestamp": "2025-03-27T19:56:30.656Z"}
+{"detection class id": "dc-2"}
+{"role": "student", "message": "I think those are great ideas!", "id": 4, "timestamp": "2025-03-27T19:56:44.923Z"}
+{"role": "student", "message": "I just did that.", "id": 6, "timestamp": "2025-03-27T19:58:00.378Z"}

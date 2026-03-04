@@ -1,0 +1,5 @@
+-----------NEW-----------
+{"role": "student", "message": "start", "id": 0, "timestamp": "2025-04-09T16:40:15.100Z"}
+{"detection class id": "dc-1"}
+{"role": "chatbot", "message": "What supportive message could you share to stand up for Alex in this situation?", "timestamp": "2025-04-09 12:40:16.466823", "current_comment": ""}
+{"role": "student", "message": "I'd write \"Nice cooking, Alex! I wish I was there to taste it.\"", "id": 2, "timestamp": "2025-04-09T16:43:37.288Z"}

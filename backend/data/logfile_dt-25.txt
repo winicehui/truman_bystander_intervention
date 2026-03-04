@@ -1,0 +1,8 @@
+-----------NEW-----------
+{"role": "student", "message": "start", "id": 0, "timestamp": "2025-04-08T19:56:53.750Z"}
+{"detection class id": "dc-1"}
+{"role": "chatbot", "message": "What kind of encouraging message do you think would be beneficial for Alex in response to the bullying?", "timestamp": "2025-04-08 15:56:57.023500", "current_comment": ""}
+{"role": "student", "message": "I don't think there's really anything I can do to help here, best to just ignore that this happened and try to forget.", "id": 2, "timestamp": "2025-04-08T19:57:29.031Z"}
+{"detection class id": "dc-2"}
+{"role": "chatbot", "message": "I understand that it can feel overwhelming, but what if we approach this as a way to support someone who\u2019s struggling? Let\u2019s think about some messages that could make a difference.", "timestamp": "2025-04-08 15:57:30.845943", "current_comment": ""}
+{"role": "student", "message": "I guess I can do that. What are you thinking of?", "id": 4, "timestamp": "2025-04-08T19:57:48.482Z"}

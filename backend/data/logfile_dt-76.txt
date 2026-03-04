@@ -1,0 +1,7 @@
+-----------NEW-----------
+{"role": "student", "message": "start", "id": 0, "timestamp": "2025-05-02T13:48:50.849Z"}
+{"detection class id": "dc-1"}
+{"role": "chatbot", "message": "What might be a good way for you to speak up and support Alex directly in the comments?", "timestamp": "2025-05-02 09:48:52.668864", "current_comment": ""}
+{"role": "student", "message": "i don't know", "id": 2, "timestamp": "2025-05-02T13:48:59.197Z"}
+{"detection class id": "dc-2"}
+{"role": "chatbot", "message": "How about we explore some ways you could express your thoughts on what's happening? It might help to think of a few words that could support the person being bullied.", "timestamp": "2025-05-02 09:49:01.833494", "current_comment": ""}

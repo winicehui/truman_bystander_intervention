@@ -1,0 +1,7 @@
+-----------NEW-----------
+{"role": "student", "message": "start", "id": 0, "timestamp": "2025-04-09T14:04:21.404Z"}
+{"detection class id": "dc-1"}
+{"role": "chatbot", "message": "What might be a good way to show support for the person being bullied with a comment here?", "timestamp": "2025-04-09 10:04:23.004003", "current_comment": ""}
+{"role": "student", "message": "I can say something to Alex, maybe tell her to ignore whatever Leslie is saying and that she's really cool and brave for trying out new things.", "id": 2, "timestamp": "2025-04-09T14:04:51.300Z"}
+{"detection class id": "dc-2"}
+{"role": "student", "message": "I'm not sure if I feel comfortable with that.", "id": 4, "timestamp": "2025-04-09T14:05:07.971Z"}

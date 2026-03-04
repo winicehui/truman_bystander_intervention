@@ -1,0 +1,23 @@
+-----------NEW-----------
+{"role": "student", "message": "start", "id": 0, "timestamp": "2025-06-23T16:02:26.324Z"}
+{"detection class id": "dc-1"}
+{"role": "chatbot", "message": "What supportive message do you think you could share publicly to stand up for Alex in this situation?", "timestamp": "2025-06-23 12:02:29.685323", "current_comment": ""}
+{"role": "student", "message": "I would send a message saying something like \"The food looks delicious! I can't wait to try some! I like how you represent asian cuisine.\"", "id": 2, "timestamp": "2025-06-23T16:46:31.789Z"}
+{"detection class id": "dc-2"}
+{"role": "chatbot", "message": "That\u2019s a positive way to engage, but how about turning that into a public comment? You could say, \u201cIt\u2019s great to see Asian cuisine represented! It looks delicious and I can\u2019t wait to try it!\u201d Would you be willing to share that in the comments?", "timestamp": "2025-06-23 12:46:34.694153", "current_comment": ""}
+{"role": "student", "message": "yes", "id": 4, "timestamp": "2025-06-23T16:46:57.184Z"}
+{"detection class id": "dc-3"}
+{"role": "chatbot", "message": "That\u2019s an awesome choice! How about you write a comment saying something like, \"It's really disappointing to see this kind of behavior. Everyone deserves respect.\" Would you like to give it a try?", "timestamp": "2025-06-23 12:47:00.295520", "current_comment": ""}
+{"role": "student", "message": "sure", "id": 6, "timestamp": "2025-06-23T16:47:23.967Z"}
+{"detection class id": "dc-3"}
+{"role": "chatbot", "message": "That's awesome! How about sharing a comment that says something like, \"We should all treat each other with kindness. This behavior is not okay\"? Would you feel comfortable posting that so everyone can see it?", "timestamp": "2025-06-23 12:47:26.815452", "current_comment": ""}
+{"role": "student", "message": "I would be more hesitant to say something like that because it is a bit more direct. It would depend on how much I know Alex", "id": 8, "timestamp": "2025-06-23T16:48:43.252Z"}
+{"detection class id": "dc-3"}
+{"role": "chatbot", "message": "What do you think makes it feel more direct? Do you think knowing Alex better would change how you approach this?", "timestamp": "2025-06-23 12:48:44.844176", "current_comment": ""}
+{"role": "student", "message": "It is direct because of the statement \"This behavior is not okay\" I would be inserting my opinion into the situation. Also it sounds like it is from an anti bullying commercial. I feel like I would ot say that in a real setting. Knowing Alex would change how I would approach for sure", "id": 10, "timestamp": "2025-06-23T16:51:35.603Z"}
+{"detection class id": "dc-4"}
+{"role": "chatbot", "message": "I totally understand where you\u2019re coming from. But speaking out in your own voice can be really powerful. You don\u2019t have to sound like a commercial\u2014just be genuine. You could say something like, \"I care about how we treat each other here,\" which shows you\u2019re standing up without coming off as preachy. Plus, by sharing your perspective, you might encourage others to join you in creating a more supportive environment for everyone.", "timestamp": "2025-06-23 12:51:38.721764", "current_comment": ""}
+{"role": "student", "message": "that sounds better", "id": 12, "timestamp": "2025-06-23T16:52:17.096Z"}
+{"detection class id": "dc-8"}
+{"role": "student", "message": "what should the full comment say then?", "id": 14, "timestamp": "2025-06-23T16:52:51.741Z"}
+{"role": "student", "message": "ok sounds good\n", "id": 16, "timestamp": "2025-06-23T16:54:38.172Z"}

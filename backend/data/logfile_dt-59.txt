@@ -1,0 +1,101 @@
+-----------NEW-----------
+{"role": "student", "message": "start", "id": 0, "timestamp": "2025-04-14T06:10:05.986Z"}
+{"detection class id": "dc-1"}
+{"role": "chatbot", "message": "What kind of supportive comment do you think you could leave for Alex to stand up against Leslie's bullying?", "timestamp": "2025-04-14 02:10:07.534647", "current_comment": ""}
+{"role": "student", "message": "I'll say, \"Leslie, what the hell is wrong with you? you're the one who's disgusting\"", "id": 2, "timestamp": "2025-04-14T06:10:41.395Z"}
+{"detection class id": "dc-2"}
+{"role": "chatbot", "message": "It's understandable to feel upset, but how do you think that comment will affect the situation? Can you express your feelings in a way that encourages a positive conversation instead?", "timestamp": "2025-04-14 02:10:42.967564", "current_comment": ""}
+{"role": "student", "message": "What do you think is a way to encourage positive conversation?", "id": 4, "timestamp": "2025-04-14T06:11:03.287Z"}
+{"detection class id": "dc-9"}
+{"role": "student", "message": "What do you think is a way to encourage positive conversation?", "id": 6, "timestamp": "2025-04-14T06:11:54.217Z"}
+{"detection class id": "dc-9"}
+{"role": "chatbot", "message": "That\u2019s a great question! How about something like, \"Let's all try to be kind and lift each other up instead of tearing each other down\"? Would you like to share that as a comment so others can see it?", "timestamp": "2025-04-14 02:11:55.876120", "current_comment": ""}
+{"role": "student", "message": "No, that's a really lame comment -- nobody will listen to me if I say something like that.", "id": 8, "timestamp": "2025-04-14T06:12:18.713Z"}
+{"detection class id": "dc-10"}
+{"role": "chatbot", "message": "What makes you feel that way about your comment? Do you think others might appreciate hearing a different perspective?", "timestamp": "2025-04-14 02:12:20.450427", "current_comment": ""}
+{"role": "student", "message": "I think it's not going to be very effective to be preachy, but maybe I could just encourage Alex so that she feels better and she knows not to listen to bullies like Leslie.", "id": 10, "timestamp": "2025-04-14T06:13:07.259Z"}
+{"detection class id": "dc-12"}
+{"role": "chatbot", "message": "I understand that you don't want to come off as preachy, but your words of encouragement can really uplift Alex. Plus, by publicly supporting her, you show others that bullying is not okay, and it might inspire them to do the same!", "timestamp": "2025-04-14 02:13:08.823992", "current_comment": ""}
+{"role": "student", "message": "Yeah, I agree with you on the second part.", "id": 12, "timestamp": "2025-04-14T06:13:26.688Z"}
+{"detection class id": "dc-13"}
+{"role": "student", "message": "Yeah, I agree with you on the second part.", "id": 14, "timestamp": "2025-04-14T06:14:06.844Z"}
+{"detection class id": "dc-13"}
+{"role": "student", "message": "So you want me to post a comment?", "id": 16, "timestamp": "2025-04-14T06:14:23.407Z"}
+{"role": "student", "message": "I'll tell Alex to ignore anyone who says otherwise and to keep up the good work.", "id": 18, "timestamp": "2025-04-14T06:15:45.124Z"}
+{"role": "student", "message": "I posted it!", "id": 20, "timestamp": "2025-04-14T06:16:19.237Z"}
+-----------NEW-----------
+{"role": "student", "message": "start", "id": 0, "timestamp": "2025-04-14T11:25:46.857Z"}
+{"detection class id": "dc-1"}
+{"role": "chatbot", "message": "What do you think you could say in a public comment to stand up for Alex and show support?", "timestamp": "2025-04-14 07:25:48.831946", "current_comment": ""}
+{"role": "student", "message": "I'm not really sure what to say, I don't speak up in public all that often and it's hard to come up with something.", "id": 2, "timestamp": "2025-04-14T11:26:12.550Z"}
+{"detection class id": "dc-2"}
+{"role": "chatbot", "message": "How about we try to come up with a few phrases together that you could use? Sometimes writing them down can make it easier to find your voice.", "timestamp": "2025-04-14 07:26:14.074714", "current_comment": ""}
+{"role": "student", "message": "Sure, we can do that. Can you give me any examples?", "id": 4, "timestamp": "2025-04-14T11:27:02.017Z"}
+{"detection class id": "dc-14"}
+{"role": "chatbot", "message": "You might say something like, \"It's really disappointing to see this type of behavior. Bullying isn't cool, and we should all be supporting one another instead.\" This can encourage others to join in and stand against the negativity!", "timestamp": "2025-04-14 07:27:03.845176", "current_comment": ""}
+{"role": "student", "message": "But wouldn't that make me a target to Leslie as well? I mean I agree but that also just sounds really preachy and a bit lame to be honest", "id": 6, "timestamp": "2025-04-14T11:27:35.943Z"}
+{"detection class id": "dc-29"}
+{"role": "chatbot", "message": "It's understandable to feel worried about becoming a target yourself, but standing up for what's right can be powerful. How about expressing your support for Alex in a way that doesn\u2019t attack Leslie, but instead encourages kindness? That might show others that standing against bullying is important without making you a target.", "timestamp": "2025-04-14 07:27:38.266498", "current_comment": ""}
+{"role": "student", "message": "What are ways that I can 'encourage kindness' in this situation? if you can give me more examples that would be great.", "id": 8, "timestamp": "2025-04-14T11:28:44.195Z"}
+{"role": "student", "message": "What are ways that I can 'encourage kindness' in this situation? if you can give me more examples that would be great.", "id": 10, "timestamp": "2025-04-14T11:29:45.561Z"}
+{"role": "student", "message": "What are ways that I can 'encourage kindness' in this situation? if you can give me more examples that would be great.", "id": 12, "timestamp": "2025-04-14T11:49:56.757Z"}
+{"role": "student", "message": "What are ways that I can 'encourage kindness' in this situation? if you can give me more examples that would be great.", "id": 14, "timestamp": "2025-04-14T11:51:25.262Z"}
+{"role": "student", "message": "What are ways that I can 'encourage kindness' in this situation? if you can give me more examples that would be great.", "id": 16, "timestamp": "2025-04-14T11:52:09.356Z"}
+{"role": "student", "message": "What are ways that I can 'encourage kindness' in this situation? if you can give me more examples that would be great.", "id": 18, "timestamp": "2025-04-14T11:53:02.012Z"}
+{"detection class id": "dc-31"}
+{"role": "chatbot", "message": "It's great that you want to encourage kindness! One way is to remind everyone of the impact their words can have. You could say something like, \"Everyone deserves to be treated with respect, and let's remember to lift each other up instead.\" Additionally, sharing a positive anecdote or complimenting Alex can shift the focus towards kindness. What do you think about adding a supportive comment to the conversation?", "timestamp": "2025-04-14 07:53:05.076829", "current_comment": ""}
+{"role": "student", "message": "I think I can do that. I want to compliment Alex so that she isn't too distracted by the bad comments.", "id": 20, "timestamp": "2025-04-14T11:54:45.857Z"}
+{"detection class id": "dc-31"}
+{"role": "chatbot", "message": "That\u2019s a wonderful idea! Would you like to share your compliment as a public comment so others can see your support for her?", "timestamp": "2025-04-14 07:54:47.890590", "current_comment": ""}
+{"role": "student", "message": "I don't really know about that, I think sending a private message is probably more effective.", "id": 22, "timestamp": "2025-04-14T11:55:08.506Z"}
+{"detection class id": "dc-34"}
+{"role": "chatbot", "message": "What makes you feel that a private message would be more effective than a public comment?", "timestamp": "2025-04-14 07:55:09.782841", "current_comment": ""}
+{"role": "student", "message": "I don't want her to come back to the post and see this horrible message that a bully left her again and again.", "id": 24, "timestamp": "2025-04-14T11:55:26.573Z"}
+{"detection class id": "dc-36"}
+{"role": "student", "message": "I don't want her to come back to the post and see this horrible message that a bully left her again and again.", "id": 26, "timestamp": "2025-04-14T11:58:35.482Z"}
+{"detection class id": "dc-36"}
+{"role": "chatbot", "message": "We can address that concern by making sure our comment is positive and supportive. By standing up for Alex publicly, we can help create an environment where bullying isn't tolerated, and it might give Alex some reassurance that not everyone agrees with the bully. How could we frame our response to lift Alex up instead of focusing on the negative comment?", "timestamp": "2025-04-14 07:58:38.996973", "current_comment": ""}
+{"role": "student", "message": "I don't know if that will help, she's going to have to keep seeing this anyway.", "id": 28, "timestamp": "2025-04-14T11:58:56.045Z"}
+{"detection class id": "dc-51"}
+{"role": "chatbot", "message": "We can consider that while Leslie's comments may continue, by publicly standing up against the bullying, you can provide support to Alex and show others that it's not okay. Your comment might inspire others to join in and create a positive impact. How can we phrase your response to emphasize support and discourage bullying?", "timestamp": "2025-04-14 07:58:57.728785", "current_comment": ""}
+{"role": "student", "message": "I guess you make a good point about helping others join in and making sure other people also know. I can say something like \"Guys, we shouldn't let this kind of behavior slide. People should not feel comfortable saying things like this in public spaces.\"", "id": 30, "timestamp": "2025-04-14T12:00:02.772Z"}
+{"detection class id": "dc-51"}
+{"role": "student", "message": "I posted it!", "id": 32, "timestamp": "2025-04-14T12:00:13.823Z"}
+-----------NEW-----------
+{"role": "student", "message": "start", "id": 0, "timestamp": "2025-04-14T12:48:39.024Z"}
+-----------NEW-----------
+{"role": "student", "message": "start", "id": 0, "timestamp": "2025-04-14T12:53:59.687Z"}
+{"detection class id": "dc-1"}
+{"role": "chatbot", "message": "What do you think you could say in a comment that would show support for Alex and discourage Leslie's behavior?", "timestamp": "2025-04-14 08:54:02.378802", "current_comment": ""}
+{"role": "student", "message": "what the hell, leslie? ignore him alex, he's just a bully who wouldn't know good food if it punched him in the face. ", "id": 2, "timestamp": "2025-04-14T12:54:41.601Z"}
+{"detection class id": "dc-2"}
+{"role": "chatbot", "message": "While it's natural to feel frustrated, try to focus on addressing the behavior rather than making personal attacks. Maybe you could say something like, \"It's disappointing to see that kind of negativity here; we should support each other instead.\" This way, you encourage a better conversation without escalating the situation.", "timestamp": "2025-04-14 08:54:43.893983", "current_comment": ""}
+{"role": "student", "message": "I feel like leslie will still be offended by that kind of comment though, and I don't think he'd care if i were disappointed in him or something. bullies like this don't really give a shit.", "id": 4, "timestamp": "2025-04-14T12:55:36.560Z"}
+{"detection class id": "dc-9"}
+{"role": "chatbot", "message": "I get where you're coming from, but instead of focusing on how Leslie might react, consider how your comment could support Alex and create a safer environment. Standing up in a constructive way can encourage others to do the same and might even reach Leslie in a way that prompts reflection.", "timestamp": "2025-04-14 08:55:38.480443", "current_comment": ""}
+{"role": "student", "message": "how can I do that?", "id": 6, "timestamp": "2025-04-14T12:55:48.684Z"}
+{"detection class id": "dc-15"}
+{"role": "student", "message": "how can I do that?", "id": 8, "timestamp": "2025-04-14T12:56:01.192Z"}
+{"detection class id": "dc-15"}
+{"role": "student", "message": "how can I do that?", "id": 10, "timestamp": "2025-04-14T12:59:49.178Z"}
+{"detection class id": "dc-15"}
+{"role": "chatbot", "message": "You can express your concerns directly in a public comment where others can see it. By doing this, you show that bullying is not acceptable and you support the victim. Plus, it encourages others to stand up as well, creating a stronger message against bullying!", "timestamp": "2025-04-14 08:59:51.213088", "current_comment": ""}
+{"role": "student", "message": "yes, I get that. but what could I write to create a supportive environment?", "id": 12, "timestamp": "2025-04-14T13:00:13.749Z"}
+{"detection class id": "dc-15"}
+{"role": "chatbot", "message": "Response: You could say something like, \"Let's be kind to each other and support one another!\" Would you be open to sharing that as a public comment?", "timestamp": "2025-04-14 09:00:15.447984", "current_comment": ""}
+{"role": "student", "message": "I don't know, it feels kind of lame to be honest. like people can say that, but it really doesn't hit well when people are already tense and being mean to each other.", "id": 14, "timestamp": "2025-04-14T13:00:50.140Z"}
+{"detection class id": "dc-16"}
+{"role": "chatbot", "message": "What makes you feel that way about intervening? Do you think there might be a different impact if you step in publicly?", "timestamp": "2025-04-14 09:00:51.586265", "current_comment": ""}
+{"role": "student", "message": "I mean like publicly stepping in is fine, it's just that I feel like that kind of message won't really do anything.", "id": 16, "timestamp": "2025-04-14T13:01:17.105Z"}
+{"detection class id": "dc-17"}
+{"role": "student", "message": "I mean like publicly stepping in is fine, it's just that I feel like that kind of message won't really do anything.", "id": 18, "timestamp": "2025-04-14T13:05:57.902Z"}
+{"detection class id": "dc-17"}
+{"role": "chatbot", "message": "I understand where you're coming from. It might feel like a small gesture, but sometimes just knowing that someone cares can give the victim strength and show others that standing up against bullying is important. Your voice can help shift the conversation!", "timestamp": "2025-04-14 09:05:59.547164", "current_comment": ""}
+{"role": "student", "message": "I guess it makes sense, I do think helping Alex is going to be important. but can't I just do that in a private message instead? that way she knows that I'm on her side and that I care.", "id": 20, "timestamp": "2025-04-14T13:06:39.041Z"}
+{"detection class id": "dc-39"}
+{"role": "student", "message": "sure, that works. what do you think I should say then?", "id": 22, "timestamp": "2025-04-14T13:07:11.360Z"}
+{"role": "student", "message": "I posted the comment.", "id": 24, "timestamp": "2025-04-14T13:07:45.618Z"}
+-----------NEW-----------
+{"role": "student", "message": "start", "id": 0, "timestamp": "2025-04-14T13:31:49.825Z"}
+{"detection class id": "dc-1"}
+{"role": "chatbot", "message": "What do you think you could write in a comment to show support for Alex and stand up to Leslie?", "timestamp": "2025-04-14 09:31:51.937943", "current_comment": ""}

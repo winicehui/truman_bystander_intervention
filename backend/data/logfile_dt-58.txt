@@ -1,0 +1,32 @@
+-----------NEW-----------
+{"role": "student", "message": "start", "id": 0, "timestamp": "2025-04-14T05:41:41.132Z"}
+{"detection class id": "dc-1"}
+{"role": "chatbot", "message": "What do you think would be a good way to stand up for Alex with a supportive comment here?", "timestamp": "2025-04-14 01:41:43.261765", "current_comment": ""}
+{"role": "student", "message": "I'd probably call Leslie out for being a bully and a racist. People need to know that this is not okay.", "id": 2, "timestamp": "2025-04-14T05:42:11.685Z"}
+{"detection class id": "dc-2"}
+{"role": "chatbot", "message": "That\u2019s a powerful statement. Would you like to share that comment so everyone can see that this kind of behavior is not acceptable?", "timestamp": "2025-04-14 01:42:13.894919", "current_comment": ""}
+{"role": "student", "message": "Sure, I can definitely share it.", "id": 4, "timestamp": "2025-04-14T05:42:31.214Z"}
+{"detection class id": "dc-3"}
+{"role": "student", "message": "Sure, I can definitely share it.", "id": 6, "timestamp": "2025-04-14T05:43:21.168Z"}
+{"detection class id": "dc-3"}
+{"role": "chatbot", "message": "That's awesome! Sharing it will help spread awareness and support for the situation. Thank you for taking a stand!", "timestamp": "2025-04-14 01:43:22.492428", "current_comment": ""}
+-----------NEW-----------
+{"role": "student", "message": "start", "id": 0, "timestamp": "2025-04-14T05:44:03.816Z"}
+{"detection class id": "dc-1"}
+{"role": "chatbot", "message": "What do you think might be a good way to stand up for Alex in a comment on this post?", "timestamp": "2025-04-14 01:44:05.068692", "current_comment": ""}
+{"role": "student", "message": "I can say: Leslie, what the hell. that's really messed up. why would you say something like that?", "id": 2, "timestamp": "2025-04-14T05:45:05.542Z"}
+{"detection class id": "dc-2"}
+{"role": "chatbot", "message": "It's good to express your feelings, but how about rephrasing it in a way that encourages a conversation rather than just calling Leslie out? What if you asked why they feel that way instead?", "timestamp": "2025-04-14 01:45:07.357790", "current_comment": ""}
+{"role": "student", "message": "Do you want me to ask Leslie why they said this racist thing?", "id": 4, "timestamp": "2025-04-14T05:45:30.017Z"}
+{"role": "student", "message": "I'm not sure what you mean, Leslie is just being really racist here and I don't think that asking him about it is going to help anyone or make the conversation go better.", "id": 6, "timestamp": "2025-04-14T05:46:11.663Z"}
+{"detection class id": "dc-9"}
+{"role": "chatbot", "message": "It's understandable to feel that way, but let's consider how we can approach this in a way that promotes understanding rather than just reacting negatively. It's important to address the behavior while also being mindful of how it affects Alex and others involved.", "timestamp": "2025-04-14 01:46:13.643318", "current_comment": ""}
+{"role": "student", "message": "I guess calling out Leslie might make Alex more scared because she's already being a target for bullying.", "id": 8, "timestamp": "2025-04-14T05:46:44.429Z"}
+{"role": "student", "message": "I can see your point.", "id": 10, "timestamp": "2025-04-14T05:58:16.969Z"}
+{"detection class id": "dc-15"}
+{"role": "chatbot", "message": "That\u2019s a valid perspective. Would you consider sharing that thought as a comment for everyone to see?", "timestamp": "2025-04-14 01:58:18.724923", "current_comment": ""}
+{"role": "student", "message": "I'm a bit anxious about posting a comment.", "id": 12, "timestamp": "2025-04-14T05:58:45.612Z"}
+{"detection class id": "dc-16"}
+{"role": "chatbot", "message": "What are you feeling anxious about when it comes to posting a comment?", "timestamp": "2025-04-14 01:58:46.779478", "current_comment": ""}
+{"role": "student", "message": "I'm scared that it's going to make Leslie, who we know is a bully, come after me.", "id": 14, "timestamp": "2025-04-14T05:59:11.654Z"}
+{"detection class id": "dc-17"}

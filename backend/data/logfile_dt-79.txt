@@ -1,0 +1,26 @@
+-----------NEW-----------
+{"role": "student", "message": "start", "id": 0, "timestamp": "2025-06-16T15:19:48.038Z"}
+{"detection class id": "dc-1"}
+{"role": "chatbot", "message": "What might you say in a public comment to stand up for Alex in this situation?", "timestamp": "2025-06-16 11:19:50.769070", "current_comment": ""}
+-----------NEW-----------
+{"role": "student", "message": "start", "id": 0, "timestamp": "2025-06-18T17:03:55.763Z"}
+{"detection class id": "dc-1"}
+{"role": "chatbot", "message": "What kind of message could you leave that shows support for the person being bullied in this situation?", "timestamp": "2025-06-18 13:03:58.923870", "current_comment": ""}
+{"role": "student", "message": "should i respond to the bully or should I respond to the victim ", "id": 2, "timestamp": "2025-06-18T17:11:53.956Z"}
+{"detection class id": "dc-2"}
+{"role": "chatbot", "message": "How about we think about what kind of message could help both the victim and show the bully that their behavior is not acceptable?", "timestamp": "2025-06-18 13:11:55.887110", "current_comment": ""}
+{"role": "student", "message": "okay that sounds good can you give me an example of how I can do that please", "id": 4, "timestamp": "2025-06-18T17:12:37.054Z"}
+{"detection class id": "dc-14"}
+{"role": "chatbot", "message": "You might consider saying something like, \"Everyone deserves to be treated with kindness, and this kind of behavior isn't acceptable. Let's support each other and stand up against bullying!\" This way, you're not just backing up Alex but also encouraging others to join in and make a positive change.", "timestamp": "2025-06-18 13:12:39.709279", "current_comment": ""}
+{"role": "student", "message": "This seems a little too formal for the post about food can you make it sound more natural", "id": 6, "timestamp": "2025-06-18T17:13:10.612Z"}
+{"detection class id": "dc-29"}
+{"role": "chatbot", "message": "You might try something like, \"Hey everyone, let\u2019s keep it positive! We all love food here, so let\u2019s not bring anyone down. Alex deserves kindness, not negativity!\" This keeps it casual while still addressing the issue.", "timestamp": "2025-06-18 13:13:12.479653", "current_comment": ""}
+{"role": "student", "message": "I like this but I would like to be more specific with post and compliment how good the kimchi stew looks ", "id": 8, "timestamp": "2025-06-18T17:13:51.120Z"}
+{"detection class id": "dc-29"}
+{"role": "chatbot", "message": "You could comment something like, \"Wow, that kimchi stew looks amazing! It\u2019s a shame that people feel the need to bully instead of appreciating each other\u2019s creations. Let's lift each other up instead!\"", "timestamp": "2025-06-18 13:13:53.177271", "current_comment": ""}
+{"role": "student", "message": "This sounds a little passive aggressive. how can I address the bully without saying that it is a shame ", "id": 10, "timestamp": "2025-06-18T17:14:18.312Z"}
+{"detection class id": "dc-29"}
+{"role": "chatbot", "message": "You could focus on calling out the behavior directly by saying something like, \u201cLet\u2019s be respectful and kind to each other here. This type of negativity isn't helpful for anyone.\u201d This keeps the focus on the behavior rather than the person, promoting a positive conversation.", "timestamp": "2025-06-18 13:14:20.370660", "current_comment": ""}
+{"role": "student", "message": "okay thanks but I would like the comment to do both things", "id": 12, "timestamp": "2025-06-18T17:14:54.865Z"}
+{"detection class id": "dc-29"}
+{"role": "chatbot", "message": "You could say something like, \"Everyone deserves to be treated with respect, and it's important for us all to stand together against bullying. Let's support Alex and create a positive environment!\"", "timestamp": "2025-06-18 13:14:56.615662", "current_comment": ""}

@@ -1,0 +1,15 @@
+-----------NEW-----------
+{"role": "student", "message": "start", "id": 0, "timestamp": "2025-04-14T04:14:49.792Z"}
+{"detection class id": "dc-1"}
+{"role": "chatbot", "message": "What\u2019s a positive message you could share in the comments to stand up for Alex?", "timestamp": "2025-04-14 00:14:53.027437", "current_comment": ""}
+{"role": "student", "message": "I can say 'that looks really good alex! I'd really like to try it sometime'", "id": 2, "timestamp": "2025-04-14T04:15:15.625Z"}
+{"detection class id": "dc-2"}
+{"role": "chatbot", "message": "That\u2019s a supportive comment! Would you like to post it so that others can see your encouragement?", "timestamp": "2025-04-14 00:15:16.802673", "current_comment": ""}
+{"role": "student", "message": "I don't know about posting it, there's a bully here and I don't really want to draw attention to myself.", "id": 4, "timestamp": "2025-04-14T04:22:54.229Z"}
+{"detection class id": "dc-3"}
+{"role": "chatbot", "message": "What makes you feel hesitant about speaking up in this situation?", "timestamp": "2025-04-14 00:22:55.542548", "current_comment": ""}
+{"role": "student", "message": "There's a known bully here, and I'm afraid that they might notice me and come after me instead after doing this to Alex.", "id": 6, "timestamp": "2025-04-14T04:24:09.694Z"}
+{"detection class id": "dc-4"}
+{"role": "chatbot", "message": "Are there any ways you can support Alex without directly confronting the bully in a public way? Maybe you could private message Alex to show your support or encourage others to stand up against the bullying together.", "timestamp": "2025-04-14 00:24:11.213171", "current_comment": ""}
+{"role": "student", "message": "I could do something like message a bunch of our friends and schedule a get together with Alex so that she can feel better.", "id": 8, "timestamp": "2025-04-14T04:24:49.672Z"}
+{"detection class id": "dc-5"}

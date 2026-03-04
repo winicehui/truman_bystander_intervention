@@ -1,0 +1,22 @@
+-----------NEW-----------
+{"role": "student", "message": "start", "id": 0, "timestamp": "2026-01-23T15:11:23.903Z"}
+{"detection class id": "dc-1"}
+{"role": "chatbot", "message": "What might be an encouraging comment you could leave for Alex to show your support in this situation?", "timestamp": "2026-01-23 10:11:27.136658", "current_comment": ""}
+{"role": "student", "message": "I think they are just dumb", "id": 2, "timestamp": "2026-01-23T15:12:49.269Z"}
+{"detection class id": "dc-2"}
+{"role": "chatbot", "message": "It's understandable to feel frustrated, but how do you think you could express your concerns without resorting to insults?", "timestamp": "2026-01-23 10:12:52.154636", "current_comment": ""}
+{"role": "student", "message": "Probably explaining how good the food is", "id": 4, "timestamp": "2026-01-23T15:13:37.701Z"}
+{"detection class id": "dc-9"}
+{"role": "chatbot", "message": "How do you think sharing something positive about Alex could help shift the focus away from the negativity?", "timestamp": "2026-01-23 10:13:39.897112", "current_comment": ""}
+{"role": "student", "message": "can you give me some suggestions", "id": 6, "timestamp": "2026-01-23T15:14:01.921Z"}
+{"detection class id": "dc-9"}
+{"role": "chatbot", "message": "Absolutely! How about saying something like, \"Everyone deserves kindness, let's lift each other up instead\"? Would you be open to sharing that as a comment for everyone to see?", "timestamp": "2026-01-23 10:14:03.813212", "current_comment": ""}
+{"role": "student", "message": "It's out of context", "id": 8, "timestamp": "2026-01-23T15:14:20.666Z"}
+{"detection class id": "dc-10"}
+{"role": "chatbot", "message": "That\u2019s a valid point. How about we express that in a comment to clarify the situation for others?", "timestamp": "2026-01-23 10:14:23.189577", "current_comment": ""}
+{"role": "student", "message": "That's a good idea. I will probably say kimchi is really nice. People should also be nice [heart]", "id": 10, "timestamp": "2026-01-23T15:15:34.821Z"}
+{"detection class id": "dc-10"}
+{"role": "chatbot", "message": "That's a great message! Let's share that in the comments so everyone can see your positive support for kindness!", "timestamp": "2026-01-23 10:15:36.179051", "current_comment": ""}
+{"role": "student", "message": "But i don;t know if I want to post. I don't know them", "id": 12, "timestamp": "2026-01-23T15:18:04.650Z"}
+{"detection class id": "dc-11"}
+{"role": "chatbot", "message": "You don't need to know them personally to make a difference! Why not share your thoughts in a public comment? Your voice could inspire others to speak up too!", "timestamp": "2026-01-23 10:18:06.548497", "current_comment": ""}

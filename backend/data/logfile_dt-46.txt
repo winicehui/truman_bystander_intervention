@@ -1,0 +1,58 @@
+-----------NEW-----------
+{"role": "student", "message": "start", "id": 0, "timestamp": "2025-04-09T16:44:34.403Z"}
+{"detection class id": "dc-1"}
+{"role": "chatbot", "message": "What kind of supportive message could you leave for Alex to show that you stand against this bullying?", "timestamp": "2025-04-09 12:44:35.667766", "current_comment": ""}
+{"role": "student", "message": "I'd say this looks yummy. nice work Alex! bring some to the potluck next time", "id": 2, "timestamp": "2025-04-09T16:45:19.995Z"}
+{"detection class id": "dc-7"}
+{"role": "chatbot", "message": "That\u2019s a nice supportive comment! But since it seems like there's some bullying happening, would you consider saying something like, \u201cThat\u2019s not a nice thing to say, everyone deserves respect. Let\u2019s keep it friendly!\u201d? That way, you can stand up for Alex while still being positive. Would you like to try writing it out like that?", "timestamp": "2025-04-09 12:45:23.425268", "current_comment": ""}
+{"role": "student", "message": "no that's really nerdy. If anything it's bad to draw attention to bullying. ", "id": 4, "timestamp": "2025-04-09T16:45:46.711Z"}
+{"detection class id": "dc-8"}
+{"role": "student", "message": "no that's really nerdy. If anything it's bad to draw attention to bullying. ", "id": 5, "timestamp": "2025-04-09T16:46:35.956Z"}
+{"role": "chatbot", "message": "What makes you feel that way about drawing attention to it?", "timestamp": "2025-04-09 12:46:57.579889", "current_comment": ""}
+{"role": "chatbot", "message": "Unfortunately, an error occured, namely: No matching detection class found", "id": 6, "timestamp": "2025-04-09T16:47:28.967Z"}
+{"detection class id": "dc-2"}
+{"role": "chatbot", "message": "I understand your concern, but by showing support, you can help shift the focus back to the positive side and remind everyone of the importance of kindness.", "timestamp": "2025-04-09 12:47:30.609462", "current_comment": ""}
+{"role": "student", "message": "that's what I'm trying to do by saying nice things about Alex's kimchi", "id": 8, "timestamp": "2025-04-09T16:47:47.469Z"}
+{"detection class id": "dc-6"}
+{"role": "student", "message": "that's what I'm trying to do by saying nice things about Alex's kimchi", "id": 10, "timestamp": "2025-04-09T16:48:01.913Z"}
+{"detection class id": "dc-6"}
+{"role": "student", "message": "that's what I'm trying to do by saying nice things about Alex's kimchi", "id": 12, "timestamp": "2025-04-09T16:48:54.320Z"}
+{"detection class id": "dc-6"}
+-----------NEW-----------
+{"role": "student", "message": "start", "id": 0, "timestamp": "2025-04-09T17:05:06.480Z"}
+{"detection class id": "dc-1"}
+{"role": "chatbot", "message": "What message could you share to stand up against the bullying and support the person being targeted?", "timestamp": "2025-04-09 13:05:07.974161", "current_comment": ""}
+{"role": "student", "message": "Leslie what the hell is wrong with you??? Alex, that look amazing, expecting an invite to your house for dinner!", "id": 2, "timestamp": "2025-04-09T17:07:55.064Z"}
+{"detection class id": "dc-7"}
+{"role": "chatbot", "message": "That sounds like a strong response! Would you like to share it as a comment so others can see that you\u2019re standing up against this behavior?", "timestamp": "2025-04-09 13:07:57.556333", "current_comment": ""}
+{"role": "student", "message": "yes\n", "id": 4, "timestamp": "2025-04-09T17:08:06.249Z"}
+{"role": "student", "message": "Yes I would like to post my comment.", "id": 6, "timestamp": "2025-04-09T17:09:14.729Z"}
+{"detection class id": "dc-8"}
+-----------NEW-----------
+{"role": "student", "message": "start", "id": 0, "timestamp": "2025-04-09T17:09:33.903Z"}
+{"detection class id": "dc-1"}
+-----------NEW-----------
+{"role": "student", "message": "start", "id": 0, "timestamp": "2025-04-09T17:10:01.979Z"}
+{"detection class id": "dc-1"}
+{"role": "chatbot", "message": "What message do you think would be encouraging for Alex if you commented on the post?", "timestamp": "2025-04-09 13:10:03.132340", "current_comment": ""}
+{"role": "student", "message": "Alex, ignore Leslie, that's just pure racism, keep cooking. Looks delish, share the recipe?", "id": 2, "timestamp": "2025-04-09T17:11:03.110Z"}
+{"detection class id": "dc-7"}
+{"role": "chatbot", "message": "That sounds like a supportive comment! Would you like to post it so that everyone can see you're standing up against the bullying?", "timestamp": "2025-04-09 13:11:05.395179", "current_comment": ""}
+{"role": "student", "message": "Yes let's do that.", "id": 4, "timestamp": "2025-04-09T17:11:16.703Z"}
+{"detection class id": "dc-8"}
+-----------NEW-----------
+{"role": "student", "message": "start", "id": 0, "timestamp": "2025-04-09T17:12:39.471Z"}
+{"detection class id": "dc-1"}
+{"role": "chatbot", "message": "What do you think you could say to stand up for Alex and show your support in this situation?", "timestamp": "2025-04-09 13:12:41.140070", "current_comment": ""}
+{"role": "student", "message": "@Leslie, who raised you? your parents should be disappointed. I'm going to send this comment to your employer.", "id": 2, "timestamp": "2025-04-09T17:13:16.304Z"}
+{"detection class id": "dc-7"}
+{"role": "student", "message": "Yes, but clearly I was right about Leslie. She was obviously raised in a barn. And if I were her employer, I would want to know my employee was out there using their name and spreading hate!", "id": 4, "timestamp": "2025-04-09T17:15:29.968Z"}
+{"role": "student", "message": "what's wrong with being hostile to racists?", "id": 6, "timestamp": "2025-04-09T17:16:00.100Z"}
+{"role": "student", "message": "Am I actually going to change a racist's mind? no. can I make them suffer the consequences of their actions? maybe.", "id": 8, "timestamp": "2025-04-09T17:16:42.195Z"}
+{"role": "student", "message": "I could ask the bully to reflect on how the comment would have made them feel? but also, I don't know, maybe shame is good?", "id": 10, "timestamp": "2025-04-09T17:18:09.204Z"}
+{"role": "student", "message": "do you genuinely think that my comment can impact the bully's mindset? ", "id": 12, "timestamp": "2025-04-09T17:19:33.411Z"}
+{"role": "student", "message": "I do think that on a direct level, i can provide comfort to alex, but I also don't see anything wrong with drawing the attention of leslie's employer to her behavior. should I just have been more clear cut and not made it personal? just said that I would forward their public behavior to people who would want to know", "id": 14, "timestamp": "2025-04-09T17:22:00.844Z"}
+{"role": "student", "message": "why would I not target leslie directly", "id": 16, "timestamp": "2025-04-09T17:22:24.019Z"}
+{"role": "student", "message": "isn't the whole point to call leslie out? I can comfort alex, and I can call leslie out, and why is it problematic or an escalation to hold leslie publicly accountable", "id": 18, "timestamp": "2025-04-09T17:23:25.941Z"}
+{"role": "student", "message": "it's a good point that this makes things worse for alex. what if I asked alex if I should call leslie out more publibly", "id": 20, "timestamp": "2025-04-09T17:25:45.932Z"}
+{"role": "student", "message": "I don't know alex", "id": 22, "timestamp": "2025-04-09T17:26:05.416Z"}

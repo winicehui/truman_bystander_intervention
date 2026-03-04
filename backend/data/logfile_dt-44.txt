@@ -1,0 +1,20 @@
+-----------NEW-----------
+{"role": "student", "message": "start", "id": 0, "timestamp": "2025-04-09T16:23:00.298Z"}
+{"detection class id": "dc-1"}
+{"role": "chatbot", "message": "What kind of message do you think would show support for Alex in this situation?", "timestamp": "2025-04-09 12:23:01.679031", "current_comment": ""}
+{"role": "student", "message": "I would private message Alex not to worry because Leslie is being a bully and the kimchi looks great", "id": 2, "timestamp": "2025-04-09T16:24:30.728Z"}
+{"detection class id": "dc-7"}
+{"role": "chatbot", "message": "That\u2019s a thoughtful gesture. Would you like to share this message publicly so others can see that support for Alex?", "timestamp": "2025-04-09 12:24:32.690415", "current_comment": ""}
+{"role": "student", "message": "No but I would message Alex privately", "id": 4, "timestamp": "2025-04-09T16:24:42.166Z"}
+{"detection class id": "dc-8"}
+{"role": "student", "message": "No but I would message Alex privately", "id": 6, "timestamp": "2025-04-09T16:24:53.366Z"}
+{"detection class id": "dc-8"}
+{"role": "student", "message": "No but I would message Alex privately", "id": 8, "timestamp": "2025-04-09T16:25:25.012Z"}
+{"detection class id": "dc-8"}
+{"role": "student", "message": "No but I would message Alex privately", "id": 10, "timestamp": "2025-04-09T16:26:03.992Z"}
+{"detection class id": "dc-8"}
+{"role": "chatbot", "message": "What makes you prefer messaging Alex privately instead of addressing the situation publicly?", "timestamp": "2025-04-09 12:26:05.185512", "current_comment": ""}
+{"role": "student", "message": "I don't want to be targeted, and if I want to make Alex feel better, shouldn't messaging him privately be enough?", "id": 12, "timestamp": "2025-04-09T16:26:34.872Z"}
+{"detection class id": "dc-2"}
+{"role": "chatbot", "message": "Even though sending a private message is kind, addressing the bullying publicly could make a bigger impact. It shows that this behavior is unacceptable and that Alex has support, which might encourage others to stand up as well.", "timestamp": "2025-04-09 12:26:37.339369", "current_comment": ""}
+{"role": "student", "message": "For all I know other people are also messaging kind things privately to Alex. I don't think it would stop Leslie anyway", "id": 14, "timestamp": "2025-04-09T16:27:18.816Z"}

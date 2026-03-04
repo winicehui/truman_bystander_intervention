@@ -1,0 +1,7 @@
+-----------NEW-----------
+{"role": "student", "message": "start", "id": 0, "timestamp": "2025-04-30T20:11:23.780Z"}
+{"detection class id": "dc-1"}
+{"role": "chatbot", "message": "What could you say publicly that might help Alex feel supported in this situation?", "timestamp": "2025-04-30 16:11:25.997393", "current_comment": ""}
+{"role": "student", "message": "what do you think", "id": 2, "timestamp": "2025-05-02T13:48:33.949Z"}
+{"detection class id": "dc-2"}
+{"role": "chatbot", "message": "We can chat about some positive ways to stand up against cyberbullying. What ideas do you have that could encourage a supportive environment for the victim?", "timestamp": "2025-05-02 09:48:37.297002", "current_comment": ""}

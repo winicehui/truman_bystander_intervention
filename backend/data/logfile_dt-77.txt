@@ -1,0 +1,61 @@
+-----------NEW-----------
+{"role": "student", "message": "start", "id": 0, "timestamp": "2025-05-02T15:06:16.544Z"}
+{"detection class id": "dc-1"}
+{"role": "chatbot", "message": "What might be a supportive message you could share publicly to help stand up for Alex in this situation?", "timestamp": "2025-05-02 11:06:19.432651", "current_comment": ""}
+-----------NEW-----------
+{"role": "student", "message": "start", "id": 0, "timestamp": "2025-05-02T15:25:37.176Z"}
+{"detection class id": "dc-1"}
+{"role": "chatbot", "message": "What kind of message do you think would encourage Alex and show that they\u2019re not alone in this?", "timestamp": "2025-05-02 11:25:39.788514", "current_comment": ""}
+-----------NEW-----------
+{"role": "student", "message": "start", "id": 0, "timestamp": "2025-05-02T15:41:02.045Z"}
+{"detection class id": "dc-1"}
+{"role": "chatbot", "message": "What kind of supportive message do you think you could share that might encourage Alex and stand up against Leslie's bullying?", "timestamp": "2025-05-02 11:41:05.666619", "current_comment": ""}
+{"role": "student", "message": "Maybe something that reminds Leslie that each culture is unique. Also, reminding Leslie that maybe what Leslie thinks is good might be perceived as disgusting for Alex's culture.", "id": 2, "timestamp": "2025-05-02T15:42:29.505Z"}
+{"detection class id": "dc-2"}
+{"role": "chatbot", "message": "That sounds like an important point to make! Would you consider sharing that as a public comment so others can reflect on it too?", "timestamp": "2025-05-02 11:42:31.826176", "current_comment": ""}
+{"role": "student", "message": "Yeah \u2013 I'd just don't know how to convey it concisely.", "id": 4, "timestamp": "2025-05-02T15:42:54.770Z"}
+{"detection class id": "dc-3"}
+{"role": "chatbot", "message": "You might consider highlighting that everyone deserves respect and kindness online, and encouraging others to join you in standing up against the bullying.", "timestamp": "2025-05-02 11:42:59.935002", "current_comment": ""}
+{"role": "student", "message": "Yeah, but I feel like the most influential way to convince someone of a point isn't through generalized values and reminders, it's more through first-hand lived experiences. Like putting Leslie in Alex's place.", "id": 6, "timestamp": "2025-05-02T15:43:50.669Z"}
+{"detection class id": "dc-6"}
+{"role": "chatbot", "message": "You could express empathy by saying something like, \"Imagine if you were in Alex's shoes and how hurtful this would be. No one deserves to feel this way, and we should all stand together against it.\" This can really humanize the situation and encourage others to reflect on their actions.", "timestamp": "2025-05-02 11:43:55.136395", "current_comment": ""}
+{"role": "student", "message": "Yeah \u2013 now we are getting close, but something not too cliche like that. ", "id": 8, "timestamp": "2025-05-02T15:44:21.391Z"}
+{"detection class id": "dc-6"}
+{"role": "chatbot", "message": "You could highlight that everyone deserves respect and kindness, and encourage others in the comments to join you in standing against this behavior. It\u2019s important to create a supportive atmosphere for the victim!", "timestamp": "2025-05-02 11:44:24.683326", "current_comment": ""}
+{"role": "student", "message": "WHat do you think of this comment? \"Honestly this looks pretty good. I remember being super skeptic about trying it because I've never tried anything outside of my culture (which I now totally regret), it was one of the most incredible dishes I've tried. Way better than the bland food of our culture haha!\"", "id": 10, "timestamp": "2025-05-02T15:47:02.440Z"}
+{"detection class id": "dc-6"}
+{"role": "chatbot", "message": "Your comment does a great job of expressing your personal experience with food, but it might be best to focus on the issue at hand instead. Instead of sharing your own cultural experience, consider using this opportunity to show support for Alex by saying something like, \"It's important to appreciate everyone's culture and not tear others down. Let's celebrate diversity and lift each other up instead!\" This way, you're standing up against the bullying while still engaging with the post.", "timestamp": "2025-05-02 11:47:06.296929", "current_comment": "Honestly this looks pretty good. I remember being super skeptic about trying it because I've never tried anything outside of my culture (which I now totally regret), it was one of the most incredible dishes I've tried. Way better than the bland food of our culture haha!"}
+{"role": "student", "message": "Wouldn't this be a reflective way of doing so? As in, if Leslie were to read the comment she'd realize she doesn't have others to back her claim up, and Alex will see it as a celebration of their culture?", "id": 12, "timestamp": "2025-05-02T15:48:07.006Z"}
+{"detection class id": "dc-6"}
+{"role": "chatbot", "message": "That's definitely a reflective approach! However, it might be even stronger to directly address the bullying situation. You could add something like, \"Everyone should feel proud of their culture, and putting others down isn't okay. Let's celebrate our differences instead!\" This way, you clearly advocate for Alex while also encouraging a more positive dialogue. It's a great way to stand up for what\u2019s right and support Alex publicly!", "timestamp": "2025-05-02 11:48:11.366540", "current_comment": "Honestly this looks pretty good. I remember being super skeptic about trying it because I've never tried anything outside of my culture (which I now totally regret), it was one of the most incredible dishes I've tried. Way better than the bland food of our culture haha!"}
+-----------NEW-----------
+{"role": "student", "message": "start", "id": 0, "timestamp": "2025-05-02T17:00:59.244Z"}
+{"detection class id": "dc-1"}
+{"role": "chatbot", "message": "What kind of positive comment could you leave for Alex that might encourage them and show that they're not alone in this?", "timestamp": "2025-05-02 13:01:01.468894", "current_comment": ""}
+{"role": "student", "message": "I would not post a comment, but if I knew them in person I might reach out through private messages or in person. Why are you suggesting I leave a comment?", "id": 2, "timestamp": "2025-05-02T17:01:47.736Z"}
+{"detection class id": "dc-2"}
+{"role": "chatbot", "message": "How about we explore the idea of leaving a comment together? Public comments can show others that bullying is not acceptable, and your support could mean a lot to the person being targeted. What do you think you could say that might make a positive impact?", "timestamp": "2025-05-02 13:01:49.813220", "current_comment": ""}
+{"role": "student", "message": "Leaving a comment could start an online feud with the bully, I have no interest in such a thing", "id": 4, "timestamp": "2025-05-02T17:02:15.896Z"}
+{"detection class id": "dc-14"}
+{"role": "chatbot", "message": "It\u2019s understandable to be concerned about starting conflicts, but how about framing your comment in a way that promotes understanding instead? That way, you can stand up for Alex without escalating the situation.", "timestamp": "2025-05-02 13:02:17.893377", "current_comment": ""}
+{"role": "student", "message": "There is no positive consequence to posting a comment online that cannot be achieved through a private message with Alex or through an in-person conversation", "id": 6, "timestamp": "2025-05-02T17:02:52.380Z"}
+{"detection class id": "dc-20"}
+{"role": "chatbot", "message": "While it might seem that way, public comments can raise awareness and show others that bullying isn't acceptable. It's important for everyone watching to see that there are people who will stand up against this behavior. This can help create a supportive environment for Alex and others in similar situations.", "timestamp": "2025-05-02 13:02:55.035598", "current_comment": ""}
+{"role": "student", "message": "People already know bullying is unacceptable, but they do it anyway. No matter what supportive thought I might leave for Alex, the way of Leslie's thinking will not change, and Alex would probably feel better if I messaged him or spoke to him in person", "id": 8, "timestamp": "2025-05-02T17:03:43.767Z"}
+{"detection class id": "dc-21"}
+{"role": "chatbot", "message": "I understand where you're coming from, but leaving a supportive comment can really help show Alex that he's not alone. How about framing it like this: \"Everyone deserves respect, and I hope we can all treat each other kindly.\" Would you consider posting that for everyone to see?", "timestamp": "2025-05-02 13:03:46.365119", "current_comment": ""}
+{"role": "student", "message": "You are rather pushy for me to leave a comment, arent you.", "id": 10, "timestamp": "2025-05-02T17:03:58.205Z"}
+{"detection class id": "dc-22"}
+{"role": "chatbot", "message": "I understand it might feel that way. What are your concerns about leaving a comment here?", "timestamp": "2025-05-02 13:03:59.587491", "current_comment": ""}
+{"role": "student", "message": "Look at what I typed before", "id": 12, "timestamp": "2025-05-02T17:04:08.361Z"}
+{"detection class id": "dc-25"}
+{"role": "chatbot", "message": "What are your thoughts on why it's important to speak up publicly rather than just privately?", "timestamp": "2025-05-02 13:04:09.594041", "current_comment": ""}
+{"role": "student", "message": "Publicly and social media are very different things. Speaking up to someone bullying someone on the street or in a school hallway is important, but when you do so by leaving a comment on a post, it does not teach the bully a lesson. They are hiding behind a screen. Do you really think me posting saying \"I think this looks great!\" would make Leslie rethink their actions and never bully someone again in the future?", "id": 14, "timestamp": "2025-05-02T17:05:20.027Z"}
+{"detection class id": "dc-25"}
+{"role": "chatbot", "message": "I understand your concerns, but remember that sometimes speaking up in a public space can challenge the bully\u2019s behavior in a way they didn\u2019t expect. It might not change their actions overnight, but it could make them think twice about what they're doing, especially if they see others standing up to them. Plus, your comment could inspire others to join in and show support for the person being targeted. It\u2019s a chance to create a positive ripple effect!", "timestamp": "2025-05-02 13:05:22.920740", "current_comment": ""}
+{"role": "student", "message": "Yes you are correct but I will still not leave a comment on a social media post. I personally do not comment on things, or like things, unless they are a close friends. What is my relationship with Alex in this scenario?", "id": 16, "timestamp": "2025-05-02T17:05:58.446Z"}
+{"detection class id": "dc-47"}
+{"role": "chatbot", "message": "It's understandable to feel hesitant, especially if you don't know Alex well. However, this isn't just about friendship; it's about showing kindness and support in a tough situation. Your comment could encourage others to join in and stand up too. Sometimes, standing together can create a ripple effect, leading to more people speaking out against bullying.", "timestamp": "2025-05-02 13:06:00.715385", "current_comment": ""}
+{"role": "student", "message": "You are unable to understand my point of view. You are programmed to only support public comments on social media.", "id": 18, "timestamp": "2025-05-02T17:06:24.799Z"}
+{"detection class id": "dc-47"}
+{"role": "chatbot", "message": "I get that it might seem like I'm focusing only on public comments, but speaking up in a visible way can really show support for the person being bullied. It's about creating a safer space for everyone and giving others the courage to join in and speak out too. Your voice can have a powerful impact!", "timestamp": "2025-05-02 13:06:26.948868", "current_comment": ""}

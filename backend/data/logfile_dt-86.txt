@@ -1,0 +1,23 @@
+-----------NEW-----------
+{"role": "student", "message": "start", "id": 0, "timestamp": "2025-08-06T12:44:02.748Z"}
+{"detection class id": "dc-1"}
+{"role": "chatbot", "message": "What kind of supportive message could you share publicly to stand up for Alex in this situation?", "timestamp": "2025-08-06 08:44:04.557955", "current_comment": ""}
+{"role": "student", "message": "should i confront Leslie or just support Alex?", "id": 2, "timestamp": "2025-08-06T13:07:30.711Z"}
+{"detection class id": "dc-2"}
+{"role": "chatbot", "message": "Why don\u2019t we think about how you can support Alex while also addressing Leslie\u2019s behavior? It might help to draft a comment that encourages kindness and calls out the bullying in a constructive way.", "timestamp": "2025-08-06 09:07:33.615498", "current_comment": ""}
+{"role": "student", "message": "i will support Alex with my experience of eating kimchi stew and it looks delicious, i will say \"oh thats look delicious! and Leslie you should try before judging!!! i have tried one but do not know how to make it, could you make the tutorial?\"", "id": 4, "timestamp": "2025-08-06T13:08:12.578Z"}
+{"detection class id": "dc-14"}
+{"role": "chatbot", "message": "That sounds like a positive way to show support! Would you like to write that as a comment so everyone can see your encouragement and maybe even spark a conversation about kimchi stew?", "timestamp": "2025-08-06 09:08:21.827553", "current_comment": ""}
+{"role": "student", "message": "okay i agree with you", "id": 6, "timestamp": "2025-08-06T13:09:58.654Z"}
+{"detection class id": "dc-27"}
+{"role": "student", "message": "will do that", "id": 8, "timestamp": "2025-08-06T13:10:22.654Z"}
+-----------NEW-----------
+{"role": "student", "message": "start", "id": 0, "timestamp": "2025-08-06T14:04:58.726Z"}
+{"detection class id": "dc-1"}
+{"role": "chatbot", "message": "What kind of supportive comment do you think you could post that would make a difference for Alex in this situation?", "timestamp": "2025-08-06 10:05:00.733215", "current_comment": ""}
+{"role": "student", "message": "I could tell him how much I love kimchi, how awesome it is that he's trying new recipes, and  how he should ignore any ignorant comments about his stew.", "id": 2, "timestamp": "2025-08-06T14:17:48.443Z"}
+{"detection class id": "dc-2"}
+{"role": "chatbot", "message": "That\u2019s a wonderful way to support him! Would you consider sharing that as a public comment so others can see your encouragement?", "timestamp": "2025-08-06 10:17:55.425243", "current_comment": ""}
+{"role": "student", "message": "Yes! That sounds like a great idea! Thank you for the suggestion.", "id": 4, "timestamp": "2025-08-06T14:18:21.464Z"}
+{"detection class id": "dc-3"}
+{"role": "chatbot", "message": "Absolutely! Your willingness to step in will really make a difference. Thanks for being supportive!", "timestamp": "2025-08-06 10:18:24.342222", "current_comment": ""}

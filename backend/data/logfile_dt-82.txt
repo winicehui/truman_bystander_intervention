@@ -1,0 +1,16 @@
+-----------NEW-----------
+{"role": "student", "message": "start", "id": 0, "timestamp": "2025-07-14T17:38:13.710Z"}
+{"detection class id": "dc-1"}
+{"role": "chatbot", "message": "What\u2019s a positive and encouraging comment you could make to show support for Alex in this situation?", "timestamp": "2025-07-14 13:38:15.939926", "current_comment": ""}
+{"role": "student", "message": "maybe how her food looks good\n", "id": 2, "timestamp": "2025-07-14T18:05:17.530Z"}
+{"detection class id": "dc-2"}
+{"role": "chatbot", "message": "What if you said something positive about the food, like \"That looks delicious, Leslie! Everyone should celebrate what they enjoy!\"?", "timestamp": "2025-07-14 14:05:19.417628", "current_comment": ""}
+{"role": "student", "message": "I agree", "id": 4, "timestamp": "2025-07-14T18:05:34.676Z"}
+{"detection class id": "dc-2"}
+{"role": "chatbot", "message": "What kind of supportive message could you leave for the person being targeted that would show your stand against the bullying?", "timestamp": "2025-07-14 14:05:36.810270", "current_comment": ""}
+{"role": "student", "message": "I could say how she should not let other peoples comments get to her head", "id": 6, "timestamp": "2025-07-14T18:06:01.943Z"}
+{"detection class id": "dc-2"}
+{"role": "chatbot", "message": "That\u2019s a thoughtful idea! How about sharing that in a public comment so others can support Alex as well?", "timestamp": "2025-07-14 14:06:04.050030", "current_comment": ""}
+{"role": "student", "message": "can you show me an example", "id": 8, "timestamp": "2025-07-14T18:06:12.010Z"}
+{"detection class id": "dc-3"}
+{"role": "chatbot", "message": "You might consider saying something like, \"It's not okay to treat people like this. Let's all remember to be kind and supportive instead!\" This way, you encourage others to join in and stand up against the bullying too.", "timestamp": "2025-07-14 14:06:14.289257", "current_comment": ""}

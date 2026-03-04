@@ -1,0 +1,20 @@
+-----------NEW-----------
+{"role": "student", "message": "start", "id": 0, "timestamp": "2025-04-09T14:41:34.424Z"}
+{"detection class id": "dc-1"}
+{"role": "chatbot", "message": "What message do you think would encourage Alex and show support in this situation?", "timestamp": "2025-04-09 10:41:36.167671", "current_comment": ""}
+{"role": "student", "message": "I can tell Alex to ignore what Leslie is saying and to keep up the good work.", "id": 2, "timestamp": "2025-04-09T14:41:56.840Z"}
+{"detection class id": "dc-6"}
+{"role": "chatbot", "message": "That's a fantastic idea! Would you like to share that as a comment to show your support for Alex?", "timestamp": "2025-04-09 10:41:58.652594", "current_comment": ""}
+{"role": "student", "message": "I'm not sure if I feel comfortable with that.", "id": 4, "timestamp": "2025-04-09T14:42:07.041Z"}
+{"role": "student", "message": "I'm not sure if I feel comfortable with that.", "id": 6, "timestamp": "2025-04-09T14:45:40.555Z"}
+{"detection class id": "dc-2"}
+{"role": "chatbot", "message": "Is there something specific that makes you feel uneasy about speaking up?", "timestamp": "2025-04-09 10:45:42.307233", "current_comment": ""}
+{"role": "student", "message": "I don't like posting things publicly in social media, and it's going to bring a lot of unnecessary attention to me.", "id": 8, "timestamp": "2025-04-09T14:46:09.880Z"}
+{"detection class id": "dc-3"}
+{"role": "student", "message": "I think I can send them a DM or something saying the same thing.", "id": 10, "timestamp": "2025-04-09T14:46:27.670Z"}
+{"role": "student", "message": "Because nobody else will know that I reached out to Alex, I won't be in danger of being targeted by people like Leslie.", "id": 12, "timestamp": "2025-04-09T14:47:00.141Z"}
+{"role": "student", "message": "I could like Alex's post and just write a generic positive comment maybe?", "id": 14, "timestamp": "2025-04-09T14:47:36.948Z"}
+{"role": "student", "message": "I can say something like \"I love this so much Alex! Yay for trying new things!\"", "id": 16, "timestamp": "2025-04-09T14:48:03.222Z"}
+{"role": "student", "message": "I think this is generally really positive and not very likely to cause backlash.", "id": 18, "timestamp": "2025-04-09T14:48:20.785Z"}
+{"role": "student", "message": "Making sure that they're not alone and struggling with this, checking in on them, things like that would help.", "id": 20, "timestamp": "2025-04-09T14:48:54.447Z"}
+{"role": "student", "message": "I can do that!", "id": 22, "timestamp": "2025-04-09T14:49:01.976Z"}

@@ -1,0 +1,58 @@
+//- Chat Box  
+#copilot-chat.container.clearfix
+  .chat.hidden
+    .chat-header.clearfix
+      i.large.close.icon.chat-close.float-right
+      i.window.minimize.large.icon.chat-minimize.float-right
+      //- img.ui.avatar.image(src='/profile_pictures/convo_bot.png')
+      .chat-about
+        .chat-with 
+          i.icon.large.shield.alternate(style="margin-right: 0.5em;")
+          | Upstanding Trainer
+    .chat-history
+      ul
+    .chat-message.clearfix
+      .ui.fluid.action.input.form
+        textarea#message-to-send(type='text', name='message-to-send', placeholder='Type your message', rows=2)
+        button
+          i.send.icon
+          | Send
+script#my-message-template(type='text/x-handlebars-template').
+  <li class="clearfix">
+    <div class="ui grid centered">
+      <div class="thirteen wide right aligned column padding-right-small my-message-div">
+          <div class="my-message align-right">
+            {{#if isTypingAnimation}}
+                <img src="/typing.gif"/>
+            {{else}}
+              {{messageOutput}}
+            {{/if}}
+          </div>
+          <span class="message-data-time align-right">{{time}}</span>
+        </div>
+        <div class="three wide column padding-left-small">
+          <div class="align-center">
+            {{#if addProfilePhoto}}
+                <img class="message-avatar" src="{{avatar}}" />
+            {{/if}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </li>
+script#other-message-template(type='text/x-handlebars-template').
+  <li class="clearfix">
+    <div class="ui grid centered">
+        <div class="thirteen wide right aligned column padding-left-small other-message-div">
+          <div class="other-message align-left">
+            {{#if isTypingAnimation}}
+                <img src="/public/typing.gif"/>
+            {{else}}
+              {{messageOutput}}
+            {{/if}}
+          </div>
+          <span class="message-data-time align-left">{{time}}</span>
+        </div>
+      </div>
+    </div>
+  </li>

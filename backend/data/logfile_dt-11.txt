@@ -1,0 +1,39 @@
+-----------NEW-----------
+{"role": "student", "message": "start", "id": 0, "timestamp": "2025-04-07T05:54:06.040Z"}
+{"detection class id": "dc-1"}
+{"role": "chatbot", "message": "Do you think you could offer support to Alex by reporting the bullying?", "timestamp": "2025-04-07 01:54:09.242964", "current_comment": ""}
+{"role": "student", "message": "I think that reporting would definitely be helpful.", "id": 2, "timestamp": "2025-04-07T05:54:21.028Z"}
+{"detection class id": "dc-7"}
+-----------NEW-----------
+{"role": "student", "message": "start", "id": 0, "timestamp": "2025-04-07T05:55:41.775Z"}
+{"detection class id": "dc-1"}
+{"role": "chatbot", "message": "Do you think you could support Alex by reporting the post or sending a message of encouragement?", "timestamp": "2025-04-07 01:55:42.941828", "current_comment": ""}
+{"role": "student", "message": "I think both of those things would definitely be helpful.", "id": 2, "timestamp": "2025-04-07T05:57:28.037Z"}
+{"detection class id": "dc-7"}
+{"role": "chatbot", "message": "What specific points do you want to address in your comment?", "timestamp": "2025-04-07 01:57:29.483645", "current_comment": ""}
+{"role": "student", "message": "If I were to comment, I would ignore the bully's comment and just try to show that there are other people that support them around here. I want Alex to know I have their back.", "id": 4, "timestamp": "2025-04-07T05:58:15.358Z"}
+{"detection class id": "dc-8"}
+{"role": "chatbot", "message": "That's a thoughtful approach! What kind of supportive message are you considering that would show your solidarity with Alex?", "timestamp": "2025-04-07 01:58:16.554121", "current_comment": ""}
+{"role": "student", "message": "something simple, probably, like \"I think it's going to be really awesome Alex! I'm so looking forward to it, I know it's going to be so cool and I bet everyone agrees\"", "id": 6, "timestamp": "2025-04-07T05:59:02.431Z"}
+{"detection class id": "dc-9"}
+{"role": "student", "message": "Thank you!", "id": 8, "timestamp": "2025-04-07T05:59:09.982Z"}
+-----------NEW-----------
+{"role": "student", "message": "start", "id": 0, "timestamp": "2025-04-07T06:03:46.167Z"}
+{"detection class id": "dc-1"}
+{"role": "chatbot", "message": "Do you think you could encourage others to support Alex by commenting on the post?", "timestamp": "2025-04-07 02:03:47.411328", "current_comment": ""}
+{"role": "student", "message": "I don't know about commenting, I would be down to help her out but I don't like getting involved in these things.", "id": 2, "timestamp": "2025-04-07T06:04:19.636Z"}
+{"detection class id": "dc-7"}
+{"role": "chatbot", "message": "Is there a specific concern you have about getting involved?", "timestamp": "2025-04-07 02:04:20.897033", "current_comment": ""}
+{"role": "student", "message": "I just don't like getting attention for things like this, you know?", "id": 4, "timestamp": "2025-04-07T06:04:50.334Z"}
+{"detection class id": "dc-2"}
+{"role": "student", "message": "I don't want to necessarily talk to Leslie here, I don't think it's going to be really productive because people like them just want to mess other people up and don't like listen to anyone even if they get called out", "id": 6, "timestamp": "2025-04-07T06:06:08.996Z"}
+{"role": "student", "message": "maybe someone could let the advisor or like teacher at the ballet recital about this to make sure Leslie can't do anything to Alex like heckle her or something", "id": 8, "timestamp": "2025-04-07T06:07:03.249Z"}
+{"role": "student", "message": "so you think I shouldn't talk to the teachers?", "id": 10, "timestamp": "2025-04-07T06:07:30.320Z"}
+{"role": "student", "message": "it depends, but I could just say that some people are trying to disrupt the performance and maybe let them know it's Leslie, tell them what he looks like and stuff, so that they know to watch out and intervene if it becomes necessary.", "id": 12, "timestamp": "2025-04-07T06:08:26.013Z"}
+{"role": "student", "message": "sure, that sounds like a good idea.", "id": 14, "timestamp": "2025-04-07T06:08:56.553Z"}
+{"role": "student", "message": "What ways do you think there could be?", "id": 16, "timestamp": "2025-04-07T06:09:09.071Z"}
+{"role": "student", "message": "I could also check in on her myself to make sure she's doing okay, if I want to let her know that I'm standing up for her", "id": 18, "timestamp": "2025-04-07T06:09:53.649Z"}
+{"role": "student", "message": "I think that sounds great, and considerate too given that a public comment is probably a lot.", "id": 20, "timestamp": "2025-04-07T06:10:41.102Z"}
+{"role": "student", "message": "I agree.", "id": 22, "timestamp": "2025-04-07T06:10:46.860Z"}
+{"role": "student", "message": "I can message her privately to let her know that I support her? I think what you've mentioned are the things that I'm already willing to do??", "id": 24, "timestamp": "2025-04-07T06:11:26.709Z"}
+{"role": "student", "message": "so you want me to make a public statement about the situation?", "id": 26, "timestamp": "2025-04-07T06:12:04.279Z"}
