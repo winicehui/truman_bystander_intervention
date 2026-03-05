@@ -19,6 +19,8 @@ exports.getScript = async(req, res, next) => {
 
         const user = await User.findById(req.user.id)
             .populate('posts.comments.actor')
+            .populate('feedAction.post')
+            .populate('chatAction.post')
             .exec();
 
         // If the user is no longer active, sign the user out.
@@ -42,11 +44,11 @@ exports.getScript = async(req, res, next) => {
             user.save();
         }
 
-        // Array of actor posts that match the user's experimental condition, within the past 24 hours, sorted by descending time. 
+        // Array of actor posts that match the user's experimental condition, sorted by descending time. 
         let script_feed = await Script.find({
                 condition: { "$in": ["", user.experimentalCondition] }
             })
-            .where('time').lte(time_diff).gte(time_limit)
+            // .where('time').lte(time_diff).gte(time_limit) // Uncomment for only past 24 hours of actor posts to show up in the feed.
             .sort('-time')
             .populate('actor')
             .populate('comments.actor')
@@ -299,7 +301,7 @@ exports.postUpdateUserPostFeedAction = async(req, res, next) => {
     try {
         const user = await User.findById(req.user.id).exec();
         // Find the index of object in user.posts
-        let feedIndex = _.findIndex(user.posts, function(o) { return o.postID.equals(req.body.postID); });
+        let feedIndex = _.findIndex(user.posts, function(o) { return o.postID == req.body.postID; });
 
         if (feedIndex == -1) {
             // Should not happen.

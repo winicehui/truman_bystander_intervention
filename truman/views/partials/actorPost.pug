@@ -1,9 +1,9 @@
-.ui.fluid.card(postCondition=val.condition, postID=val.id, type='actor', actor_un = val.actor.username, actor_name = val.actor.profile.name, actor_pic = val.actor.profile.picture)
+.ui.fluid.card(postCondition=val.condition, postID=val.id, type='actor', actor_un = val.actor.username, actor_name = val.actor.profile.name, actor_pic = val.actor.profile.picture, class=(val.class=="cyberbullying") ? "cyberbullying" : null)
   .content
     .right.floated.time.meta= (user.createdAt.getTime() + val.time)
     a(href='/user/'+val.actor.username)     
       img.ui.avatar.image(src='/public/picture.svg', data-src=cdn+"/profile_pictures/"+val.actor.profile.picture)
-      span.username(data-position="bottom center" data-html=`<div class='header'><img class='ui avatar image' src='/profile_pictures/${val.actor.profile.picture}'/>${val.actor.username}</div><div class='content'><button class='ui small button basic message-button' onClick="clickMessageUser(event)">Message</button></div>`)=val.actor.profile.name
+      span.username=val.actor.profile.name
   .content.dimmable(class=val.flagged ? "dimmed": "")
     .ui.dimmer.flag(class=val.flagged ? "active": "")
       .content
@@ -16,8 +16,9 @@
           .ui.inverted.unflag.button(tabindex='0')
             i.flag.icon
             |  Unflag
-    .img.post.image
-      img(src='/public/picture.svg', data-src=cdn+"/post_pictures/"+val.picture, style="max-width:100%; width:100%;")
+    if val.picture
+      .img.post.image
+        img(src='/public/picture.svg', data-src=cdn+"/post_pictures/"+val.picture, style="max-width:100%; width:100%;")
     .description=val.body
     .myTimer.hidden 0
   .ui.bottom.three.attached.icon.buttons
@@ -32,10 +33,11 @@
         i.heart.icon
         |  Like
       a.ui.basic.red.left.pointing.label.count=val.likes
-  .content
-    .ui.labeled.icon.button.pink.practice-chat(tabindex='0')
-      i.shield.alternate.icon 
-      | Practice Response
+  if val.class
+    .content
+      .ui.labeled.icon.button.pink.practice-chat(tabindex='0')
+        i.shield.alternate.icon 
+        | Practice Response
   if val.comments.length > 0
     .content
       .ui.comments
@@ -61,7 +63,7 @@
                   a.like.comment(class=comment.liked ? "red" : null ) !{comment.liked ? "Unlike" : "Like"}
           //- Else this is a normal comment from the script
           else
-            .comment(commentID=comment.id)
+            .comment(commentID=comment.id, class=(comment.class=="cyberbullying") ? "cyberbullying" : null)
               .content(class=!comment.flagged ? "transition hidden" : "")                           
                 .text(style="background-color: black; color: white; padding: 0.2em;")  You flagged this comment. The admins will review this comment further. We are sorry you had this experience.
                 .actions 
@@ -69,13 +71,15 @@
               a.avatar(href='/user/'+comment.actor.username, class=comment.flagged ? "transition hidden" : "")                  
                 img(src='/public/picture.svg', data-src=cdn+"/profile_pictures/"+comment.actor.profile.picture)
               .content(class=comment.flagged ? "transition hidden" : "")
-                a.author.username(data-html=`<div class='header'><img class='ui avatar image' src='/profile_pictures/${comment.actor.profile.picture}'/>${comment.actor.username}</div><div class='content'><button class='ui small button basic message-button' onClick="clickMessageUser(event)">Message</button></div>`)=comment.actor.profile.name
+                a.author(href='/user/'+comment.actor.username)=comment.actor.profile.name
                 .metadata
                   span.date=(user.createdAt.getTime() + comment.time)
                   .rating
                     i.heart.icon(class=comment.liked ? "red" : null)
                     span.num=comment.likes+(comment.liked ? 1 : 0)
                     |  Likes
+                  if comment.class=="cyberbullying"
+                    .ui.label.red Potential Cyberbullying
                 .text=comment.body
                 .actions
                   a.like.comment(class=comment.liked ? "red" : null ) !{comment.liked ? "Unlike" : "Like"}

@@ -26,7 +26,7 @@ function shuffle(array) {
  *  - script_feed: list of script (actor) posts, typically from a call to the database: Script.find(...)
  *  - user: a User document
  *  - order: 'SHUFFLE', 'CHRONOLOGICAL'; indicates the order the posts in the final feed should be displayed in.
- *  - removedFlaggedContent (boolean): T/F; indicates if a flagged post should be removed from the final feed.
+ *  - removeFlaggedContent (boolean): T/F; indicates if a flagged post should be removed from the final feed.
  *  - removedBlockedUserContent (boolean): T/F; indicates if posts from a blocked user should be removed from the final feed.
  * Returns: 
  *  - finalfeed: the processed final feed of posts for the user
@@ -90,7 +90,7 @@ exports.getFeed = function(user_posts, script_feed, user, order, removeFlaggedCo
                         } else {
                             // This is not a user-made comment.
                             // Get the index of the comment in the post.
-                            const commentIndex = _.findIndex(script_feed[0].comments, function(o) { return o.id == commentObject.comment; });
+                            const commentIndex = _.findIndex(script_feed[0].comments, function(o) { return o._id.equals(commentObject.comment); });
                             if (commentIndex != -1) {
                                 // Check if this comment has been liked by the user. If true, update the comment in the post.
                                 if (commentObject.liked) {
@@ -100,14 +100,15 @@ exports.getFeed = function(user_posts, script_feed, user, order, removeFlaggedCo
                                 if (commentObject.flagged) {
                                     if (removeFlaggedContent) {
                                         script_feed[0].comments.splice(commentIndex, 1);
+                                        continue;
                                     } else {
                                         script_feed[0].comments[commentIndex].flagged = true;
                                     }
                                 }
                             }
                             // Check if this comment is by a blocked user: If true and removedBlockedUserContent is true, remove the comment.
-                            if (user.blocked.includes(commentObject.actor.username) && removedBlockedUserContent) {
-                                script_feed[0].comments.splice(script_feed[0].comments.indexOf(commentObject), 1);
+                            if (user.blocked.includes(script_feed[0].comments[commentIndex].actor.username) && removedBlockedUserContent) {
+                                script_feed[0].comments.splice(commentIndex, 1);
                             }
                         }
                     }
