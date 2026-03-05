@@ -1,15 +1,14 @@
-The Truman Platform 2.0
+The Truman Platform: Bystander intervention and instruction
 =======================
-_The original version of The Truman Platform can be found here: https://github.com/cornellsml/truman_ 
-
 Named after the 1998 film, The Truman Show, **The Truman Platform** is an open-source, complete social media simulation platform. It was developed as part of a joint effort by the [Cornell Social Media Lab (SML)](https://socialmedialab.cornell.edu/), led by former SML post-doc [Dominic DiFranzo](https://difranzo.com/), to provide researchers a community research infrastructure to conduct social media experiments in ecologically-valid realistic environments. Researchers can create different social media environments with a repertoire of features and affordances that fit their research goals and purposes, while ensuring participants have a naturalistic social media experience. 
 
-This project and software development was supported by the National Science Foundation through IIS-1405634. Special thanks to everyone at Cornell Social Media Lab in the Department of Communication. 
+This current interation studies **bystander intervention and instruction, specifically competing enhnacement accounts: In-situ coaching effect vs. Prior coaching effect**.
 
-Also special thanks to Sahat Yalkabov and his [Hackathon Starter](https://github.com/sahat/hackathon-starter) project, which provided the basic organization for this project. 
+## How to Install Locally
+### Installing the Prerequisites
 
-## **Demo**
-**[https://truman-2023-82f66bc03792.herokuapp.com/](https://truman-2023-82f66bc03792.herokuapp.com/)**. You may enter a random 6-digit ID when prompted to make an account and provide a Mechanical Turk ID.
+Follow these instructions: https://truman.gitbook.io/the-truman-platform/setting-up-truman/installing-truman/installing-the-prerequisites
 
-## **Documentation**
-Please see **[https://truman.gitbook.io/the-truman-platform/](https://truman.gitbook.io/the-truman-platform)** for more details on how to use this tool.
+### Setting up the interface locally
+
+Follow these instructions: https://truman.gitbook.io/the-truman-platform/setting-up-truman/installing-truman/setting-up-truman-locally
