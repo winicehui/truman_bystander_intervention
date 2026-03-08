@@ -11,6 +11,7 @@ html
     meta(name="mobile-web-app-capable" content="yes")
     meta(name="msapplication-tap-highlight" content="no")
     meta(name="content-language" content="en_US")
+    meta(name='csrf-token', content=_csrf)
     title #{title} - #{process.env.SITE_NAME}
     link(rel='shortcut icon', href=process.env.SITE_FAVICON)
     link(rel='manifest', href='/public/manifest.json')

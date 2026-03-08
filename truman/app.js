@@ -141,7 +141,8 @@ app.use((req, res, next) => {
         '/account/signup_info_post',
         '/login',
         '/signup',
-        '/account/signup_info'
+        '/account/signup_info',
+        '/chat/ai',
     ];
     
     if (skipCsrfPaths.includes(req.path)) {
@@ -242,6 +243,7 @@ app.post('/chat', passportConfig.isAuthenticated, scriptController.postchatActio
 app.get('/feed', passportConfig.isAuthenticated, scriptController.getScript);
 app.post('/feed', passportConfig.isAuthenticated, scriptController.postUpdateFeedAction);
 app.post('/userPost_feed', passportConfig.isAuthenticated, scriptController.postUpdateUserPostFeedAction);
+app.post('/chat/ai', passportConfig.isAuthenticated, scriptController.postAIChat);
 app.get('/test', passportConfig.isAuthenticated, function(req, res) {
     res.render('test', {
         title: 'Test'

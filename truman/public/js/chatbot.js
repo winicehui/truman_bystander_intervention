@@ -5,11 +5,9 @@ async function openChat(e) {
 
     // Update chat header with given actor metadata
     $("#copilot-chat").attr("chatId", chatId);
-    // $(".actor-chat .chat .chat-header img.ui.avatar.image").attr("src", picture);
-    // $("#copilot-chat .chat .chat-header .chat-about .chat-with").text("Chat with " + chatId);
-    // Update chat instance
+
     const chat = $('#copilot-chat.container.clearfix').data('chatInstance');
-    const profilePicture = $(".menu .ui.mini.spaced.circular.image").attr("src"); 
+    const profilePicture = $(".menu .ui.mini.spaced.circular.image").attr("src");
 
     chat.chatId = chatId;
     chat.mostRecentMessenger = null;
@@ -24,12 +22,54 @@ async function openChat(e) {
     if (!$('#copilot-chat .chat .chat-history').is(":visible")) {
         $('#copilot-chat .chat .chat-history').slideToggle(300, 'swing');
     }
-    // Get previous messages in #USERNAME chat and update chat messages
-    await $.getJSON("/chat", { "chat_id": chatId }, function(data) {
-        for (const msg of data) {
+
+    // Load previous messages
+    let existingMessages = [];
+    try {
+        existingMessages = await $.getJSON("/chat", { "chat_id": chatId });
+        for (const msg of existingMessages) {
             chat.addMessageExternal(msg.body, msg.absTime, msg.name, msg.isAgent);
         }
-    });
+    } catch(err) {
+        console.error('Failed to load chat history:', err);
+    }
+
+    // Only trigger AI greeting if there are no prior messages
+    if (existingMessages.length === 0) {
+        const postContext = post.find('.description').first().text().trim();
+        const postCondition = post.attr('postcondition') || '';
+
+        chat.addTypingAnimationExternal("Comment Coach");
+
+        try {
+            const response = await fetch('/chat/ai', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-csrf-token': $('meta[name="csrf-token"]').attr('content')
+                },
+                body: JSON.stringify({
+                    chat_id: chatId,
+                    postCondition: postCondition,
+                    messages: [],
+                    postContext: postContext
+                })
+            });
+
+            if (!response.ok) {
+                const errText = await response.text();
+                console.error('Greeting failed:', response.status, errText);
+                chat.addMessageExternal('Sorry, could not connect to Comment Coach. Please try again.', chat.getCurrentTime(), 'Comment Coach', true);
+                return;
+            }
+
+            const data = await response.json();
+            chat.addMessageExternal(data.message.content, chat.getCurrentTime(), 'Comment Coach', true);
+        } catch(err) {
+            console.error('Greeting error:', err);
+            chat.addMessageExternal('Sorry, something went wrong. Please try again.', chat.getCurrentTime(), 'Comment Coach', true);
+        }
+    }
 }
 
 $(window).on("load", function() {
@@ -42,51 +82,46 @@ $(window).on("load", function() {
             mostRecentMessenger: null,
             chatId: chatId,
             typingTimeout: null,
+            profilePicture: null,
             init: function() {
                 this.cacheDOM();
                 this.bindEvents();
                 $(this.$chatHistory).closest('.container.clearfix').data('chatInstance', this); // Store instance
             },
             cacheDOM: function() {
-                    this.$chatHistory = $('#copilot-chat .chat-history');
-                    this.$button = $('#copilot-chat button');
-                    this.$textarea = $('#copilot-chat #message-to-send');
-                    this.$img = $('#copilot-chat img.ui.avatar.image');
-                    this.$chatHistoryList = this.$chatHistory.find('ul');
+                this.$chatHistory = $('#copilot-chat .chat-history');
+                this.$button = $('#copilot-chat button');
+                this.$textarea = $('#copilot-chat #message-to-send');
+                this.$chatHistoryList = this.$chatHistory.find('ul');
             },
             bindEvents: function() {
-                this.$button.on('click', this.addMessage.bind(this));
-                this.$textarea.on('keydown', this.addMessageTyping.bind(this));
+                this.$button.on('click', this.sendMessage.bind(this));
+                this.$textarea.on('keydown', this.handleKeydown.bind(this));
             },
-            // Renders a message
+
+            // Renders a message bubble
             render: function(body, absTime, name, isAgent, isExternalMessage, isTypingAnimation) {
                 if (this.typingTimeout != null) {
                     clearTimeout(this.typingTimeout);
                     this.typingTimeout = null;
                     this.removeTypingAnimationExternal();
                 }
-                if (isTypingAnimation || body.trim() !== '') {
-                    let template;
-                    if (isAgent) {
-                        template = Handlebars.compile($("#other-message-template").html());
-                    } else {
-                        template = Handlebars.compile($("#my-message-template").html());
-                    }
-
-                    let context = {
+                if (isTypingAnimation || (body && body.trim() !== '')) {
+                    const template = Handlebars.compile(
+                        isAgent ? $("#other-message-template").html() : $("#my-message-template").html()
+                    );
+                    const context = {
                         name: name,
                         messageOutput: body,
                         time: absTime,
-                        addProfilePhoto: this.mostRecentMessenger != name,
+                        addProfilePhoto: this.mostRecentMessenger !== name,
                         isTypingAnimation: isTypingAnimation,
                         avatar: this.profilePicture
                     };
                     if (!isTypingAnimation) {
                         this.mostRecentMessenger = name;
                     }
-
                     this.$chatHistoryList.append(template(context));
-
                     this.scrollToBottom();
                     if (!isExternalMessage) {
                         this.$textarea.val('');
@@ -102,44 +137,105 @@ $(window).on("load", function() {
                 }
             },
 
-            // Handles the addition of outgoing message (by the user) to chat history
-            addMessage: function() {
-                const name = "Me";
-                const message = this.$textarea.val();
-                const time = this.getCurrentTime();
+            // Called by button click or Enter key — sends user message and gets AI reply
+            sendMessage: async function() {
+            const name = "Me";
+            const message = this.$textarea.val().trim();
+            if (!message) return;
 
-                this.render(message, time, name, false, false, false);
+            this.render(message, this.getCurrentTime(), name, false, false, false);
 
-                $.post("/chat", {
-                    chat_id: this.chatId,
-                    body: message,
-                    absTime: Date.now(),
-                    name: name,
-                    isAgent: false,
-                    _csrf: $('meta[name="csrf-token"]').attr('content')
+            $.post("/chat", {
+                chat_id: this.chatId,
+                body: message,
+                absTime: Date.now(),
+                name: name,
+                isAgent: false,
+                _csrf: $('meta[name="csrf-token"]').attr('content')
+            });
+
+            this.addTypingAnimationExternal("Comment Coach");
+
+            const messages = [];
+            this.$chatHistoryList.find('li').each(function() {
+                const isAgent = $(this).find('.other-message').length > 0;
+                const body = $(this).find('.other-message, .my-message').text().trim();
+                if (body) {
+                    messages.push({ role: isAgent ? 'assistant' : 'user', content: body });
+                }
+            });
+
+            const post = $('[postid="' + this.chatId + '"]');
+            const postContext = post.find('.description').first().text().trim();
+            const csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+            // DEBUG
+            console.log('chatId:', this.chatId);
+            console.log('postContext:', postContext);
+            console.log('csrfToken:', csrfToken);
+            console.log('messages:', messages);
+            console.log('About to fetch /chat/ai...');
+            
+
+            try {
+                const response = await fetch('/chat/ai', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-csrf-token': csrfToken
+                    },
+                    body: JSON.stringify({
+                        chat_id: this.chatId,
+                        postCondition: post.attr('postcondition') || '',
+                        messages: messages,
+                        postContext: postContext
+                    })
                 });
-                
-                this.addTypingAnimationExternal("Trainer", false);
-            },
 
-            // Handles the addition of an incoming message to chat history (could be user or copilot)
+                console.log('Response status:', response.status);
+
+                if (!response.ok) {
+                    const errText = await response.text();
+                    console.error('AI reply failed:', response.status, errText);
+                    this.addMessageExternal('Sorry, something went wrong. Please try again.', this.getCurrentTime(), 'Comment Coach', true);
+                    return;
+                }
+
+                const data = await response.json();
+                const replyText = data.message.content;
+                this.addMessageExternal(replyText, this.getCurrentTime(), 'Comment Coach', true);
+
+                const match = replyText.match(/FINAL_COMMENT:\s*(.+?)(?=\n✅|\n\n|✅|$)/s);
+                if (match) {
+                    const finalComment = match[1].trim();
+                    post.find('textarea.newcomment').val(finalComment);
+                    post.find('textarea.newcomment').focus();
+                    setTimeout(function() {
+                        $('#copilot-chat .chat').transition('fade down');
+                    }, 2000);
+                }
+            } catch (err) {
+                console.error('FETCH ERROR:', err);
+                this.addMessageExternal('Sorry, something went wrong. Please try again.', this.getCurrentTime(), 'Comment Coach', true);
+            }
+        },
+
+            // Handles the addition of an incoming message (agent or replayed history)
             addMessageExternal: function(body, absTime, name, isAgent) {
                 this.render(body, absTime, name, isAgent, true, false);
             },
 
-            // Handles typing events in the textarea of chats
-            addMessageTyping: function(event) {
+            // Handles Enter key in textarea
+            handleKeydown: function(event) {
                 if (event.keyCode == 13 && !event.ctrlKey) {
                     event.preventDefault();
                     event.stopImmediatePropagation();
-                    this.addMessage();
-                    this.addTypingAnimationExternal("You");
+                    this.sendMessage();
                 } else {
                     event.stopImmediatePropagation();
                 }
             },
 
-            // Adds typing animation
             addTypingAnimationExternal: function(name) {
                 if (this.typingTimeout == null) {
                     this.render(undefined, undefined, name, true, true, true);
@@ -149,11 +245,10 @@ $(window).on("load", function() {
                 this.typingTimeout = setTimeout(() => {
                     this.typingTimeout = null;
                     this.removeTypingAnimationExternal();
-                }, 3000);
+                }, 5000);
             },
 
-            // Removes typing animation
-            removeTypingAnimationExternal: function(name, isAgent) {
+            removeTypingAnimationExternal: function() {
                 this.$chatHistoryList.find(".ui.grid.centered:last").remove();
             },
 
@@ -164,8 +259,8 @@ $(window).on("load", function() {
             },
 
             getCurrentTime: function() {
-                return new Date().toLocaleTimeString().
-                replace(/([\d]+:[\d]{2})(:[\d]{2})(.*)/, "$1$3");
+                return new Date().toLocaleTimeString()
+                    .replace(/([\d]+:[\d]{2})(:[\d]{2})(.*)/, "$1$3");
             },
 
             resetChat: function() {
