@@ -145,7 +145,7 @@ $(window).on("load", function() {
 
             this.render(message, this.getCurrentTime(), name, false, false, false);
 
-            $.post("/chat", {
+            await $.post("/chat", {
                 chat_id: this.chatId,
                 body: message,
                 absTime: Date.now(),

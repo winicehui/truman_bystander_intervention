@@ -105,6 +105,7 @@ exports.getChat = async(req, res, next) => {
 
         if (feedIndex != -1) {
             let messages = user.chatAction[feedIndex].messages;
+            messages.sort((a, b) => new Date(a.absTime) - new Date(b.absTime));
             messages = messages.map(messageDoc => {
                 let message = messageDoc.toObject(); // Convert to plain JavaScript object
                 return {
