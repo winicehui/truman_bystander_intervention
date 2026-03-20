@@ -288,3 +288,20 @@
 .chat-message-content {
     margin-left: 56px;
 }
+
+/* #chatbot-container {
+  position: fixed !important;
+  bottom: 20px;
+  right: 20px;
+  width: 300px;
+  z-index: 999;
+}
+
+.chat-bubble {
+  border-radius: 16px !important;
+  margin-bottom: 8px !important;
+}
+
+.chat-options .button {
+  border-radius: 20px !important; */
+}
