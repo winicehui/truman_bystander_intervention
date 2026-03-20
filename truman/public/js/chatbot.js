@@ -1,29 +1,26 @@
-// Opens chat option
 async function confirmChat(e) {
     const post = $(e.target).closest('.ui.fluid.card');
     const chatId = post.attr("postid");
 
-    // If chat is already open for this exact post, do nothing
     const currentChatId = $("#copilot-chat").attr("chatId");
+    const pendingChatId = $('#chatbot-container').data('pendingChatId');
     const isChatVisible = $('#copilot-chat .chat').is(":visible");
-    if (isChatVisible && currentChatId === chatId) return;
 
+    // Do nothing if chat or bubble is already showing for this exact post
+    if ((isChatVisible && currentChatId === chatId) || pendingChatId === chatId) return;
+
+    // If chat is open for a different post, close it first then show bubble
     if (isChatVisible && currentChatId !== chatId) {
-        // If chat is open for a different post, close it first before opening new one
         $('#copilot-chat .chat').transition('fade down');
-        // Unhighlight previously highlighted post
-        $('[postid="' + currentChatId + '"]').removeClass("chat-highlight");
-        // Wait for the close animation to finish before proceeding
-        setTimeout(() => {
-            showChatPrompt(e);
-        }, 500); // Match this duration with the fade down animation time
+        $('.ui.fluid.card[postid="' + currentChatId + '"]').removeClass("chat-highlight");
+        setTimeout(() => confirmChat(e), 500); // Re-call after animation, chat will be closed by then
+        return;
     }
 
+    // Unhighlight previously pending post and show bubble for new post
+    $('.ui.fluid.card[postid="' + pendingChatId + '"]').removeClass("chat-highlight");
     post.addClass("chat-highlight");
-    // Store the event target on the bubble for use when user clicks Yes
-    $('#chatbot-container').data('pendingEvent', e);
-
-    // Show the prompt bubble, hide it first in case it's already visible
+    $('#chatbot-container').data({ pendingEvent: e, pendingChatId: chatId });
     $('#chatbot-container .chat-bubble, #chatbot-container .chat-options').show();
 }
 
@@ -31,9 +28,8 @@ async function confirmChat(e) {
 async function openChat(e) {
     const pendingEvent = $('#chatbot-container').data('pendingEvent');
 
-    // Hide the bubble regardless of Yes or No
     $('#chatbot-container .chat-bubble, #chatbot-container .chat-options').hide();
-    $('#chatbot-container').removeData('pendingEvent');
+    $('#chatbot-container').removeData('pendingEvent').removeData('pendingChatId');
 
     if (!pendingEvent) return;
 
