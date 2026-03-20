@@ -69,6 +69,8 @@ async function openChat(e) {
         console.error('Failed to load chat history:', err);
     }
 
+    // First time the user opens the chat for a post, greet them and provide context. 
+    // If there are existing messages, we assume the user has already been greeted and shown context, so we skip straight to showing the history.
     if (existingMessages.length === 0) {
         const postContext = post.find('.description').first().text().trim();
         const postCondition = post.attr('postcondition') || '';
@@ -112,6 +114,12 @@ $(window).on("load", function() {
     $('.no-help').on('click', function() {
         $('#chatbot-container .chat-bubble, #chatbot-container .chat-options').hide();
         $('#chatbot-container').removeData('pendingEvent');
+
+        // if any element has chat-highlight class, remove it
+        const highlightedPost = $(".chat-highlight");
+        if (highlightedPost.length) {
+            highlightedPost.removeClass("chat-highlight");
+        }
     });
 
     // Define and initiate chats
@@ -178,86 +186,78 @@ $(window).on("load", function() {
 
             // Called by button click or Enter key — sends user message and gets AI reply
             sendMessage: async function() {
-            const name = "Me";
-            const message = this.$textarea.val().trim();
-            if (!message) return;
+                const name = "Me";
+                const message = this.$textarea.val().trim();
+                if (!message) return;
 
-            this.render(message, this.getCurrentTime(), name, false, false, false);
+                this.render(message, this.getCurrentTime(), name, false, false, false);
 
-            await $.post("/chat", {
-                chat_id: this.chatId,
-                body: message,
-                absTime: Date.now(),
-                name: name,
-                isAgent: false,
-                _csrf: $('meta[name="csrf-token"]').attr('content')
-            });
-
-            this.addTypingAnimationExternal("Comment Coach");
-
-            const messages = [];
-            this.$chatHistoryList.find('li').each(function() {
-                const isAgent = $(this).find('.other-message').length > 0;
-                const body = $(this).find('.other-message, .my-message').text().trim();
-                if (body) {
-                    messages.push({ role: isAgent ? 'assistant' : 'user', content: body });
-                }
-            });
-
-            const post = $('[postid="' + this.chatId + '"]');
-            const postContext = post.find('.description').first().text().trim();
-            const csrfToken = $('meta[name="csrf-token"]').attr('content');
-
-            // DEBUG
-            console.log('chatId:', this.chatId);
-            console.log('postContext:', postContext);
-            console.log('csrfToken:', csrfToken);
-            console.log('messages:', messages);
-            console.log('About to fetch /chat/ai...');
-            
-
-            try {
-                const response = await fetch('/chat/ai', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'x-csrf-token': csrfToken
-                    },
-                    body: JSON.stringify({
-                        chat_id: this.chatId,
-                        postCondition: post.attr('postcondition') || '',
-                        messages: messages,
-                        postContext: postContext
-                    })
+                await $.post("/chat", {
+                    chat_id: this.chatId,
+                    body: message,
+                    absTime: Date.now(),
+                    name: name,
+                    isAgent: false,
+                    _csrf: $('meta[name="csrf-token"]').attr('content')
                 });
 
-                console.log('Response status:', response.status);
+                this.addTypingAnimationExternal("Comment Coach");
 
-                if (!response.ok) {
-                    const errText = await response.text();
-                    console.error('AI reply failed:', response.status, errText);
+                const messages = [];
+                this.$chatHistoryList.find('li').each(function() {
+                    const isAgent = $(this).find('.other-message').length > 0;
+                    const body = $(this).find('.other-message, .my-message').text().trim();
+                    if (body) {
+                        messages.push({ role: isAgent ? 'assistant' : 'user', content: body });
+                    }
+                });
+
+                const post = $('[postid="' + this.chatId + '"]');
+                const postContext = post.find('.description').first().text().trim();
+                const csrfToken = $('meta[name="csrf-token"]').attr('content');
+                
+                try {
+                    const response = await fetch('/chat/ai', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'x-csrf-token': csrfToken
+                        },
+                        body: JSON.stringify({
+                            chat_id: this.chatId,
+                            postCondition: post.attr('postcondition') || '',
+                            messages: messages,
+                            postContext: postContext
+                        })
+                    });
+
+                    console.log('Response status:', response.status);
+
+                    if (!response.ok) {
+                        const errText = await response.text();
+                        console.error('AI reply failed:', response.status, errText);
+                        this.addMessageExternal('Sorry, something went wrong. Please try again.', this.getCurrentTime(), 'Comment Coach', true);
+                        return;
+                    }
+
+                    const data = await response.json();
+                    const replyText = data.message.content;
+                    this.addMessageExternal(replyText, this.getCurrentTime(), 'Comment Coach', true);
+
+                    const match = replyText.match(/FINAL_COMMENT:\s*(.+?)(?=\n✅|\n\n|✅|$)/s);
+                    if (match) {
+                        const finalComment = match[1].trim();
+                        post.find('textarea.newcomment').val(finalComment);
+                        post.find('textarea.newcomment').focus();
+                        setTimeout(function() {
+                            $('#copilot-chat .chat').transition('fade down');
+                        }, 2000);
+                    }
+                } catch (err) {
+                    console.error('FETCH ERROR:', err);
                     this.addMessageExternal('Sorry, something went wrong. Please try again.', this.getCurrentTime(), 'Comment Coach', true);
-                    return;
                 }
-
-                const data = await response.json();
-                const replyText = data.message.content;
-                this.addMessageExternal(replyText, this.getCurrentTime(), 'Comment Coach', true);
-
-                const match = replyText.match(/FINAL_COMMENT:\s*(.+?)(?=\n✅|\n\n|✅|$)/s);
-                if (match) {
-                    const finalComment = match[1].trim();
-                    post.find('textarea.newcomment').val(finalComment);
-                    post.find('textarea.newcomment').focus();
-                    setTimeout(function() {
-                        $('#copilot-chat .chat').transition('fade down');
-                    }, 2000);
-                }
-            } catch (err) {
-                console.error('FETCH ERROR:', err);
-                this.addMessageExternal('Sorry, something went wrong. Please try again.', this.getCurrentTime(), 'Comment Coach', true);
-            }
-        },
+            },
 
             // Handles the addition of an incoming message (agent or replayed history)
             addMessageExternal: function(body, absTime, name, isAgent) {
@@ -321,5 +321,10 @@ $(window).on("load", function() {
         e.preventDefault();
         e.stopImmediatePropagation();
         $('#copilot-chat .chat').transition('fade down');
+        // if any element has chat-highlight class, remove it
+        const highlightedPost = $(".chat-highlight");
+        if (highlightedPost.length) {
+            highlightedPost.removeClass("chat-highlight");
+        }
     });
 });
