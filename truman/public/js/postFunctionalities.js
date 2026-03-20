@@ -40,12 +40,9 @@ function likePost(e) {
                 _csrf: $('meta[name="csrf-token"]').attr('content')
             });
     }
-<<<<<<< Updated upstream
-=======
     if (target.closest(".ui.fluid.card").find(".cyberbullying").length > 0) {
         confirmChat(e);
     }
->>>>>>> Stashed changes
 }
 
 function flagPost(e) {
@@ -62,10 +59,7 @@ function flagPost(e) {
         _csrf: $('meta[name="csrf-token"]').attr('content')
     });
     post.find(".ui.dimmer.flag").dimmer({ closable: true }).dimmer('show');
-<<<<<<< Updated upstream
-=======
     confirmChat(e);
->>>>>>> Stashed changes
 }
 
 function unflagPost(e) {
@@ -82,12 +76,9 @@ function unflagPost(e) {
         _csrf: $('meta[name="csrf-token"]').attr('content')
     });
     target.closest(".ui.fluid.card").find(".ui.dimmer.flag").removeClass("active").dimmer({ closable: true }).dimmer('hide');
-<<<<<<< Updated upstream
-=======
     if (target.closest(".ui.fluid.card").find(".cyberbullying").length > 0) {
         confirmChat(e);
     }
->>>>>>> Stashed changes
 }
 
 function likeComment(e) {
@@ -149,12 +140,9 @@ function likeComment(e) {
                 _csrf: $('meta[name="csrf-token"]').attr('content')
             });
     }
-<<<<<<< Updated upstream
-=======
     if (target.closest(".ui.fluid.card").find(".cyberbullying").length > 0) {
         confirmChat(e);
     }
->>>>>>> Stashed changes
 }
 
 function flagComment(e) {
@@ -183,12 +171,9 @@ function flagComment(e) {
             postCondition: postCondition,
             _csrf: $('meta[name="csrf-token"]').attr('content')
         });
-<<<<<<< Updated upstream
-=======
     if (target.closest(".ui.fluid.card").find(".cyberbullying").length > 0) {
         confirmChat(e);
     }
->>>>>>> Stashed changes
 }
 
 function unflagComment(e) {
@@ -218,12 +203,9 @@ function unflagComment(e) {
             postCondition: postCondition,
             _csrf: $('meta[name="csrf-token"]').attr('content')
         });
-<<<<<<< Updated upstream
-=======
     if (target.closest(".ui.fluid.card").find(".cyberbullying").length > 0) {
         confirmChat(e);
     }
->>>>>>> Stashed changes
 }
 
 function addComment(e) {
@@ -285,12 +267,9 @@ function addComment(e) {
                 numComments = json.numComments;
             });
     }
-<<<<<<< Updated upstream
-=======
     if (target.closest(".ui.fluid.card").find(".cyberbullying").length > 0) {
         confirmChat(e);
     }
->>>>>>> Stashed changes
 }
 
 function followUser(e) {
@@ -375,8 +354,6 @@ $(window).on('load', () => {
     // Follow button
     $('.ui.basic.primary.follow.button').on('click', followUser);
 
-<<<<<<< Updated upstream
-=======
     const hoverTimers = new Map();
 
     $('.cyberbullying').mouseenter(function(event) {
@@ -399,7 +376,6 @@ $(window).on('load', () => {
         }
     });
 
->>>>>>> Stashed changes
     // Track how long a post is on the screen (borders are defined by image)
     // Start time: When the entire photo is visible in the viewport.
     // End time: When the entire photo is no longer visible in the viewport.

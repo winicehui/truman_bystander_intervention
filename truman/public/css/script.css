@@ -8,8 +8,12 @@
 
 /* POST */
 
-.ui.fluid.card.cyberbullying {
+/* .ui.fluid.card.cyberbullying {
     border: 2px solid red;
+} */
+
+.ui.fluid.card.chat-highlight {
+    border: 2px solid #e61a8d;
 }
 
 .ui.fluid.card>.content.dimmable>.image {
@@ -43,10 +47,10 @@
     border-radius: 1em;
 }
 
-.ui.comments>.comment.cyberbullying {
+/* .ui.comments>.comment.cyberbullying {
     border: 2px solid red;
     background-color: #fbd9d3;
-}
+} */
     
 .ui.comments .comment .text {
     margin: 0.25em 0;

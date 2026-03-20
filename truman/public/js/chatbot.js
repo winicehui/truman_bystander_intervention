@@ -1,6 +1,5 @@
 // Opens chat option
 async function confirmChat(e) {
-    console.log("confirmChat")
     const post = $(e.target).closest('.ui.fluid.card');
     const chatId = post.attr("postid");
 
@@ -12,12 +11,15 @@ async function confirmChat(e) {
     if (isChatVisible && currentChatId !== chatId) {
         // If chat is open for a different post, close it first before opening new one
         $('#copilot-chat .chat').transition('fade down');
+        // Unhighlight previously highlighted post
+        $('[postid="' + currentChatId + '"]').removeClass("chat-highlight");
         // Wait for the close animation to finish before proceeding
         setTimeout(() => {
             showChatPrompt(e);
         }, 500); // Match this duration with the fade down animation time
     }
 
+    post.addClass("chat-highlight");
     // Store the event target on the bubble for use when user clicks Yes
     $('#chatbot-container').data('pendingEvent', e);
 
@@ -27,9 +29,6 @@ async function confirmChat(e) {
 
 // Opens the co-pilot chat
 async function openChat(e) {
-<<<<<<< Updated upstream
-    const post = $(this).closest('.ui.fluid.card');
-=======
     const pendingEvent = $('#chatbot-container').data('pendingEvent');
 
     // Hide the bubble regardless of Yes or No
@@ -39,7 +38,6 @@ async function openChat(e) {
     if (!pendingEvent) return;
 
     const post = $(pendingEvent.target).closest('.ui.fluid.card');
->>>>>>> Stashed changes
     const chatId = post.attr("postid");
 
     // Update chat header with given actor metadata
@@ -109,16 +107,12 @@ async function openChat(e) {
 }
 
 $(window).on("load", function() {
-<<<<<<< Updated upstream
-    $('.practice-chat').click(openChat);
-=======
     $('.yes-help').on('click', openChat);
 
     $('.no-help').on('click', function() {
         $('#chatbot-container .chat-bubble, #chatbot-container .chat-options').hide();
         $('#chatbot-container').removeData('pendingEvent');
     });
->>>>>>> Stashed changes
 
     // Define and initiate chats
     $('.container.clearfix').each(function() {
