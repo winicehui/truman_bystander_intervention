@@ -1,6 +1,45 @@
+// Opens chat option
+async function confirmChat(e) {
+    console.log("confirmChat")
+    const post = $(e.target).closest('.ui.fluid.card');
+    const chatId = post.attr("postid");
+
+    // If chat is already open for this exact post, do nothing
+    const currentChatId = $("#copilot-chat").attr("chatId");
+    const isChatVisible = $('#copilot-chat .chat').is(":visible");
+    if (isChatVisible && currentChatId === chatId) return;
+
+    if (isChatVisible && currentChatId !== chatId) {
+        // If chat is open for a different post, close it first before opening new one
+        $('#copilot-chat .chat').transition('fade down');
+        // Wait for the close animation to finish before proceeding
+        setTimeout(() => {
+            showChatPrompt(e);
+        }, 500); // Match this duration with the fade down animation time
+    }
+
+    // Store the event target on the bubble for use when user clicks Yes
+    $('#chatbot-container').data('pendingEvent', e);
+
+    // Show the prompt bubble, hide it first in case it's already visible
+    $('#chatbot-container .chat-bubble, #chatbot-container .chat-options').show();
+}
+
 // Opens the co-pilot chat
 async function openChat(e) {
+<<<<<<< Updated upstream
     const post = $(this).closest('.ui.fluid.card');
+=======
+    const pendingEvent = $('#chatbot-container').data('pendingEvent');
+
+    // Hide the bubble regardless of Yes or No
+    $('#chatbot-container .chat-bubble, #chatbot-container .chat-options').hide();
+    $('#chatbot-container').removeData('pendingEvent');
+
+    if (!pendingEvent) return;
+
+    const post = $(pendingEvent.target).closest('.ui.fluid.card');
+>>>>>>> Stashed changes
     const chatId = post.attr("postid");
 
     // Update chat header with given actor metadata
@@ -14,16 +53,14 @@ async function openChat(e) {
     chat.typingTimeout = null;
     chat.profilePicture = profilePicture;
     chat.resetChat();
-    // If chat is hidden, show chat
+
     if (!$('#copilot-chat .chat').is(":visible")) {
         $('#copilot-chat .chat').transition('fade up');
     }
-    // If chat history is hidden, toggle chat history up
     if (!$('#copilot-chat .chat .chat-history').is(":visible")) {
         $('#copilot-chat .chat .chat-history').slideToggle(300, 'swing');
     }
 
-    // Load previous messages
     let existingMessages = [];
     try {
         existingMessages = await $.getJSON("/chat", { "chat_id": chatId });
@@ -34,7 +71,6 @@ async function openChat(e) {
         console.error('Failed to load chat history:', err);
     }
 
-    // Only trigger AI greeting if there are no prior messages
     if (existingMessages.length === 0) {
         const postContext = post.find('.description').first().text().trim();
         const postCondition = post.attr('postcondition') || '';
@@ -73,7 +109,16 @@ async function openChat(e) {
 }
 
 $(window).on("load", function() {
+<<<<<<< Updated upstream
     $('.practice-chat').click(openChat);
+=======
+    $('.yes-help').on('click', openChat);
+
+    $('.no-help').on('click', function() {
+        $('#chatbot-container .chat-bubble, #chatbot-container .chat-options').hide();
+        $('#chatbot-container').removeData('pendingEvent');
+    });
+>>>>>>> Stashed changes
 
     // Define and initiate chats
     $('.container.clearfix').each(function() {

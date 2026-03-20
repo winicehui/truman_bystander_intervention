@@ -287,4 +287,29 @@
 
 .chat-message-content {
     margin-left: 56px;
+<<<<<<< Updated upstream
+=======
+}
+
+#chatbot-container {
+  position: fixed !important;
+  bottom: 20px;
+  right: 20px;
+  width: 300px;
+  z-index: 999;
+}
+
+.chat-bubble {
+  border-radius: 16px !important;
+  margin-bottom: 8px !important;
+  display: none;
+}
+
+.ui.two.column.grid.chat-options{
+    display: none;
+}
+
+.chat-options .button {
+  border-radius: 20px !important;
+>>>>>>> Stashed changes
 }
