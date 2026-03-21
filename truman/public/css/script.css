@@ -47,6 +47,10 @@
     border: 2px solid red;
     background-color: #fbd9d3;
 } */
+
+.ui.fluid.card.chat-highlight {
+    border: 2px solid #e61a8d;
+}
     
 .ui.comments .comment .text {
     margin: 0.25em 0;

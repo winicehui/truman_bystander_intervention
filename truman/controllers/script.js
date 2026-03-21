@@ -443,14 +443,19 @@ exports.postAIChat = async (req, res, next) => {
             : messages;
 
         // Call OpenAI
-        const completion = await openai.chat.completions.create({
-            model: 'gpt-4o-mini',
-            messages: [{ role: 'system', content: SYSTEM_PROMPT }, ...enrichedMessages],
-            max_tokens: 300,
-            temperature: 0.7,
-        });
+        // const completion = await openai.chat.completions.create({
+        //     model: 'gpt-4o-mini',
+        //     messages: [{ role: 'system', content: SYSTEM_PROMPT }, ...enrichedMessages],
+        //     max_tokens: 300,
+        //     temperature: 0.7,
+        // });
 
-        const reply = completion.choices[0].message;
+        // const reply = completion.choices[0].message;
+
+        const reply = {
+            role: 'assistant',
+            content: 'This is a placeholder response from the AI. Replace this with the actual response from OpenAI.'
+        };
 
         // Log the AI reply into chatAction
         user.chatAction[feedIndex].messages.push({

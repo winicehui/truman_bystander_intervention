@@ -3,6 +3,19 @@ async function openChat(e) {
     const post = $(e.target).closest('.ui.fluid.card');
     const chatId = post.attr("postid");
 
+    const currentChatId = $("#copilot-chat").attr("chatId");
+    const isChatVisible = $('#copilot-chat .chat').is(":visible");
+
+    // Do nothing if chat is already showing for this exact post
+    if (isChatVisible && currentChatId === chatId) return;
+
+    // If chat is open for a different post, unhighlight the old post
+    if (isChatVisible && currentChatId !== chatId) {
+        $('.ui.fluid.card[postid="' + currentChatId + '"]').removeClass("chat-highlight");
+    }
+
+    post.addClass("chat-highlight");
+
     // Update chat header with given actor metadata
     $("#copilot-chat").attr("chatId", chatId);
 
@@ -73,8 +86,6 @@ async function openChat(e) {
 }
 
 $(window).on("load", function() {
-    $('.practice-chat').on('click', openChat);
-
     // Define and initiate chats
     $('.container.clearfix').each(function() {
         const chatId = this.id;
@@ -272,5 +283,11 @@ $(window).on("load", function() {
         e.preventDefault();
         e.stopImmediatePropagation();
         $('#copilot-chat .chat').transition('fade down');
+
+        // if any element has chat-highlight class, remove it
+        const highlightedPost = $(".chat-highlight");
+        if (highlightedPost.length) {
+            highlightedPost.removeClass("chat-highlight");
+        }
     });
 });
