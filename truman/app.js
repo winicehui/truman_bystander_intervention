@@ -209,6 +209,11 @@ app.get('/info', passportConfig.isAuthenticated, function(req, res) {
     });
 });
 
+app.get('/training', function(req, res) {
+    res.render('training', {
+        title: 'Training Module'
+    });
+});
 app.get('/tos', function(req, res) { res.render('tos', { title: 'Terms of Service' }); });
 
 app.get('/completed', passportConfig.isAuthenticated, userController.userTestResults);
