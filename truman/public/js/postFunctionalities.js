@@ -41,7 +41,7 @@ function likePost(e) {
             });
     }
     if (target.closest(".ui.fluid.card").find(".description.cyberbullying").length > 0) {
-        confirmChat(e);
+        openChat(e);
     }
 }
 
@@ -60,7 +60,7 @@ function flagPost(e) {
     });
     post.find(".ui.dimmer.flag").dimmer({ closable: true }).dimmer('show');
     if (target.closest(".ui.fluid.card").find(".description.cyberbullying").length > 0) {
-        confirmChat(e);
+        openChat(e);
     }
 }
 
@@ -79,7 +79,7 @@ function unflagPost(e) {
     });
     target.closest(".ui.fluid.card").find(".ui.dimmer.flag").removeClass("active").dimmer({ closable: true }).dimmer('hide');
     if (target.closest(".ui.fluid.card").find(".description.cyberbullying").length > 0) {
-        confirmChat(e);
+        openChat(e);
     }
 }
 
@@ -143,7 +143,7 @@ function likeComment(e) {
             });
     }
     if (comment.hasClass("cyberbullying")) {
-        confirmChat(e);
+        openChat(e);
     }
 }
 
@@ -174,7 +174,7 @@ function flagComment(e) {
             _csrf: $('meta[name="csrf-token"]').attr('content')
         });
     if (commentElement.hasClass("cyberbullying")) {
-        confirmChat(e);
+        openChat(e);
     }
 }
 
@@ -206,7 +206,7 @@ function unflagComment(e) {
             _csrf: $('meta[name="csrf-token"]').attr('content')
         });
     if (commentElement.hasClass("cyberbullying")) {
-        confirmChat(e);
+        openChat(e);
     }
 }
 
@@ -270,7 +270,7 @@ function addComment(e) {
             });
     }
     if (card.find(".cyberbullying").length > 0) {
-        confirmChat(e);
+        openChat(e);
     }
 }
 
@@ -310,9 +310,12 @@ $(window).on('load', () => {
 
     // ************ Actions on Main Post ***************
     // Focus new comment element if "Reply" button is clicked
-    $('.reply.button').on('click', function() {
+    $('.reply.button').on('click', function(event) {
         let parent = $(this).closest(".ui.fluid.card");
         parent.find("textarea.newcomment").focus();
+        if (parent.find(".cyberbullying").length > 0) { 
+            openChat(event);
+        }
     });
 
     // Press enter to submit a comment
@@ -321,6 +324,10 @@ $(window).on('load', () => {
             event.preventDefault();
             event.stopImmediatePropagation();
             $(this).parents(".ui.form").siblings("i.big.send.link.icon").click();
+        }
+
+        if (this.closest(".ui.fluid.card").find(".cyberbullying").length > 0) {
+            openChat(e);
         }
     });
 
