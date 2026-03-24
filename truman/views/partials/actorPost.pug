@@ -1,4 +1,4 @@
-.ui.fluid.card(postCondition=val.condition, postID=val.id, type='actor', actor_un = val.actor.username, actor_name = val.actor.profile.name, actor_pic = val.actor.profile.picture, class=(val.class=="cyberbullying") ? "cyberbullying" : null)
+.ui.fluid.card(postCondition=val.condition, postID=val.id, type='actor', actor_un = val.actor.username, actor_name = val.actor.profile.name, actor_pic = val.actor.profile.picture)
   .content
     .right.floated.time.meta= (user.createdAt.getTime() + val.time)
     a(href='/user/'+val.actor.username)     
@@ -19,7 +19,7 @@
     if val.picture
       .img.post.image
         img(src='/public/picture.svg', data-src=cdn+"/post_pictures/"+val.picture, style="max-width:100%; width:100%;")
-    .description=val.body
+    .description(class=(val.class=="cyberbullying") ? "cyberbullying" : null)=val.body
     .myTimer.hidden 0
   //- .ui.bottom.three.attached.icon.buttons
   //-   .ui.reply.button(tabindex='0')
@@ -45,12 +45,6 @@
         i.heart.icon
         |  Like
       a.ui.basic.red.left.pointing.label.count=val.likes
-
-  //- if val.class
-  //-   .content
-  //-     .ui.labeled.icon.button.pink.practice-chat(tabindex='0')
-  //-       i.shield.alternate.icon 
-  //-       | Practice Response
   if val.comments.length > 0
     .content
       .ui.comments
@@ -91,8 +85,6 @@
                     i.heart.icon(class=comment.liked ? "red" : null)
                     span.num=comment.likes+(comment.liked ? 1 : 0)
                     |  Likes
-                  //- if comment.class=="cyberbullying"
-                  //-   .ui.label.red Potential Cyberbullying
                 .text=comment.body
                 .actions
                   a.like.comment(class=comment.liked ? "red" : null ) !{comment.liked ? "Unlike" : "Like"}

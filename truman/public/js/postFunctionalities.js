@@ -40,6 +40,9 @@ function likePost(e) {
                 _csrf: $('meta[name="csrf-token"]').attr('content')
             });
     }
+    if (target.closest(".ui.fluid.card").find(".description.cyberbullying").length > 0) {
+        confirmChat(e);
+    }
 }
 
 function flagPost(e) {
@@ -56,6 +59,9 @@ function flagPost(e) {
         _csrf: $('meta[name="csrf-token"]').attr('content')
     });
     post.find(".ui.dimmer.flag").dimmer({ closable: true }).dimmer('show');
+    if (target.closest(".ui.fluid.card").find(".description.cyberbullying").length > 0) {
+        confirmChat(e);
+    }
 }
 
 function unflagPost(e) {
@@ -72,6 +78,9 @@ function unflagPost(e) {
         _csrf: $('meta[name="csrf-token"]').attr('content')
     });
     target.closest(".ui.fluid.card").find(".ui.dimmer.flag").removeClass("active").dimmer({ closable: true }).dimmer('hide');
+    if (target.closest(".ui.fluid.card").find(".description.cyberbullying").length > 0) {
+        confirmChat(e);
+    }
 }
 
 function likeComment(e) {
@@ -133,6 +142,9 @@ function likeComment(e) {
                 _csrf: $('meta[name="csrf-token"]').attr('content')
             });
     }
+    if (comment.hasClass("cyberbullying")) {
+        confirmChat(e);
+    }
 }
 
 function flagComment(e) {
@@ -161,6 +173,9 @@ function flagComment(e) {
             postCondition: postCondition,
             _csrf: $('meta[name="csrf-token"]').attr('content')
         });
+    if (commentElement.hasClass("cyberbullying")) {
+        confirmChat(e);
+    }
 }
 
 function unflagComment(e) {
@@ -190,6 +205,9 @@ function unflagComment(e) {
             postCondition: postCondition,
             _csrf: $('meta[name="csrf-token"]').attr('content')
         });
+    if (commentElement.hasClass("cyberbullying")) {
+        confirmChat(e);
+    }
 }
 
 function addComment(e) {
@@ -250,6 +268,9 @@ function addComment(e) {
             }).then(function(json) {
                 numComments = json.numComments;
             });
+    }
+    if (card.find(".cyberbullying").length > 0) {
+        confirmChat(e);
     }
 }
 
@@ -327,6 +348,53 @@ $(window).on('load', () => {
 
     // Follow button
     $('.ui.basic.primary.follow.button').on('click', followUser);
+
+    const cyberbullyingContent = $('.cyberbullying');
+
+    const cyberbullyingState = new Map(); // Map to track each element (key: PostID, value: timeout or true if chat has already been opened)
+   
+    const cyberbullyingObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            const element = entry.target;
+            const post = $(element).closest(".ui.fluid.card");
+            const postID = post.attr("postID");
+
+            // Element is visible in the viewport-50px (defined by rootMargin)
+            if (entry.isIntersecting) {
+                console.log(`Element with postID ${postID} is visible in the viewport-50px.`);
+                // If chat has already been opened for this post or a timer is already running, do nothing.
+                if (cyberbullyingState.has(postID)) {
+                    return;
+                } else {
+                    // Start a 3 second countdown to open chat
+                    const timeout = setTimeout(() => {
+                        openChat(entry);
+                        cyberbullyingState.set(postID, true); // Mark that chat has been opened for this post
+                    }, 3000);
+                    cyberbullyingState.set(postID, timeout);
+                }
+            } 
+            // Element is not visible in the viewport-50px (defined by rootMargin)
+            else {
+                const state = cyberbullyingState.get(postID);
+                if (state && state !== true) {
+                    clearTimeout(state); // Clear the timeout if it exists and chat hasn't been opened yet
+                    cyberbullyingState.delete(postID); // Remove from map
+                } else if (state === true) {
+                    cyberbullyingState.delete(postID); // If chat was opened and user scrolls away, allow chat to be opened again if they scroll back
+                }
+                console.log(`Element with postID ${postID} is no longer visible in the viewport-50px.`);
+            }
+        });
+    }, { 
+        threshold: 1,
+        rootMargin: '-50px'
+     });
+
+    cyberbullyingContent.each(function(index, element) {
+        cyberbullyingObserver.observe(element);
+    });
+
 
     // Track how long a post is on the screen (borders are defined by image)
     // Start time: When the entire photo is visible in the viewport.
