@@ -5,17 +5,17 @@
       img.ui.avatar.image(src='/public/picture.svg', data-src=cdn+"/profile_pictures/"+val.actor.profile.picture)
       span.username=val.actor.profile.name
   .content.dimmable(class=val.flagged ? "dimmed": "")
-    .ui.dimmer.flag(class=val.flagged ? "active": "")
-      .content
-        .center
-          h2.ui.inverted.icon.header
-            i.red.flag.icon
-            | You've flagged this!
-            h3.ui.inverted.header
-                span="The admins will review this post further. We are sorry you had this experience."
-          .ui.inverted.unflag.button(tabindex='0')
-            i.flag.icon
-            |  Unflag
+    //- .ui.dimmer.flag(class=val.flagged ? "active": "")
+    //-   .content
+    //-     .center
+    //-       h2.ui.inverted.icon.header
+    //-         i.red.flag.icon
+    //-         | You've flagged this!
+    //-         h3.ui.inverted.header
+    //-             span="The admins will review this post further. We are sorry you had this experience."
+          //- .ui.inverted.unflag.button(tabindex='0')
+          //-   i.flag.icon
+          //-   |  Unflag
     if val.picture
       .img.post.image
         img(src='/public/picture.svg', data-src=cdn+"/post_pictures/"+val.picture, style="max-width:100%; width:100%;")
@@ -33,13 +33,31 @@
   //-       i.heart.icon
   //-       |  Like
   //-     a.ui.basic.red.left.pointing.label.count=val.likes
-  .ui.bottom.three.attached.icon.buttons
+  //- .ui.bottom.three.attached.icon.buttons
+  //-   .ui.reply.button(tabindex='0')
+  //-     i.reply.icon
+  //-     |  Reply
+  //-   .ui.flag.button(tabindex='0', class=val.class ? "practice-chat" : null)
+  //-     i.flag.icon
+  //-     |  Flag
+  //-   .ui.labeled.button(tabindex='0')
+  //-     .ui.like.button(class=val.liked? "red": null)
+  //-       i.heart.icon
+  //-       |  Like
+  //-     a.ui.basic.red.left.pointing.label.count=val.likes
+  .ui.bottom.four.attached.icon.buttons
     .ui.reply.button(tabindex='0')
       i.reply.icon
       |  Reply
+
     .ui.flag.button(tabindex='0', class=val.class ? "practice-chat" : null)
       i.flag.icon
       |  Flag
+
+    .ui.unflag.button(tabindex='0', class=val.flagged ? "" : "disabled")
+      i.undo.icon
+      |  Unflag
+
     .ui.labeled.button(tabindex='0')
       .ui.like.button(class=val.liked? "red": null)
         i.heart.icon
@@ -97,6 +115,9 @@
                 .actions
                   a.like.comment(class=comment.liked ? "red" : null ) !{comment.liked ? "Unlike" : "Like"}
                   a.flag.comment Flag
+  .ui.warning.message.flag-status(class=val.flagged ? "" : "hidden")
+    i.flag.icon
+    |  This post has been flagged
   .extra.content
     .ui.fluid.left.labeled.right.icon.input
       .ui.label

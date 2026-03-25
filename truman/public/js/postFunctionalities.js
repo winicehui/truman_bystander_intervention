@@ -56,6 +56,7 @@ function flagPost(e) {
         _csrf: $('meta[name="csrf-token"]').attr('content')
     });
     post.find(".ui.dimmer.flag").dimmer({ closable: true }).dimmer('show');
+    post.find(".flag-status").removeClass("hidden");
 }
 
 function unflagPost(e) {
@@ -72,6 +73,7 @@ function unflagPost(e) {
         _csrf: $('meta[name="csrf-token"]').attr('content')
     });
     target.closest(".ui.fluid.card").find(".ui.dimmer.flag").removeClass("active").dimmer({ closable: true }).dimmer('hide');
+    post.find(".flag-status").addClass("hidden");
 }
 
 function likeComment(e) {
