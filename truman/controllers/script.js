@@ -68,6 +68,7 @@ exports.getScript = async(req, res, next) => {
 
         // Array of actor posts that match the user's experimental condition, sorted by descending time. 
         let script_feed = await Script.find({
+                class: { $ne: 'training' },
                 condition: { "$in": ["", user.experimentalCondition] }
             })
             // .where('time').lte(time_diff).gte(time_limit) // Uncomment for only past 24 hours of actor posts to show up in the feed.
@@ -465,4 +466,92 @@ exports.postAIChat = async (req, res, next) => {
     } catch (err) {
         next(err);
     }
+};
+
+/**
+ * GET /training-module
+ * Fetch and render training module with one post.
+ */
+exports.getTrainingModule = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user.id)
+      .populate("posts.comments.actor")
+      .populate("feedAction.post")
+      .populate("chatAction.post")
+      .exec();
+
+    // If the user is no longer active, sign the user out.
+    if (!user.active) {
+      req.logout((err) => {
+        if (err) console.log("Error : Failed to logout.", err);
+        req.session.destroy((err) => {
+          if (err)
+            console.log(
+              "Error : Failed to destroy the session during logout.",
+              err,
+            );
+          req.user = null;
+          req.flash("errors", {
+            msg: "Account is no longer active. Study is over.",
+          });
+          res.redirect(
+            "/login" + (req.query.r_id ? `?r_id=${req.query.r_id}` : ""),
+          );
+        });
+      });
+    }
+
+    // Training module should use only training-class posts.
+    let training_feed = await Script.find({
+      class: "training",
+      condition: { $in: ["", user.experimentalCondition] },
+    })
+      .sort("-time")
+      .populate("actor")
+      .populate("comments.actor")
+      .exec();
+
+    // Choose a single training post (first by time)
+    const trainingPost = training_feed[0];
+    if (!trainingPost) {
+      req.flash("errors", { msg: "No training post available yet." });
+      return res.redirect("/");
+    }
+
+    res.render("training_module", {
+      script: [trainingPost],
+      showNewPostIcon: false,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+/**
+ * GET /api/training-status
+ * Return current numComments and chatAction for the user.
+ */
+exports.getTrainingStatus = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user.id)
+      .populate("chatAction.post")
+      .exec();
+
+    // Count user turns across all chatAction
+    let userTurns = 0;
+    user.chatAction.forEach((chat) => {
+      chat.messages.forEach((message) => {
+        if (!message.isAgent) {
+          userTurns++;
+        }
+      });
+    });
+
+    res.json({
+      numComments: user.numComments,
+      userTurns: userTurns,
+    });
+  } catch (err) {
+    next(err);
+  }
 };

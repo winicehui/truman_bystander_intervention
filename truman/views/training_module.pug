@@ -69,8 +69,31 @@ block scripts
     });
 
     // Proceed button (no validation)
-    $(document).on('click', '#proceed-btn', function() {
-      window.location.href = '/';
+    $(document).on('click', '#proceed-btn', async function() {
+      try {
+        const response = await fetch('/api/training-status');
+        const data = await response.json();
+        const currentNumComments = data.numComments;
+        const userTurns = data.userTurns;
+        const hasPostedComment = currentNumComments > initialNumComments;
+
+        console.log('Proceed clicked:', { currentNumComments, initialNumComments, userTurns, hasPostedComment });
+
+        if (userTurns >= 5 || hasPostedComment) {
+          window.location.href = '/';
+        } else {
+          $('#error-msg').transition('slide down');
+          setTimeout(function() {
+            $('#error-msg').transition('slide up');
+          }, 5000);
+        }
+      } catch (err) {
+        console.error('Error fetching training status:', err);
+        $('#error-msg').transition('slide down');
+        setTimeout(function() {
+          $('#error-msg').transition('slide up');
+        }, 5000);
+      }
     });
 
   
