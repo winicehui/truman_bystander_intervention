@@ -255,6 +255,8 @@ app.get('/test', passportConfig.isAuthenticated, function(req, res) {
     })
 });
 
+app.get('/userProfile', userController.getUserProfile);
+
 /**
  * Error Handler.
  */

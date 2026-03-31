@@ -74,6 +74,7 @@ exports.getScript = async(req, res, next) => {
             .sort('-time')
             .populate('actor')
             .populate('comments.actor')
+            .populate('comments.subcomments.actor')
             .exec();
 
         // Array of any user-made posts within the past 24 hours, sorted by time they were created.
@@ -215,6 +216,8 @@ exports.postUpdateFeedAction = async(req, res, next) => {
                 absTime: req.body.new_comment,
                 liked: false,
                 flagged: false,
+                reply_to: req.body.reply_to,
+                parent_comment: req.body.parent_comment
             }
             user.feedAction[feedIndex].comments.push(cat);
         }
@@ -340,7 +343,9 @@ exports.postUpdateUserPostFeedAction = async(req, res, next) => {
                 new_comment: true,
                 liked: false,
                 flagged: false,
-                likes: 0
+                likes: 0, 
+                reply_to: req.body.reply_to,
+                parent_commentID: req.body.parent_comment
             };
             user.posts[feedIndex].comments.push(cat);
         }

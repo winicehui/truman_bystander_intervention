@@ -1,10 +1,11 @@
-.ui.fluid.card(postCondition=val.condition, postID=val.id, type='actor', actor_un = val.actor.username, actor_name = val.actor.profile.name, actor_pic = val.actor.profile.picture)
+.ui.fluid.card(postCondition=val.condition, postID=val.id, type='actor', index, val.postID, actor_un = val.actor.username, actor_name = val.actor.profile.name, actor_pic = val.actor.profile.picture)
   .content
     .right.floated.time.meta= (user.createdAt.getTime() + val.time)
     a(href='/user/'+val.actor.username)     
       img.ui.avatar.image(src='/public/picture.svg', data-src=cdn+"/profile_pictures/"+val.actor.profile.picture)
       span.username=val.actor.profile.name
-  .content.dimmable(class=val.flagged ? "dimmed": "")
+  //- .content.dimmable(class=val.flagged ? "dimmed": "")
+  .content
     //- .ui.dimmer.flag(class=val.flagged ? "active": "")
     //-   .content
     //-     .center
@@ -19,105 +20,89 @@
     if val.picture
       .img.post.image
         img(src='/public/picture.svg', data-src=cdn+"/post_pictures/"+val.picture, style="max-width:100%; width:100%;")
+    .ui.warning.message.flag-status(class=val.flagged ? "" : "hidden")
+      i.flag.icon
+      |  This post has been flagged for review. Thank you for helping us keep the community welcoming and safe.
     .description(class=(val.class=="cyberbullying") ? "cyberbullying" : null)=val.body
     .myTimer.hidden 0
-  //- .ui.bottom.three.attached.icon.buttons
-  //-   .ui.reply.button(tabindex='0')
-  //-     i.reply.icon
-  //-     |  Reply
-  //-   .ui.flag.button(tabindex='0')
-  //-     i.flag.icon
-  //-     |  Flag
-  //-   .ui.labeled.button(tabindex='0')
-  //-     .ui.like.button(class=val.liked? "red": null)
-  //-       i.heart.icon
-  //-       |  Like
-  //-     a.ui.basic.red.left.pointing.label.count=val.likes
-  //- .ui.bottom.three.attached.icon.buttons
-  //-   .ui.reply.button(tabindex='0')
-  //-     i.reply.icon
-  //-     |  Reply
-  //-   .ui.flag.button(tabindex='0', class=val.class ? "practice-chat" : null)
-  //-     i.flag.icon
-  //-     |  Flag
-  //-   .ui.labeled.button(tabindex='0')
-  //-     .ui.like.button(class=val.liked? "red": null)
-  //-       i.heart.icon
-  //-       |  Like
-  //-     a.ui.basic.red.left.pointing.label.count=val.likes
-  .ui.bottom.four.attached.icon.buttons
+  .ui.bottom.three.attached.icon.buttons
     .ui.reply.button(tabindex='0')
       i.reply.icon
       |  Reply
-
-    .ui.flag.button(tabindex='0', class=val.class ? "practice-chat" : null)
+    .ui.flag.button(tabindex='0', class=val.flagged ? "orange" : null)
       i.flag.icon
-      |  Flag
-
-    .ui.unflag.button(tabindex='0', class=val.flagged ? "" : "disabled")
-      i.undo.icon
-      |  Unflag
-
+      span.label=(val.flagged ? " Unflag" : " Flag")
     .ui.labeled.button(tabindex='0')
       .ui.like.button(class=val.liked? "red": null)
         i.heart.icon
-        |  Like
+        span.label=(val.liked ? " Unlike" : " Like")
       a.ui.basic.red.left.pointing.label.count=val.likes
   if val.comments.length > 0
     .content
       .ui.comments
         each comment in val.comments
-          //- Comment is user-made
-          if comment.new_comment
-            .comment(commentID=comment.commentID)
+          .comment(commentID=comment.new_comment ? comment.commentID : comment.id, class=comment.class, index=comment.commentID)
+            if comment.new_comment
               a.avatar.image(href='/me')
                 if user.profile.picture
                   img(src='/user_avatar/'+user.profile.picture)
                 else
                   img(src=user.gravatar(60))
-              .content
+            else 
+                a.avatar(href='/user/'+comment.actor.username)                  
+                  img(src='/public/picture.svg', data-src=cdn+"/profile_pictures/"+comment.actor.profile.picture)
+            .content
+              if comment.new_comment
                 a.author(href='/me')=user.profile.name || user.username || user.id
-                .metadata
-                  span.date=(user.createdAt.getTime() + comment.time)
-                  .rating
-                    i.heart.icon(class=comment.liked ? "red" : null)
-                    span.num=comment.likes+(comment.liked ? 1 : 0)
-                    |  Likes
-                .text=comment.body
-                .actions
-                  a.like.comment(class=comment.liked ? "red" : null ) !{comment.liked ? "Unlike" : "Like"}
-          //- Else this is a normal comment from the script
-          else
-            .comment(commentID=comment.id, class=(comment.class=="cyberbullying") ? "cyberbullying" : null)
-              .content(class=!comment.flagged ? "transition hidden" : "")                           
-                .text(style="background-color: black; color: white; padding: 0.2em;")  You flagged this comment. The admins will review this comment further. We are sorry you had this experience.
-                .actions 
-                  a.unflag Unflag
-              a.avatar(href='/user/'+comment.actor.username, class=comment.flagged ? "transition hidden" : "")                  
-                img(src='/public/picture.svg', data-src=cdn+"/profile_pictures/"+comment.actor.profile.picture)
-              .content(class=comment.flagged ? "transition hidden" : "")
-                a.author(href='/user/'+comment.actor.username)=comment.actor.profile.name
-                .metadata
-                  span.date=(user.createdAt.getTime() + comment.time)
-                  .rating
-                    i.heart.icon(class=comment.liked ? "red" : null)
-                    span.num=comment.likes+(comment.liked ? 1 : 0)
-                    |  Likes
-                .text=comment.body
-                .actions
-                  a.like.comment(class=comment.liked ? "red" : null ) !{comment.liked ? "Unlike" : "Like"}
-                  a.flag.comment Flag
-  .ui.warning.message.flag-status(class=val.flagged ? "" : "hidden")
-    i.flag.icon
-    |  This post has been flagged
+              else 
+                a.author !{comment.actor.username}
+              .metadata
+                span.date=(user.createdAt.getTime() + comment.time)
+              .text=comment.body
+              .actions
+                a.reply Reply
+                a.like(class=comment.liked ? "red" : null )
+                  i.icon.heart(class=comment.liked ? "red" : null)
+                  span.num=comment.likes+(comment.liked ? 1 : 0)
+                if !comment.new_comment
+                  a.flag(class=comment.flagged ? "orange" : null)
+                    i.icon.flag(class=comment.flagged ? "orange" : null)
+                    span.label=(comment.flagged ? " Unflag" : " Flag")
+            if comment.subcomments.length!==0
+              .comments.subcomments
+                each subcomment in comment.subcomments
+                  .comment(commentID=subcomment.new_comment ? subcomment.commentID : subcomment.id, index=subcomment.commentID, class=subcomment.class)
+                    if subcomment.new_comment 
+                      .image(style="background-color:"+user.profile.color+";")
+                        a.avatar.image(href='/me')
+                          if user.profile.picture
+                            img(src='/user_avatar/'+user.profile.picture)
+                          else
+                            img(src=user.gravatar(60))
+                    else
+                      .image(style="background-color:"+subcomment.actor.profile.color+";")
+                        a.avatar
+                          img(src=cdn+'/profile_pictures/'+subcomment.actor.profile.picture)
+                    .content
+                        if subcomment.new_comment
+                          a.author(href='/me') !{user.username} (me)
+                        else 
+                          a.author !{subcomment.actor.username}
+                        .metadata
+                          span.date !{user.createdAt.getTime() + subcomment.time}
+                        .text !{subcomment.body}
+                        .actions
+                          a.reply Reply
+                          a.like(class=subcomment.liked ? "red" : null)
+                            i.icon.heart(class=subcomment.liked ? "red" : null)
+                            span.num=subcomment.likes+(subcomment.liked ? 1 : 0)
+                          if !subcomment.new_comment 
+                            a.flag(class=subcomment.flagged ? "orange" : null)  
+                              i.icon.flag(class=subcomment.flagged ? "orange" : null)
+                              span.label=(subcomment.flagged ? " Unflag" : " Flag")
   .extra.content
-    .ui.fluid.left.labeled.right.icon.input
-      .ui.label
-        if user.profile.picture
-          img.ui.avatar.image.small(src='/user_avatar/'+user.profile.picture, name=user.profile.name || user.username || user.id)
-        else
-          img.ui.avatar.image.small(src=user.gravatar(60), name=user.profile.name || user.username || user.id)            
-      .ui.form
-        .field 
-          textarea.newcomment(type='text', placeholder='Write a Comment' rows='1')
-      i.big.send.link.icon
+    .ui.form
+      .inline.field
+        img.ui.image.rounded(src=user.profile.picture)
+        textarea.replyToPost(name='replyToPost' type='text' placeholder='Add a Comment...' rows='1' data-autoresize)
+        i.big.send.link.icon.replyToPost

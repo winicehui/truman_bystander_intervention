@@ -42,6 +42,7 @@ exports.getFeed = function(user_posts, script_feed, user, order, removeFlaggedCo
 
     // While there are actor posts or user posts to add to the final feed
     while (script_feed.length || user_posts.length) {
+        let replyDictionary = {}; // where Key = parent comment ID, Value = list of subcomments replying to the parent comment. This is used to organize subcomments under their parent comments.
         // If there are no more script_feed posts or if user_post[0] post is more recent than script_feed[0] post, then add user_post[0] post to the finalfeed.
         // Else, add script_feed[0] post to the finalfeed.
         if (script_feed[0] === undefined ||
@@ -70,7 +71,7 @@ exports.getFeed = function(user_posts, script_feed, user, order, removeFlaggedCo
 
             // Check if the user has interacted with this post by checking if a user.feedAction.post value matches this script_feed[0]'s _id. 
             // If the user has interacted with this post, add the user's interactions to the post.
-            const feedIndex = _.findIndex(user.feedAction, function(o) { return o.post.equals(script_feed[0].id) });
+            const feedIndex = _.findIndex(user.feedAction, function(o) { return o.post.equals(script_feed[0]._id) });
             if (feedIndex != -1) {
                 // Check if there are comment-type actions on this post.
                 if (Array.isArray(user.feedAction[feedIndex].comments) && user.feedAction[feedIndex].comments) {
@@ -86,7 +87,18 @@ exports.getFeed = function(user_posts, script_feed, user, order, removeFlaggedCo
                                 new_comment: commentObject.new_comment,
                                 liked: commentObject.liked
                             };
-                            script_feed[0].comments.push(cat);
+
+                            if (commentObject.reply_to != null) {
+                                cat.reply_to = commentObject.reply_to;
+                                cat.parent_comment = commentObject.parent_comment;
+                                if (replyDictionary[commentObject.parent_comment]) {
+                                    replyDictionary[commentObject.parent_comment].push(cat)
+                                } else {
+                                    replyDictionary[commentObject.parent_comment] = [cat];
+                                }
+                            } else {
+                                script_feed[0].comments.push(cat);
+                            }
                         } else {
                             // This is not a user-made comment.
                             // Get the index of the comment in the post.
@@ -105,10 +117,30 @@ exports.getFeed = function(user_posts, script_feed, user, order, removeFlaggedCo
                                         script_feed[0].comments[commentIndex].flagged = true;
                                     }
                                 }
-                            }
-                            // Check if this comment is by a blocked user: If true and removedBlockedUserContent is true, remove the comment.
-                            if (user.blocked.includes(script_feed[0].comments[commentIndex].actor.username) && removedBlockedUserContent) {
-                                script_feed[0].comments.splice(commentIndex, 1);
+                                // Check if this comment is by a blocked user: If true and removedBlockedUserContent is true, remove the comment.
+                                if (user.blocked.includes(script_feed[0].comments[commentIndex].actor.username) && removedBlockedUserContent) {
+                                    script_feed[0].comments.splice(commentIndex, 1);
+                                }
+                            } else {
+                                // Check if user conducted any actions on subcomments
+                                script_feed[0].comments.forEach(function(comment, index) {
+                                const subcommentIndex = _.findIndex(comment.subcomments, function(o) { return o.id == commentObject.comment; });
+                                if (subcommentIndex != -1) {
+                                    // Check if there is a like recorded for this subcomment.
+                                    if (commentObject.liked) {
+                                        // Update the comment in script_feed.
+                                        script_feed[0].comments[index].subcomments[subcommentIndex].liked = true;
+                                    }
+                                    // Check if there is a flag recorded for this subcomment.
+                                    if (commentObject.flagged) {
+                                        script_feed[0].comments[index].subcomments[subcommentIndex].flagged = true;
+                                    }
+                                }
+                                // Check if this comment is by a blocked user: If true and removedBlockedUserContent is true, remove the comment.
+                                if (user.blocked.includes(script_feed[0].comments[index].subcomments[subcommentIndex].actor.username) && removedBlockedUserContent) {
+                                    script_feed[0].comments[index].subcomments[subcommentIndex].splice(commentIndex, 1);
+                                }
+                            })
                             }
                         }
                     }
@@ -118,8 +150,15 @@ exports.getFeed = function(user_posts, script_feed, user, order, removeFlaggedCo
                     return a.time - b.time;
                 });
 
-                // No longer looking at comments on this post.
-                // Now we are looking at the main post.
+                for (const [key, value] of Object.entries(replyDictionary)) {
+                    const commentIndex = _.findIndex(script_feed[0].comments, function(o) { return o.commentID == key; });
+                    script_feed[0].comments[commentIndex]["subcomments"] =
+                        script_feed[0].comments[commentIndex]["subcomments"].concat(value)
+                        .sort(function(a, b) {
+                            return a.time - b.time; // in descending order.
+                        });
+                }
+
                 // Check if this post has been liked by the user. If true, update the post.
                 if (user.feedAction[feedIndex].liked) {
                     script_feed[0].liked = true;

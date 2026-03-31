@@ -121,6 +121,8 @@ const userSchema = new mongoose.Schema({
             unflagTime: [Date], // List of absolute times when the user has unflagged the comment
             new_comment: { type: Boolean, default: false }, // Indicates if this comment is made by the user
             new_comment_id: Number, // ID for the comment if this comment is made by the user
+            reply_to: Number, // Indicates the commentID of the comment this comment is replying
+            parent_comment: Number, // Indicates the commentID of the top-level comment this comment is under
             body: String, // Body (text) of the comment if this comment is made by the user
             absTime: Date, // Exact time comment was made if this comment is made by the user
             relativeTime: Number, // Indicates the time the comment was made relative to when the user created their account, in milliseconds

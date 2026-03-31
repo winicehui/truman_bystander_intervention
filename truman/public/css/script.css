@@ -4,15 +4,13 @@
 
 
 /* CSS for Actor and User Posts */
-
-
 /* POST */
 
-/* .ui.fluid.card.cyberbullying {
+.ui.fluid.card.cyberbullying {
     border: 2px solid red;
-} */
+}
 
-.ui.fluid.card>.content.dimmable>.image {
+.ui.fluid.card>.content>.image {
     position: relative;
     display: block;
     -webkit-box-flex: 0;
@@ -23,8 +21,17 @@
     margin: -1em -1em 1em -1em;
 }
 
-.ui.fluid.card>.content.dimmable>.image>img {
+.ui.fluid.card>.content>.image>img {
     width: 100%;
+}
+
+.ui.fluid.card>.content>.ui.warning.message.flag-status {
+    margin: -1em -1em 1em -1em;
+    border-radius: 0;
+    border-bottom: none;
+    border-right: none;
+    border-left: none;
+    text-align: center;
 }
 
 .ui[class*="bottom attached"].buttons .button:first-child {
@@ -38,29 +45,68 @@
 
 /* COMMMENT */
 
-.ui.comments>.comment{
-    padding: 0.5em;
-    border-radius: 1em;
+.ui.comments>.comment:first-child {
+    margin: 0.5em 0 0 !important;
 }
 
-/* .ui.comments>.comment.cyberbullying {
-    border: 2px solid red;
-    background-color: #fbd9d3;
-} */
-
-.ui.fluid.card.chat-highlight {
-    border: 2px solid #e61a8d;
-}
-    
-.ui.comments .comment .text {
-    margin: 0.25em 0;
+.comment {
+    /* margin: 1em 1em 1em 0em; */
+    /* padding: 0.5em !important; */
 }
 
-.comment .content.hidden,
-.comment a.avatar.hidden {
+.ui.comments{
+    /* font-size: 1.25em; */
+}
+
+.ui.comments>form.ui.reply.form {
+    width: 100%;
+}
+
+.comment>.comments {
+    padding-left: 3em !important;
+    padding-bottom: 0em !important;
+}
+
+.comment>.image {
+    width: 2.5em;
+    height: 2.5em;
+    margin: 0.2em 0.2em 0 0;
+    float: left;
+    background-color: inherit;
+    border-radius: 50% !important;
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+}
+
+.comment .image.hidden {    
     display: none !important;
 }
 
+.comment>.image>a.avatar {
+    margin: 0 !important;
+}
+
+.comment>.image>a.avatar>img {
+    width: 65% !important;
+}
+
+.comment>.image~.content {
+    margin-left: 3.5em
+}
+
+a.reply, a.like {
+    margin-right: 20px !important;
+}
+
+a.like.red {
+    color: red !important;
+}
+
+a.flag.orange {
+    color: orange !important;
+}
 
 /* CSS for adding new post */
 
@@ -71,30 +117,51 @@
 
 /* CSS for adding new comment on post */
 
-.extra.content>.ui.fluid.left.labeled.right.icon.input>.ui.form {
+/* ---- COMMENT FORM TO VIDEO AND COMMENTS CSS ---- */
+
+.ui.form {
+    display: inline-block;
     width: 100%;
+    margin: 1em 0em;
+    padding: 0 0 0 0.5em;
 }
 
-textarea.newcomment {
-    border-radius: 0 .28571429rem .28571429rem 0 !important;
-    height: 48px;
+.ui.form>.inline.field {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0em !important;
 }
 
-.extra.content>.ui.fluid.left.labeled.right.icon.input>.ui.label {
+.ui.form>.inline.field>.image {
+    min-width: 44px;
+    height: 44px;
+    background-color: #a6a488;
+    border-radius: 50% !important;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 0.5em;
-    height: 48px;
+    align-content: center;
 }
 
-.extra.content>.ui.fluid.left.labeled.right.icon.input>.ui.label>img {
-    margin: 0;
-    width: 3em!important;
+.ui.form>.inline.field>.image>img.ui.image.rounded {
+    width: 65%
 }
 
-.extra.content>.ui.fluid.left.labeled.right.icon.input>i.big.send.link.icon {
-    margin-right: 4px;
+.ui.form>.inline.field>textarea {
+    font-size: 1.1em !important;
+    padding-right: 35px !important;
+}
+
+.ui.form>.inline.field>i.big.send.link.icon {
+    position: absolute;
+    right: 10px;
+    top: 9px;
+}
+
+.ui.button.replyToComment {
+    float: right;
+    margin-top: 1em !important;
+    font-size: 1.05em !important;
 }
 
 

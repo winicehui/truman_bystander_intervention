@@ -1,3 +1,10 @@
+async function getUserInformation() {
+    const data = await $.get("/userProfile");
+    script.userProfile = data.userProfile;
+    script.numComments = data.numComments;
+    script.username = data.username;
+}
+
 function likePost(e) {
     const target = $(e.target).closest('.ui.like.button');
     const label = target.closest('.ui.like.button').next("a.ui.basic.red.left.pointing.label.count");
@@ -6,6 +13,9 @@ function likePost(e) {
     const currDate = Date.now();
 
     if (target.hasClass("red")) { // Unlike Post
+        // Reset the visible like button text back to 'Like' while preserving the icon
+        target.contents().filter(function() { return this.nodeType === 3; }).remove();
+        target.find('span.label').text(' Like');
         target.removeClass("red");
         label.html(function(i, val) { return val * 1 - 1 });
 
@@ -23,6 +33,8 @@ function likePost(e) {
                 _csrf: $('meta[name="csrf-token"]').attr('content')
             });
     } else { // Like Post
+        // Set the visible like button text to 'Unlike' while preserving the icon
+        target.find('span.label').text(' Unlike');
         target.addClass("red");
         label.html(function(i, val) { return val * 1 + 1 });
 
@@ -46,49 +58,50 @@ function likePost(e) {
 }
 
 function flagPost(e) {
-    const target = $(e.target);
+    const target = $(e.target).closest('.ui.flag.button');
     const post = target.closest(".ui.fluid.card");
     const postID = post.attr("postID");
     const postCondition = target.closest(".ui.fluid.card").attr("postCondition");
-    const flag = Date.now();
+    const flagStatusMessage = post.find(".flag-status");
+    const currDate = Date.now();
 
-    $.post("/feed", {
-        postID: postID,
-        flag: flag,
-        postCondition: postCondition,
-        _csrf: $('meta[name="csrf-token"]').attr('content')
-    });
-    post.find(".ui.dimmer.flag").dimmer({ closable: true }).dimmer('show');
+    if (target.hasClass("orange")) { // Unflag Post
+        // Reset the visible flag button text back to 'Flag' while preserving the icon
+        target.find('span.label').text(' Flag');
+        target.removeClass('orange');
+        flagStatusMessage.addClass("hidden");
+        
+        $.post("/feed", {
+            postID: postID,
+            unflag: currDate,
+            postCondition: postCondition,
+            _csrf: $('meta[name="csrf-token"]').attr('content')
+        });
+        // target.closest(".ui.fluid.card").find(".ui.dimmer.flag").removeClass("active").dimmer({ closable: true }).dimmer('hide');
+    } else { // Flag Post}
+        // Update button text to 'Unflag' while preserving the icon
+        target.find('span.label').text(' Unflag');
+        target.addClass('orange');
+        flagStatusMessage.removeClass("hidden");
+
+        $.post("/feed", {
+            postID: postID,
+            flag: currDate,
+            postCondition: postCondition,
+            _csrf: $('meta[name="csrf-token"]').attr('content')
+        });
+        // post.find(".ui.dimmer.flag").dimmer({ closable: true }).dimmer('show');
+    }
     if (target.closest(".ui.fluid.card").find(".description.cyberbullying").length > 0) {
         openChat(e);
     }
-    post.find(".flag-status").removeClass("hidden");
-}
-
-function unflagPost(e) {
-    const target = $(e.target);
-    const post = target.closest(".ui.fluid.card");
-    const postID = post.attr("postID");
-    const postCondition = target.closest(".ui.fluid.card").attr("postCondition");
-    const unflag = Date.now();
-
-    $.post("/feed", {
-        postID: postID,
-        unflag: unflag,
-        postCondition: postCondition,
-        _csrf: $('meta[name="csrf-token"]').attr('content')
-    });
-    target.closest(".ui.fluid.card").find(".ui.dimmer.flag").removeClass("active").dimmer({ closable: true }).dimmer('hide');
-    if (target.closest(".ui.fluid.card").find(".description.cyberbullying").length > 0) {
-        openChat(e);
-    }
-    post.find(".flag-status").addClass("hidden");
 }
 
 function likeComment(e) {
-    const target = $(e.target);
-    const comment = target.parents(".comment");
-    const label = comment.find("span.num");
+    const target = $(e.target).closest('a.like');
+    const comment = target.closest(".comment");
+    const label = target.find("span.num");
+    const icon = target.find("i.icon.heart");
 
     const postID = target.closest(".ui.fluid.card").attr("postID");
     const postCondition = target.closest(".ui.fluid.card").attr("postCondition");
@@ -98,8 +111,7 @@ function likeComment(e) {
 
     if (target.hasClass("red")) { // Unlike comment
         target.removeClass("red");
-        comment.find("i.heart.icon").removeClass("red");
-        target.html('Like');
+        icon.removeClass("red");
         label.html(function(i, val) { return val * 1 - 1 });
 
         if (target.closest(".ui.fluid.card").attr("type") == 'userPost') {
@@ -122,8 +134,7 @@ function likeComment(e) {
         }
     } else { // Like comment
         target.addClass("red");
-        comment.find("i.heart.icon").addClass("red");
-        target.html('Unlike');
+        icon.addClass("red");
         label.html(function(i, val) { return val * 1 + 1 });
 
         if (target.closest(".ui.fluid.card").attr("type") == 'userPost')
@@ -150,63 +161,44 @@ function likeComment(e) {
 }
 
 function flagComment(e) {
-    const target = $(e.target);
-    const commentElement = target.parents(".comment");
+    const target = $(e.target).closest('a.flag');
+    const commentElement = target.closest(".comment");
+    const label = target.find("span.label");
+    const icon = target.find("i.icon.flag");
     const postID = target.closest(".ui.fluid.card").attr("postID");
     const postCondition = target.closest(".ui.fluid.card").attr("postCondition");
     const commentID = commentElement.attr("commentID");
 
-    const comment_imageElement = commentElement.children('a.avatar');
-    const comment_contentElement = commentElement.children('.content');
-    const flaggedComment_contentElement = commentElement.children('.content.hidden');
+    const currDate = Date.now();
 
-    comment_imageElement.transition('hide');
-    comment_contentElement.transition('hide');
-    $(flaggedComment_contentElement).transition();
-    const flag = Date.now();
-
-    if (target.closest(".ui.fluid.card").attr("type") == 'userPost')
-        console.log("Should never be here.")
-    else
-        $.post("/feed", {
-            postID: postID,
-            commentID: commentID,
-            flag: flag,
-            postCondition: postCondition,
-            _csrf: $('meta[name="csrf-token"]').attr('content')
-        });
-    if (commentElement.hasClass("cyberbullying")) {
-        openChat(e);
+    if (target.closest(".ui.fluid.card").attr("type") == 'userPost'){
+        console.log("Should never be here.");
+        return; 
     }
-}
 
-function unflagComment(e) {
-    const target = $(e.target);
-    const commentElement = target.parents(".comment");
-    const postID = target.closest(".ui.fluid.card").attr("postID");
-    const postCondition = target.closest(".ui.fluid.card").attr("postCondition");
-    const commentID = commentElement.attr("commentID");
-
-    const comment_imageElement = commentElement.children('a.avatar.hidden');
-    const comment_contentElement = commentElement.children('.content.hidden');
-    const flaggedComment_contentElement = commentElement.children('.content:not(.hidden)');
-
-    $(flaggedComment_contentElement).transition('hide');
-    comment_imageElement.transition();
-    comment_imageElement.find("img").visibility('refresh');
-    comment_contentElement.transition();
-    const unflag = Date.now();
-
-    if (target.closest(".ui.fluid.card").attr("type") == 'userPost')
-        console.log("Should never be here.")
-    else
+    if (target.hasClass("orange")) { // Unflag comment
+        target.removeClass("orange");
+        icon.removeClass("orange");
+        label.text(" Flag");
         $.post("/feed", {
             postID: postID,
             commentID: commentID,
-            unflag: unflag,
+            unflag: currDate,
             postCondition: postCondition,
             _csrf: $('meta[name="csrf-token"]').attr('content')
         });
+    } else { // Flag comment
+        target.addClass("orange");
+        icon.addClass("orange");
+        label.text(" Unflag");
+        $.post("/feed", {
+            postID: postID,
+            commentID: commentID,
+            flag: currDate,
+            postCondition: postCondition,
+            _csrf: $('meta[name="csrf-token"]').attr('content')
+        });
+    }
     if (commentElement.hasClass("cyberbullying")) {
         openChat(e);
     }
@@ -214,7 +206,8 @@ function unflagComment(e) {
 
 function addComment(e) {
     const target = $(e.target);
-    const text = target.siblings(".ui.form").find("textarea.newcomment").val().trim();
+    const form = target.parents(".ui.form");
+    const text = form.find("textarea.replyToPost").val().trim();
     const card = target.parents(".ui.fluid.card");
     let comments = card.find(".ui.comments");
     const postCondition = target.closest(".ui.fluid.card").attr("postCondition");
@@ -230,25 +223,30 @@ function addComment(e) {
         const ava_img = ava.attr("src");
         const ava_name = ava.attr("name");
         const postID = card.attr("postID");
-        const commentID = numComments + 1;
+        const commentID = script.numComments + 1;
 
         const mess = `
-        <div class="comment" commentID=${commentID}>
-            <a class="avatar"><img src="${ava_img}"></a>
+        <div class="comment" commentID=${commentID} index=${commentID}>
+            <div class="image" style="background-color:${script.userProfile.color}">
+                <a class="avatar"><img src="${script.userProfile.picture}"></a>
+            </div>
             <div class="content"> 
-                <a class="author" href="/me">${ava_name}</a>
+                <a class="author" href="/me">${script.userProfile.name || script.username} (me)</a>
                 <div class="metadata"> 
-                    <span class="date">${humanized_time_span(currDate)}</span>
-                    <i class="heart icon"></i> 
-                    <span class="num"> 0 </span> Likes
+                    <span class="date">Just now</span>
                 </div> 
                 <div class="text">${text}</div>
                 <div class="actions"> 
-                    <a class="like comment" onClick="likeComment(event)">Like</a> 
+                    <a class="reply" onClick="openCommentReply(event)">Reply</a> 
+                    <a class="like" onClick="likeComment(event)">
+                        <i class="icon heart"></i>
+                        <span class="num">0</span>
+                    </a>                                 
                 </div> 
             </div>
         </div>`;
-        $(this).siblings(".ui.form").find("textarea.newcomment").val('');
+        form.find("textarea.replyToPost").val('');
+        form.find("textarea.replyToPost").blur();
         comments.append(mess);
 
         if (card.attr("type") == 'userPost')
@@ -258,7 +256,7 @@ function addComment(e) {
                 comment_text: text,
                 _csrf: $('meta[name="csrf-token"]').attr('content')
             }).then(function(json) {
-                numComments = json.numComments;
+                script.nunComments = json.numComments;
             });
         else
             $.post("/feed", {
@@ -268,11 +266,146 @@ function addComment(e) {
                 postCondition: postCondition,
                 _csrf: $('meta[name="csrf-token"]').attr('content')
             }).then(function(json) {
-                numComments = json.numComments;
+                script.nunComments = json.numComments;
             });
     }
     if (card.find(".cyberbullying").length > 0) {
         openChat(e);
+    }
+}
+
+function changeColor(e, string = "") {
+    let target = $(e.target);
+    if (target.val().trim() !== string) {
+        target.parents(".ui.form").children('.ui.submit.button').addClass("blue");
+    } else {
+        target.parents(".ui.form").children('.ui.submit.button').removeClass("blue");
+    }
+}
+
+function openCommentReply(e) {
+    const photo = script.userProfile.picture;
+    const color = script.userProfile.color;
+    const target = $(e.target).parents('.content');
+    const reply_to = target.children('a.author').text().replace(" (me)", "");
+    const form = target.children('.ui.form');
+    if (form.length !== 0) {
+        form.hide(function() { $(this).remove(); });
+        target[0].scrollIntoView({ block: 'center', behavior: 'smooth' });
+    } else {
+        const comment_level = target.parents(".comment").length;
+        const comment_area = (
+            `<div class="ui form">
+                <div class="inline field">
+                    <img class="ui image rounded" src=${script.userProfile.picture ? ('/user_avatar/' + script.userProfile.picture) : null} style="background-color:${color};">
+                    <textarea class="replyToComment" type="text" placeholder="Add a Reply..." rows="1" onInput="changeColor(event${", '@"+reply_to +"'"})">${"@"+reply_to+" "}</textarea>
+                </div>
+                <div class="ui submit button replyToComment" onClick="addCommentToComment(event)">
+                    Reply to ${reply_to}
+                </div>
+                <div class="ui cancel basic blue button replyToComment" onClick="openCommentReply(event)">
+                    Cancel
+                </div>
+            </div>
+            </div>`
+        );
+        $(comment_area).insertAfter(target.children('.actions')).hide().show(400);
+        const comment_area_element = $(target).find('textarea.replyToComment');
+        const end = comment_area_element.val().length;
+        comment_area_element[0].setSelectionRange(end, end);
+        // if (comment_level == 2) {
+        comment_area_element.highlightWithinTextarea({
+                highlight: [{
+                    highlight: "@" + reply_to, // string, regexp, array, function, or custom object
+                    className: 'blue'
+                }]
+            })
+            // };
+        comment_area_element.focus();
+        comment_area_element[0].scrollIntoView({ block: 'center', behavior: 'smooth' });
+    }
+}
+
+function addCommentToComment(e) {
+    const target = $(e.target);
+    const form = target.parents(".ui.form");
+    if (!form.children(".ui.submit.button").hasClass("blue")) {
+        return;
+    }
+    let text = form.find("textarea.replyToComment").val();
+    const orig_comment = form.closest(".comment");
+    const comment_level = form.parents(".comment").length; // = 1 if 1st level, = 2 if 2nd level
+    if (comment_level == 1) {
+        if (!orig_comment.children('.comments').length) {
+            orig_comment.append('<div class="comments subcomments">');
+        }
+        comments = orig_comment.find(".comments");
+    } else {
+        comments = orig_comment.closest(".comments");
+    }
+    if (text.trim() !== "") {
+        const words = form.find("mark").map(function() {
+            return $(this).html();
+        })
+        const highlights = [...new Set(words)].sort(function(a, b) {
+            return b.length - a.length; // Desc order
+        });
+        if (highlights.length !== 0) {
+            for (word of highlights) {
+                var regEx = new RegExp('(?<!<a>)' + word, 'gmi');
+                text = text.replace(regEx, '<a>' + word + '</a>')
+            }
+        }
+
+        const card = target.parents(".ui.fluid.card");
+        const date = Date.now();
+        const postID = card.attr("postID");
+        const postClass = card.attr("postClass");
+        const commentID = script.numComments + 1;
+        const reply_to = orig_comment.children(".content").children("a.author").hasClass('/me') ? orig_comment.attr('commentID') : orig_comment.attr('index');
+        const parent_comment = form.parents(".comment").last().attr('index');
+
+        const mess =
+            `<div class="comment" commentID=${commentID}>
+            <div class="image" style="background-color:${script.userProfile.color}">
+                <a class="avatar"><img src="${script.userProfile.picture}"></a>
+            </div>
+            <div class="content"> 
+                <a class="author" href="/me">${script.userProfile.name || script.username} (me)</a>
+                <div class="metadata">
+                    <span class="date">Just now</span>
+                </div> 
+                <div class="text">${text}</div>
+                <div class="actions"> 
+                    <a class="reply" onClick="openCommentReply(event)">Reply</a>  
+                    <a class="like" onClick="likeComment(event)">
+                        <i class="icon heart"></i>
+                        <span class="num">0</span>
+                    </a>                                     
+                </div> 
+            </div>
+        </div>`;
+
+        form.find("textarea.replyToComment").val("");
+        form.remove();
+
+        if (!comments.is(":visible")) {
+            comments.transition('fade');
+        }
+        comments.append(mess);
+        $(`.comment[commentID=${commentID}]`).last()[0].scrollIntoView({ block: 'center', behavior: 'smooth' });
+
+        $.post("/feed", {
+            postID: postID,
+            new_comment: date,
+            comment_text: text,
+            postClass: postClass,
+            reply_to: reply_to,
+            parent_comment: parent_comment,
+            _csrf: $('meta[name="csrf-token"]').attr('content')
+        }).then(function(json) {
+            script.numComments = json.numComments;
+        });
     }
 }
 
@@ -302,7 +435,9 @@ function followUser(e) {
     }
 }
 
-$(window).on('load', () => {
+$(window).on('load', async () => {
+    await getUserInformation();
+
     // add humanized time to all posts
     $('.right.floated.time.meta, .date').each(function() {
         const ms = parseInt($(this).text(), 10);
@@ -312,29 +447,35 @@ $(window).on('load', () => {
 
     // ************ Actions on Main Post ***************
     // Focus new comment element if "Reply" button is clicked
-    $('.reply.button').on('click', function(event) {
+    $('.ui.reply.button').on('click', function(event) {
         let parent = $(this).closest(".ui.fluid.card");
-        parent.find("textarea.newcomment").focus();
+        parent.find("textarea.replyToPost").focus();
         if (parent.find(".cyberbullying").length > 0) { 
             openChat(event);
         }
     });
 
     // Press enter to submit a comment
-    $("textarea.newcomment").keydown(function(event) {
-        if (event.key === "Enter" && !event.shiftKey) {
+    window.addEventListener("keydown", function(event) {
+        if (!event.shiftKey && event.key === "Enter" && $(event.target).hasClass("replyToPost")) {
             event.preventDefault();
             event.stopImmediatePropagation();
-            $(this).parents(".ui.form").siblings("i.big.send.link.icon").click();
+            addComment(event);
+            if ($(event.target).closest(".ui.fluid.card").find(".description.cyberbullying").length > 0) {
+                openChat(e);
+            }
+        } else if (!event.shiftKey && event.key === "Enter" && $(event.target).hasClass("replyToComment")) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            addCommentToComment(event);
+            if ($(event.target).closest(".comment").hasClass("cyberbullying")) {
+                openChat(e);    
+            }
         }
-
-        if (this.closest(".ui.fluid.card").find(".cyberbullying").length > 0) {
-            openChat(e);
-        }
-    });
+    }, true);
 
     // Create a new Comment
-    $("i.big.send.link.icon").on('click', addComment);
+    $("i.big.send.link.icon.replyToPost").on('click', addComment);
 
     // Like/Unlike Post
     $('.like.button').on('click', likePost);
@@ -342,21 +483,18 @@ $(window).on('load', () => {
     // Flag Post
     $('.flag.button').on('click', flagPost);
 
-    // Unflag Post
-    $(".unflag.button").click(unflagPost);
-
     // ************ Actions on Comments***************
     // Like/Unlike comment
-    $('a.like.comment').on('click', likeComment);
+    $('a.like').on('click', likeComment);
 
-    // Flag comment
-    $('a.flag.comment').on('click', flagComment);
-
-    // Unflag comment
-    $("a.unflag").click(unflagComment);
+    // Flag/Unflag comment
+    $('a.flag').on('click', flagComment);
 
     // Follow button
     $('.ui.basic.primary.follow.button').on('click', followUser);
+
+    //Reply to comment
+    $('a.reply').on('click', openCommentReply);
 
     const cyberbullyingContent = $('.cyberbullying');
 

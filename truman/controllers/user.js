@@ -367,3 +367,21 @@ exports.userTestResults = async(req, res) => {
         }
     }
 };
+
+/**
+ * GET /userInfo
+ * Get user profile and number of user comments
+ */
+exports.getUserProfile = async(req, res) => {
+    try {
+        const user = await User.findById(req.user.id).exec();
+        res.set('Content-Type', 'application/json; charset=UTF-8');
+        res.send({
+            userProfile: user.profile,
+            numComments: user.numComments,
+            username: user.username
+        });
+    } catch (err) {
+        next(err);
+    }
+}

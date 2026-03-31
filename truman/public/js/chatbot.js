@@ -209,8 +209,8 @@ $(window).on("load", function() {
                     const match = replyText.match(/FINAL_COMMENT:\s*(.+?)(?=\n✅|\n\n|✅|$)/s);
                     if (match) {
                         const finalComment = match[1].trim();
-                        post.find('textarea.newcomment').val(finalComment);
-                        post.find('textarea.newcomment').focus();
+                        post.find('textarea.replytoPost').val(finalComment);
+                        post.find('textarea.replytoPost').focus();
                         setTimeout(function() {
                             $('#copilot-chat .chat').transition('fade down');
                         }, 2000);
