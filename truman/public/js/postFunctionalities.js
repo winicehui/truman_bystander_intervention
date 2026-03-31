@@ -62,6 +62,7 @@ function flagPost(e) {
     if (target.closest(".ui.fluid.card").find(".description.cyberbullying").length > 0) {
         openChat(e);
     }
+    post.find(".flag-status").removeClass("hidden");
 }
 
 function unflagPost(e) {
@@ -81,6 +82,7 @@ function unflagPost(e) {
     if (target.closest(".ui.fluid.card").find(".description.cyberbullying").length > 0) {
         openChat(e);
     }
+    post.find(".flag-status").addClass("hidden");
 }
 
 function likeComment(e) {
