@@ -4,19 +4,19 @@
     .chat-header.clearfix
       i.large.close.icon.chat-close.float-right
       i.window.minimize.large.icon.chat-minimize.float-right
-      //- img.ui.avatar.image(src='/profile_pictures/convo_bot.png')
+      i.ui.large.shield.alternate.icon.bot-header-icon
       .chat-about
         .chat-with 
-          i.icon.large.shield.alternate(style="margin-right: 0.5em;")
           | Upstanding Trainer
     .chat-history
       ul
     .chat-message.clearfix
-      .ui.fluid.action.input.form
-        textarea#message-to-send(type='text', name='message-to-send', placeholder='Type your message', rows=2)
-        button
-          i.send.icon
-          | Send
+      .ui.form
+        .inline.field
+          textarea#message-to-send(type='text', name='message-to-send', placeholder='Type your message', rows=2)
+          button.ui.primary.button(type='button')
+            i.send.icon
+            | Send
 script#my-message-template(type='text/x-handlebars-template').
   <li class="clearfix">
     <div class="ui grid centered">
@@ -25,30 +25,41 @@ script#my-message-template(type='text/x-handlebars-template').
             {{#if isTypingAnimation}}
                 <img src="/typing.gif"/>
             {{else}}
-              {{messageOutput}}
+              {{{messageOutput}}}
             {{/if}}
           </div>
           <span class="message-data-time align-right">{{time}}</span>
         </div>
-        <div class="three wide column padding-left-small">
+        {{#if addProfilePhoto}}
+        <div class="three wide column padding-left-small avatar-col">
           <div class="align-center">
-            {{#if addProfilePhoto}}
-                <img class="message-avatar" src="{{avatar}}" />
-            {{/if}}
+                <img class="message-avatar user-avatar" src="{{avatar}}" />
           </div>
         </div>
+        {{/if}}
       </div>
     </div>
   </li>
 script#other-message-template(type='text/x-handlebars-template').
   <li class="clearfix">
     <div class="ui grid centered">
+        {{#if addProfilePhoto}}
+        <div class="three wide column padding-right-small avatar-col">
+          <div class="align-center">
+            {{#if isAgent}}
+                <i class='ui large shield alternate icon bot-avatar'></i>
+            {{else}}
+                <img class="message-avatar bot-avatar" src="{{avatar}}" />
+            {{/if}}
+          </div>
+        </div>
+        {{/if}}
         <div class="thirteen wide right aligned column padding-left-small other-message-div">
           <div class="other-message align-left">
             {{#if isTypingAnimation}}
                 <img src="/public/typing.gif"/>
             {{else}}
-              {{messageOutput}}
+              {{{messageOutput}}}
             {{/if}}
           </div>
           <span class="message-data-time align-left">{{time}}</span>

@@ -1,4 +1,4 @@
-.ui.fluid.card(postCondition=val.condition, postID=val.id, type='actor', index, val.postID, actor_un = val.actor.username, actor_name = val.actor.profile.name, actor_pic = val.actor.profile.picture)
+.ui.fluid.card(postCondition=val.condition, postID=val.id, type='actor', index, val.postID, actor_un = val.actor.username, actor_name = val.actor.profile.name, actor_pic = val.actor.profile.picture, class=val.flagged ? "flagged" : "")
   .content
     .right.floated.time.meta= (user.createdAt.getTime() + val.time)
     a(href='/user/'+val.actor.username)     
@@ -20,9 +20,6 @@
     if val.picture
       .img.post.image
         img(src='/public/picture.svg', data-src=cdn+"/post_pictures/"+val.picture, style="max-width:100%; width:100%;")
-    .ui.warning.message.flag-status(class=val.flagged ? "" : "hidden")
-      i.flag.icon
-      |  This post has been flagged for review. Thank you for helping us keep the community welcoming and safe.
     .description(class=(val.class=="cyberbullying") ? "cyberbullying" : null)=val.body
     .myTimer.hidden 0
   .ui.bottom.three.attached.icon.buttons
@@ -41,7 +38,7 @@
     .content
       .ui.comments
         each comment in val.comments
-          .comment(commentID=comment.new_comment ? comment.commentID : comment.id, class=comment.class, index=comment.commentID)
+          .comment(commentID=comment.new_comment ? comment.commentID : comment.id, class=(comment.class || "") + (comment.flagged ? " flagged" : ""), index=comment.commentID)
             if comment.new_comment
               a.avatar.image(href='/me')
                 if user.profile.picture
@@ -71,7 +68,7 @@
             if comment.subcomments.length!==0
               .comments.subcomments
                 each subcomment in comment.subcomments
-                  .comment(commentID=subcomment.new_comment ? subcomment.commentID : subcomment.id, index=subcomment.commentID, class=subcomment.class)
+                  .comment(commentID=subcomment.new_comment ? subcomment.commentID : subcomment.id, index=subcomment.commentID, class=(subcomment.class || "") + (subcomment.flagged ? " flagged" : ""))
                     if subcomment.new_comment 
                       .image(style="background-color:"+user.profile.color+";")
                         a.avatar.image(href='/me')
@@ -103,6 +100,9 @@
   .extra.content
     .ui.form
       .inline.field
-        img.ui.image.rounded(src=user.profile.picture)
+        if user && user.profile && user.profile.picture
+          img.ui.image.rounded(src='/user_avatar/'+user.profile.picture)
+        else
+          img.ui.image.rounded(src=user.gravatar(60))
         textarea.replyToPost(name='replyToPost' type='text' placeholder='Add a Comment...' rows='1' data-autoresize)
         i.big.send.link.icon.replyToPost

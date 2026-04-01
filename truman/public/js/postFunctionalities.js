@@ -62,14 +62,13 @@ function flagPost(e) {
     const post = target.closest(".ui.fluid.card");
     const postID = post.attr("postID");
     const postCondition = target.closest(".ui.fluid.card").attr("postCondition");
-    const flagStatusMessage = post.find(".flag-status");
     const currDate = Date.now();
 
     if (target.hasClass("orange")) { // Unflag Post
         // Reset the visible flag button text back to 'Flag' while preserving the icon
         target.find('span.label').text(' Flag');
         target.removeClass('orange');
-        flagStatusMessage.addClass("hidden");
+        post.removeClass("flagged");
         
         $.post("/feed", {
             postID: postID,
@@ -82,7 +81,7 @@ function flagPost(e) {
         // Update button text to 'Unflag' while preserving the icon
         target.find('span.label').text(' Flagged');
         target.addClass('orange');
-        flagStatusMessage.removeClass("hidden");
+        post.addClass("flagged");
 
         $.post("/feed", {
             postID: postID,
@@ -179,6 +178,7 @@ function flagComment(e) {
     if (target.hasClass("orange")) { // Unflag comment
         target.removeClass("orange");
         icon.removeClass("orange");
+        commentElement.removeClass("flagged");
         label.text(" Flag");
         $.post("/feed", {
             postID: postID,
@@ -190,6 +190,7 @@ function flagComment(e) {
     } else { // Flag comment
         target.addClass("orange");
         icon.addClass("orange");
+        commentElement.addClass("flagged");
         label.text(" Flagged");
         $.post("/feed", {
             postID: postID,

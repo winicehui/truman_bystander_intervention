@@ -2,10 +2,19 @@
     display: none;
 }
 
+#content{
+    margin-top: 1em;
+}
+
 .ui.fluid.card {
     border-radius: 12px;
     box-shadow: 0 6px 18px rgba(23, 32, 51, 0.08);
     border: 1px solid rgba(34,36,38,.06);
+}
+
+.ui.fluid.card.flagged {
+    background-color: #fff6f6 !important;
+    border: 1px solid #ffcccc !important;
 }
 
 /* NEW POST FORM */
@@ -70,6 +79,15 @@
     width: 100%;
 }
 
+/* .ui.fluid.card>.content>.ui.warning.message.flag-status {
+    margin: -1em -1em 1em -1em;
+    border-radius: 0;
+    border-bottom: none;
+    border-right: none;
+    border-left: none;
+    text-align: center;
+} */
+
 .ui.fluid.card>.content>.ui.warning.message.flag-status {
     margin: -1em -1em 1em -1em;
     border-radius: 0;
@@ -127,6 +145,12 @@
     padding: 0.5em !important;
 }
 
+.comment.flagged {
+    background-color: #fff6f6 !important;
+    border: 1px solid #ffcccc !important;
+    border-radius: 12px;
+}
+
 .ui.comments{
     /* font-size: 1.25em; */
 }
@@ -174,27 +198,19 @@ a.reply, a.like {
 }
 
 a.like.red {
-    color: red !important;
+    color: #d70020 !important;
 }
 
 a.flag.orange {
-    color: orange !important;
+    color: #ff600b !important;
 }
 
-/* CSS for adding new post */
-
-.ui.label>img {
-    width: 2.1666em!important;
-}
-
-
-/* CSS for adding new comment on post */
-
-/* ---- COMMENT FORM TO POST AND COMMENTS CSS ---- */
+/* COMMENT FORM TO POST AND COMMENTS CSS */
 
 .ui.fluid.card .extra.content { 
     padding: .75rem 1.25rem; 
     background: #f9f9f9;
+    border-radius: 0px 0px 12px 12px !important;
 }
 
 .ui.form {
@@ -202,6 +218,7 @@ a.flag.orange {
     width: 100%;
     margin: 1em 0em;
     padding: 0 0 0 0.5em;
+    border-radius: 12px;
 }
 
 .ui.form>.inline.field {
@@ -240,7 +257,6 @@ a.flag.orange {
     margin-top: 1em !important;
     font-size: 1.05em !important;
 }
-
 
 /* CSS for reporting and blocking modals */
 

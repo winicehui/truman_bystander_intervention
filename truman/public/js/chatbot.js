@@ -127,6 +127,7 @@ $(window).on("load", function() {
                         time: absTime,
                         addProfilePhoto: this.mostRecentMessenger !== name,
                         isTypingAnimation: isTypingAnimation,
+                        isAgent: !!isAgent,
                         avatar: this.profilePicture
                     };
                     if (!isTypingAnimation) {
