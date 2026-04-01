@@ -33,8 +33,8 @@ function likePost(e) {
                 _csrf: $('meta[name="csrf-token"]').attr('content')
             });
     } else { // Like Post
-        // Set the visible like button text to 'Unlike' while preserving the icon
-        target.find('span.label').text(' Unlike');
+        // Set the visible like button text to 'Liked' while preserving the icon
+        target.find('span.label').text(' Liked');
         target.addClass("red");
         label.html(function(i, val) { return val * 1 + 1 });
 
@@ -80,7 +80,7 @@ function flagPost(e) {
         // target.closest(".ui.fluid.card").find(".ui.dimmer.flag").removeClass("active").dimmer({ closable: true }).dimmer('hide');
     } else { // Flag Post}
         // Update button text to 'Unflag' while preserving the icon
-        target.find('span.label').text(' Unflag');
+        target.find('span.label').text(' Flagged');
         target.addClass('orange');
         flagStatusMessage.removeClass("hidden");
 
@@ -190,7 +190,7 @@ function flagComment(e) {
     } else { // Flag comment
         target.addClass("orange");
         icon.addClass("orange");
-        label.text(" Unflag");
+        label.text(" Flagged");
         $.post("/feed", {
             postID: postID,
             commentID: commentID,

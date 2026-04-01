@@ -11,14 +11,14 @@ block content
     img.ui.centered.small.image(src='/public/heart.svg')
   #content.twelve.wide.computer.ten.wide.tablet.sixteen.wide.mobile.column.hidden
     //- Input for creating new post at top of feed
-    #newpost.ui.fluid.left.labeled.right.icon.input
-      .ui.label
+    #newpost.ui.segment
+      .ui.fluid.left.labeled.right.icon.input
         if user.profile.picture
-          img.ui.avatar.image(src='/user_avatar/'+user.profile.picture)
+          img.ui.image.rounded(src='/user_avatar/'+user.profile.picture)
         else
-          img.ui.avatar.image(src=user.gravatar(60))
-      input(type='text', placeholder='Create a post')
-      i.big.photo.link.icon
+          img.ui.image.rounded(src=user.gravatar(60))
+        input(type='text', placeholder='Create a post')
+        i.big.photo.link.icon
     each val in script
       if val.relativeTime 
         //- This is a User made post

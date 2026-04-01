@@ -31,11 +31,11 @@
       |  Reply
     .ui.flag.button(tabindex='0', class=val.flagged ? "orange" : null)
       i.flag.icon
-      span.label=(val.flagged ? " Unflag" : " Flag")
+      span.label=(val.flagged ? " Flagged" : " Flag")
     .ui.labeled.button(tabindex='0')
       .ui.like.button(class=val.liked? "red": null)
         i.heart.icon
-        span.label=(val.liked ? " Unlike" : " Like")
+        span.label=(val.liked ? " Liked" : " Like")
       a.ui.basic.red.left.pointing.label.count=val.likes
   if val.comments.length > 0
     .content
@@ -67,7 +67,7 @@
                 if !comment.new_comment
                   a.flag(class=comment.flagged ? "orange" : null)
                     i.icon.flag(class=comment.flagged ? "orange" : null)
-                    span.label=(comment.flagged ? " Unflag" : " Flag")
+                    span.label=(comment.flagged ? " Flagged" : " Flag")
             if comment.subcomments.length!==0
               .comments.subcomments
                 each subcomment in comment.subcomments
@@ -99,7 +99,7 @@
                           if !subcomment.new_comment 
                             a.flag(class=subcomment.flagged ? "orange" : null)  
                               i.icon.flag(class=subcomment.flagged ? "orange" : null)
-                              span.label=(subcomment.flagged ? " Unflag" : " Flag")
+                              span.label=(subcomment.flagged ? " Flagged" : " Flag")
   .extra.content
     .ui.form
       .inline.field

@@ -2,12 +2,57 @@
     display: none;
 }
 
+.ui.fluid.card {
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(23, 32, 51, 0.08);
+    border: 1px solid rgba(34,36,38,.06);
+}
+
+/* NEW POST FORM */
+#newpost.ui.segment { 
+    display: block; 
+    padding: .75rem; 
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(23, 32, 51, 0.08);
+    border: 1px solid rgba(34,36,38,.06);
+    margin-bottom: 1rem; 
+}
+
+#newpost img.ui.rounded.image { 
+    width: 38px; 
+    height: 38px; 
+    border-radius: 50%;
+}
+
+#newpost input[type='text'] { 
+    border: none; 
+    outline: none; 
+    box-shadow: none; 
+    font-size: 1.05rem; 
+}
 
 /* CSS for Actor and User Posts */
 /* POST */
 
 .ui.fluid.card.cyberbullying {
     border: 2px solid red;
+}
+
+.ui.fluid.card>.content>a{
+    display: flex;
+    align-items: center;
+}
+
+.ui.fluid.card .username { 
+    font-weight: 700; 
+    font-size: 1.1em;
+    margin-left: .5rem; 
+    color: #222;
+}
+
+.ui.fluid.card .time.meta { 
+    color: #8a8d91; 
+    margin-top: .4rem;
 }
 
 .ui.fluid.card>.content>.image {
@@ -34,6 +79,35 @@
     text-align: center;
 }
 
+/* Buttons row */
+.ui.bottom.three.attached.icon.buttons { 
+    border-top: 1px solid rgba(34,36,38,.06); 
+    background: #f9f9f9; 
+}
+
+.ui.bottom.three.attached.icon.buttons .button { 
+    border-radius: 0; 
+    background: transparent; 
+}
+
+.ui.bottom.three.attached.icon.buttons .button.red,
+.ui.bottom.three.attached.icon.buttons .button.red:hover,
+.ui.bottom.three.attached.icon.buttons .button.red:active {
+    background: #d70020;
+    color: white;
+}
+
+.ui.bottom.three.attached.icon.buttons .button.orange,
+.ui.bottom.three.attached.icon.buttons .button.orange:hover,
+.ui.bottom.three.attached.icon.buttons .button.orange:active {
+    background: #ff600b;
+    color: white;
+}
+.ui.bottom.three.attached.icon.buttons .button:hover,
+.ui.bottom.three.attached.icon.buttons .button:active {
+    background: #ececec;
+}
+
 .ui[class*="bottom attached"].buttons .button:first-child {
     border-radius: 0 !important;
 }
@@ -44,14 +118,13 @@
 
 
 /* COMMMENT */
-
 .ui.comments>.comment:first-child {
     margin: 0.5em 0 0 !important;
 }
 
 .comment {
-    /* margin: 1em 1em 1em 0em; */
-    /* padding: 0.5em !important; */
+    margin: 1em 1em 1em 0em;
+    padding: 0.5em !important;
 }
 
 .ui.comments{
@@ -117,7 +190,12 @@ a.flag.orange {
 
 /* CSS for adding new comment on post */
 
-/* ---- COMMENT FORM TO VIDEO AND COMMENTS CSS ---- */
+/* ---- COMMENT FORM TO POST AND COMMENTS CSS ---- */
+
+.ui.fluid.card .extra.content { 
+    padding: .75rem 1.25rem; 
+    background: #f9f9f9;
+}
 
 .ui.form {
     display: inline-block;
@@ -148,7 +226,6 @@ a.flag.orange {
 }
 
 .ui.form>.inline.field>textarea {
-    font-size: 1.1em !important;
     padding-right: 35px !important;
 }
 
