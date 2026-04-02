@@ -13,7 +13,7 @@ html
     meta(name="content-language" content="en_US")
     meta(name='csrf-token', content=_csrf)
     title #{title} - #{process.env.SITE_NAME}
-    link(rel='shortcut icon', href=process.env.SITE_FAVICON)
+    link(rel='shortcut icon', type=image/svg+xml, href=process.env.SITE_FAVICON)
     link(rel='manifest', href='/public/manifest.json')
     link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.2/semantic.min.css')
     link(type='text/css', rel='stylesheet', href='/public/css/ui_layout.css')

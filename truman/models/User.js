@@ -6,8 +6,8 @@ const dotenv = require('dotenv');
 dotenv.config({ path: '.env' });
 
 const userSchema = new mongoose.Schema({
-    email: { type: String, unique: true },
-    password: String,
+    // email: { type: String, unique: false },
+    // password: String,
     username: String,
     active: { type: Boolean, default: true }, // Indicates if the user is still active
     isAdmin: { type: Boolean, default: false }, // Indicates if the user is an administrator
@@ -25,8 +25,8 @@ const userSchema = new mongoose.Schema({
     createdAt: Date, // Absolute Time the user was created
     consent: { type: Boolean, default: false }, // Indicates if user has proceeded through the Welcome & community rule pages
 
-    mturkID: { type: String, unique: true }, // MTurkID
-    ResponseID: { type: String, unique: false }, // Qualtric's ResponseID
+    // mturkID: { type: String, unique: false }, // MTurkID
+    ResponseID: { type: String, unique: true }, // Qualtric's ResponseID
 
     experimentalCondition: String, // Indicates the experimental condition user is assigned to. Values are defined in the .env file by the variable EXP_CONDITIONS_NAMES and assigned at account creation in the users controller.
 

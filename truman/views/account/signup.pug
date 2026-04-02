@@ -1,31 +1,38 @@
 extends ../ui_layout
 
+block styles
+  link(type='text/css', rel='stylesheet', href='/public/css/signup.css')
+
 block content
-  .computer.only.tablet.only.eight.wide.column
-    img.ui.fluid.image(src=process.env.SITE_PICTURE)
-  .eight.wide.computer.eight.wide.tablet.sixteen.wide.mobile.column
-    .ui.card.fluid(style="padding: 20px; margin-top: 90px;")
+  .computer.only.tablet.only.six.wide.column
+    img.ui.fluid.image(src=process.env.SITE_PICTURE, style="padding: 20px; margin-top: 90px;")
+  .ten.wide.computer.ten.wide.tablet.sixteen.wide.mobile.column
+    .ui.card.fluid
       h2.ui.header Sign Up
-      form.ui.form(id='signup-form', action=(process.env.POST_SURVEY_WITH_QUALTRICS ? `/signup?r_id=${r_id}`: '/signup'), method='POST')
+      h3 Hey there 👋 Welcome to 
+        span(style="color: #2966C2; font-weight: 900;") FreshView
+        | !
+      h3 Let’s start your Fresher journey by creating an account profile!
+
+      form.ui.form(id='signup-form', action=(process.env.POST_SURVEY_WITH_QUALTRICS ? `/signup?ResponseID=${ResponseID}&Condition=${Condition}`: '/signup'), method='POST')
         input(type='hidden', name='_csrf', value=_csrf)
         .field
           label(for='username') Username
+          p(style="text-align: center; color: #666; font-size: 1em; font-style: italic;") (Username must be at least 4 characters long)
           input(type='text', name='username', id='username', placeholder='Username', autofocus, required)
-        .field
-          label(for='mturkID') !{process.env.IDENTIFIER}
-          input(type='text', name='mturkID', id='mturkID', placeholder=process.env.IDENTIFIER, required)
-        .field
-          label(for='email') Email (will not be publicly displayed)
-          input(type='email', name='email', id='email', placeholder='Email', required)
-        .field
-          label(for='password') Password
-          input(type='password', name='password', id='password', placeholder='Password', minlength="4", required)
-        .field
-          label(for='confirmPassword') Confirm Password 
-          input(type='password', name='confirmPassword', id='confirmPassword', placeholder='Confirm Password', minlength="4", required)
-          span(style="color: green; visibility:hidden; display: inline-block;")#passwordsMatch  
-            i.icon.check 
-            | Passwords Match
+        //- .field
+        //-   label(for='location') Location
+        //-   input(type='text', name='location', id='location', placeholder='Your Location')
+        //- .field
+        //-   label(for='bio') Bio
+        //-   textarea(rows='2', name='bio', id='bio', placeholder='Tell us about yourself')
+        .field 
+          label Profile Picture 
+          .images
+            each filename in profilePictures
+              .image
+                a.avatar
+                  img(src=`/profile_pictures/${filename}`)
         .field
           .ui.checkbox
             input(type='checkbox', name='tos', tabindex="0", id='tos', required)

@@ -189,7 +189,13 @@ app.use('/profile_pictures', express.static(path.join(__dirname, 'profile_pictur
 /**
  * Primary app routes.
  */
-app.get('/', passportConfig.isAuthenticated, scriptController.getScript);
+app.get('/', (req, res) => {
+    if (req.isAuthenticated()) {
+        return scriptController.getScript(req, res);
+    } else {
+        return res.render('landing', { title: 'Welcome' });
+    }
+});
 
 app.post('/post/new', userpostupload.single('picinput'), scriptController.newPost);
 app.post('/pageLog', passportConfig.isAuthenticated, userController.postPageLog);
@@ -198,7 +204,7 @@ app.post('/pageTimes', passportConfig.isAuthenticated, userController.postPageTi
 app.get('/com', function(req, res) {
     const feed = req.query.feed == "true" ? true : false; //Are we accessing the community rules from the feed?
     res.render('com', {
-        title: 'Community Rules',
+        title: 'Community Guidelines',
         feed
     });
 });

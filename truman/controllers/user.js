@@ -4,6 +4,17 @@ const dotenv = require('dotenv');
 dotenv.config({ path: '.env' }); // See the file .env.example for the structure of .env
 const User = require('../models/User');
 
+// create random id for guest accounts
+function makeid(length) {
+    var result = '';
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for (var i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+}
+
 /**
  * GET /login
  * Render the login page.
@@ -55,7 +66,7 @@ exports.postLogin = (req, res, next) => {
             if (user.consent) {
                 res.redirect(req.session.returnTo || '/');
             } else {
-                res.redirect('/account/signup_info');
+                res.redirect('/');
             }
         });
     })(req, res, next);
@@ -84,9 +95,26 @@ exports.getSignup = (req, res) => {
     if (req.user) {
         return res.redirect('/');
     }
+    const fs = require('fs');
+    const path = require('path');
+    const files = [
+        'bear.png', 
+        'koala.png',
+        'giraffe.png',
+        'dog.png',
+        'lion.png',
+        'deer.png',
+        'cow.png',
+        'chicken.png', 
+        'cat.png',
+        'bear1.png'
+    ]; // List of available profile pictures. These should be located in the folder truman/profile_pictures. Update this list if you add or remove profile pictures.
+    const profilePictures = fs.readdirSync(path.join(__dirname, '../profile_pictures')).filter(file => files.includes(file));
     res.render('account/signup', {
         title: 'Create Account',
-        r_id: req.query.r_id
+        ResponseID: req.query.ResponseID,
+        Condition: req.query.Condition,
+        profilePictures
     });
 };
 
@@ -96,21 +124,17 @@ exports.getSignup = (req, res) => {
  */
 exports.postSignup = async(req, res, next) => {
     const validationErrors = [];
-    if (!validator.isEmail(req.body.email)) validationErrors.push({ msg: 'Please enter a valid email address.' });
-    if (!validator.isLength(req.body.password, { min: 4 })) validationErrors.push({ msg: 'Password must be at least 4 characters long.' });
-    if (validator.escape(req.body.password) !== validator.escape(req.body.confirmPassword)) validationErrors.push({ msg: 'Passwords do not match.' });
-    if (validationErrors.length) {
-        req.flash('errors', validationErrors);
-        return res.redirect('/signup');
-    }
-    req.body.email = validator.normalizeEmail(req.body.email, { gmail_remove_dots: false });
+    // if (!validator.isEmail(req.body.email)) validationErrors.push({ msg: 'Please enter a valid email address.' });
+    // if (!validator.isLength(req.body.password, { min: 4 })) validationErrors.push({ msg: 'Password must be at least 4 characters long.' });
+    // if (validator.escape(req.body.password) !== validator.escape(req.body.confirmPassword)) validationErrors.push({ msg: 'Passwords do not match.' });
+    // if (!req.body.username || req.body.username.trim().length === 0) validationErrors.push({ msg: 'Username is required.' });
+    // if (validationErrors.length) {
+    //     req.flash('errors', validationErrors);
+    //     return res.redirect('/signup?RespondentID=' + (req.query.RespondentID || '')+'&Condition=' + (req.query.Condition || ''));
+    // }
+    // req.body.email = validator.normalizeEmail(req.body.email, { gmail_remove_dots: false });
 
-    try {
-        const existingUser = await User.findOne({ $or: [{ email: req.body.email }, { mturkID: req.body.mturkID }] }).exec();
-        if (existingUser) {
-            req.flash('errors', { msg: 'An account with that email address or MTurkID already exists.' });
-            return res.redirect('/signup');
-        }
+    try { 
         /*###############################
         Place Experimental Varibles Here!
         ###############################*/
@@ -124,20 +148,38 @@ exports.postSignup = async(req, res, next) => {
                 req.query.r_id != 'null' && req.query.r_id && req.query.r_id != 'undefined' ? req.query.r_id : "") :
             "";
         const currDate = Date.now();
-        const user = new User({
-            email: req.body.email,
-            password: req.body.password,
-            mturkID: req.body.mturkID,
-            username: req.body.username,
-            experimentalCondition: experimentalCondition,
-            endSurveyLink: surveyLink,
-            active: true,
-            lastNotifyVisit: currDate,
-            createdAt: currDate
-        });
-        if (req.query.r_id) {
-            user.ResponseID = req.query.r_id;
+        const ResponseID = (req.query.ResponseID=='undefined') ? makeid(10) : req.query.ResponseID; // If no ResponseID is provided, generate a random one. This allows for guest accounts that are not created through Qualtrics.
+
+        // const existingUser = await User.findOne({ $or: [{ email: req.body.email }, { mturkID: req.body.mturkID }] }).exec();
+        const existingUser = await User.findOne({ ResponseID: ResponseID }).exec();
+        console.log(existingUser)
+        if (existingUser) {
+            existingUser.username = req.body.username;
+            existingUser.profile.picture = req.body.profile_picture;
+            existingUser.profile.name = req.body.username;
+            user = existingUser;
+        } else {
+            user = new User({
+                // email: req.body.email,
+                // password: req.body.password,
+                // mturkID: req.body.mturkID,
+                ResponseID: ResponseID, // If no ResponseID is provided, generate a random one. This allows for guest accounts that are not created through Qualtrics.
+                experimentalCondition: (req.query.Condition=='undefined') || !experimentalConditionNames.includes(req.query.Condition) ? experimentalCondition : req.query.Condition, // If no condition is provided in the query, randomly assign one. This allows for guest accounts that are not created through Qualtrics.
+                username: req.body.username,
+                endSurveyLink: surveyLink,
+                active: true,
+                lastNotifyVisit: currDate,
+                createdAt: currDate,
+                consent: false,
+                profile: {
+                    // name: req.body.name.trim() || '',
+                    // location: req.body.location.trim() || '',
+                    // bio: req.body.bio.trim() || '',
+                    picture: req.body.profilePicture || null
+                }
+            });
         }
+
         await user.save();
         req.logIn(user, (err) => {
             if (err) {
@@ -146,7 +188,7 @@ exports.postSignup = async(req, res, next) => {
             const userAgent = req.headers['user-agent'];
             const user_ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
             user.logUser(currDate, userAgent, user_ip);
-            res.redirect('/account/signup_info');
+            res.redirect('/com');
         });
     } catch (err) {
         next(err);
