@@ -1,7 +1,7 @@
 .ui.card
   .image
     if user.profile.picture
-      img(src='/user_avatar/'+user.profile.picture)
+      img(src=getUserAvatarSrc(user.profile.picture))
     else
       img(src=user.gravatar(60))
   .content

@@ -1,3 +1,18 @@
+function getCommentContext(post) {
+    const comments = [];
+
+    post.find('.ui.comments .comment .content').each(function() {
+        const author = $(this).children('.author').first().text().trim();
+        const body = $(this).children('.text').first().text().trim();
+
+        if (body) {
+            comments.push(author ? `${author}: ${body}` : body);
+        }
+    });
+
+    return comments.join('\n');
+}
+
 // Opens the co-pilot chat
 async function openChat(e) {
     const post = $(e.target).closest('.ui.fluid.card');
@@ -50,6 +65,7 @@ async function openChat(e) {
     // Only trigger AI greeting if there are no prior messages
     if (existingMessages.length === 0) {
         const postContext = post.find('.description').first().text().trim();
+        const commentContext = getCommentContext(post);
         const postCondition = post.attr('postcondition') || '';
 
         chat.addTypingAnimationExternal("Comment Coach");
@@ -65,7 +81,8 @@ async function openChat(e) {
                     chat_id: chatId,
                     postCondition: postCondition,
                     messages: [],
-                    postContext: postContext
+                    postContext: postContext,
+                    commentContext: commentContext
                 })
             });
 
@@ -179,6 +196,7 @@ $(window).on("load", function() {
 
                 const post = $('[postid="' + this.chatId + '"]');
                 const postContext = post.find('.description').first().text().trim();
+                const commentContext = getCommentContext(post);
                 const csrfToken = $('meta[name="csrf-token"]').attr('content');
 
                 try {
@@ -192,7 +210,8 @@ $(window).on("load", function() {
                             chat_id: this.chatId,
                             postCondition: post.attr('postcondition') || '',
                             messages: messages,
-                            postContext: postContext
+                            postContext: postContext,
+                            commentContext: commentContext
                         })
                     });
 
@@ -210,8 +229,8 @@ $(window).on("load", function() {
                     const match = replyText.match(/FINAL_COMMENT:\s*(.+?)(?=\n✅|\n\n|✅|$)/s);
                     if (match) {
                         const finalComment = match[1].trim();
-                        post.find('textarea.replytoPost').val(finalComment);
-                        post.find('textarea.replytoPost').focus();
+                        post.find('textarea.replyToPost, textarea.replytoPost').val(finalComment);
+                        post.find('textarea.replyToPost, textarea.replytoPost').focus();
                         setTimeout(function() {
                             $('#copilot-chat .chat').transition('fade down');
                         }, 2000);

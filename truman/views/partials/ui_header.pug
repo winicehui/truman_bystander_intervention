@@ -5,8 +5,8 @@
         img.ui.tiny.image(src=process.env.SITE_LOGO, id='logo')
       .right.menu
         if !user
-          a.item(href=process.env.POST_SURVEY_WITH_QUALTRICS ? `/login?r_id=${r_id}`: '/login') Log In
-          a.item(href=process.env.POST_SURVEY_WITH_QUALTRICS ? `/signup?r_id=${r_id}`: '/signup') Create Account
+          a.item(href=process.env.POST_SURVEY_WITH_QUALTRICS ? `/login?ResponseID=${ResponseID || r_id || ''}&Condition=${Condition || ''}`: '/login') Log In
+          a.item(href=process.env.POST_SURVEY_WITH_QUALTRICS ? `/signup?ResponseID=${ResponseID || r_id || ''}&Condition=${Condition || ''}`: '/signup') Create Account
         else
           if user.consent
             if(showNewPostIcon)
@@ -16,7 +16,7 @@
               i.big.alarm.icon
           .ui.simple.dropdown.item
             if user.profile.picture
-              img.ui.mini.spaced.circular.image(src='/user_avatar/'+user.profile.picture)
+              img.ui.mini.spaced.circular.image(src=getUserAvatarSrc(user.profile.picture))
             else
               img.ui.mini.spaced.circular.image(src=user.gravatar(60))
             |
@@ -36,8 +36,8 @@
     a.item("/")
       img.ui.tiny.image(src=process.env.SITE_LOGO, id='mobile_logo')
     if !user
-      a.item(href=process.env.POST_SURVEY_WITH_QUALTRICS ? `/login?r_id=${r_id}`: '/login') Log In
-      a.item(href=process.env.POST_SURVEY_WITH_QUALTRICS ? `/signup?r_id=${r_id}`: '/signup') Create Account
+      a.item(href=process.env.POST_SURVEY_WITH_QUALTRICS ? `/login?ResponseID=${ResponseID || r_id || ''}&Condition=${Condition || ''}`: '/login') Log In
+      a.item(href=process.env.POST_SURVEY_WITH_QUALTRICS ? `/signup?ResponseID=${ResponseID || r_id || ''}&Condition=${Condition || ''}`: '/signup') Create Account
     else
       if user.consent
         if(showNewPostIcon)
@@ -50,7 +50,7 @@
         .item
       .ui.simple.dropdown.item
         if user.profile.picture
-          img.ui.mini.spaced.circular.image(src='/user_avatar/'+user.profile.picture)
+          img.ui.mini.spaced.circular.image(src=getUserAvatarSrc(user.profile.picture))
         else
           img.ui.mini.spaced.circular.image(src=user.gravatar(60))
         i.dropdown.icon

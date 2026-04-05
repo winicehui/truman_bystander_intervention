@@ -3,7 +3,7 @@
     .right.floated.time.meta=(val.absTime.getTime())
     a.ui.avatar.image(href='/me')
       if user.profile.picture
-        img(src='/user_avatar/'+user.profile.picture)
+        img(src=getUserAvatarSrc(user.profile.picture))
       else
         img(src=user.gravatar(60))
     a(href='/me')
@@ -31,7 +31,7 @@
               .comment(commentID=comment.commentID)
                 a.avatar.image(href='/me')
                   if user.profile.picture
-                    img(src='/user_avatar/'+user.profile.picture)
+                    img(src=getUserAvatarSrc(user.profile.picture))
                   else
                     img(src=user.gravatar(60))
                 .content
@@ -66,7 +66,7 @@
     .ui.fluid.left.labeled.right.icon.input
       .ui.label
         if user.profile.picture
-          img.ui.avatar.image.small(src='/user_avatar/'+user.profile.picture, name=user.profile.name || user.username || user.id)
+          img.ui.avatar.image.small(src=getUserAvatarSrc(user.profile.picture), name=user.profile.name || user.username || user.id)
         else
           img.ui.avatar.image.small(src=user.gravatar(60), name=user.profile.name || user.username || user.id)            
       .ui.form

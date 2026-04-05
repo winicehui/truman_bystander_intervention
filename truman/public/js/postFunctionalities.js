@@ -298,7 +298,7 @@ function openCommentReply(e) {
         const comment_area = (
             `<div class="ui form">
                 <div class="inline field">
-                    <img class="ui image rounded" src=${script.userProfile.picture ? ('/user_avatar/' + script.userProfile.picture) : null} style="background-color:${color};">
+                    <img class="ui image rounded" src=${script.userProfile.pictureSrc || script.userProfile.picture || ''} style="background-color:${color};">
                     <textarea class="replyToComment" type="text" placeholder="Add a Reply..." rows="1" onInput="changeColor(event${", '@"+reply_to +"'"})">${"@"+reply_to+" "}</textarea>
                 </div>
                 <div class="ui submit button replyToComment" onClick="addCommentToComment(event)">

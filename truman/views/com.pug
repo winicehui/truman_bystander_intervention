@@ -40,7 +40,7 @@ block content
       $.post('/account/consent', { _csrf: $('meta[name="csrf-token"]').attr('content') })
         .done(function() {
           console.log("done setting consent")
-          window.location.href = '/';
+          window.location.href = !{JSON.stringify(user.experimentalCondition === 'C1' ? '/training_intro' : '/')};
         })
         .fail(function() {
           alert('Error setting consent. Please try again.');

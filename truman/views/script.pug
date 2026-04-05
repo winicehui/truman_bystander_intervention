@@ -2,7 +2,8 @@ extends ui_layout
 
 block styles 
   link(type='text/css', rel='stylesheet', href='/public/css/script.css')
-  link(type='text/css', rel='stylesheet', href='/public/css/chatbot.css')
+  if chatbotEnabled
+    link(type='text/css', rel='stylesheet', href='/public/css/chatbot.css')
 
 block content
   //- .computer.only.tablet.only.four.wide.column 
@@ -14,7 +15,7 @@ block content
     #newpost.ui.segment
       .ui.fluid.left.labeled.right.icon.input
         if user.profile.picture
-          img.ui.image.rounded(src='/user_avatar/'+user.profile.picture)
+          img.ui.image.rounded(src=getUserAvatarSrc(user.profile.picture))
         else
           img.ui.image.rounded(src=user.gravatar(60))
         input(type='text', placeholder='Create a post')
@@ -30,7 +31,8 @@ block content
       .content
         .description
         |  End of Posts for the last 24 hours.
-  include partials/chatbot
+  if chatbotEnabled
+    include partials/chatbot
     
   .ui.tiny.post.modal
     i.close.icon
@@ -51,7 +53,10 @@ block content
 block scripts
   script().
     window.script={
+      chatbotEnabled: !{JSON.stringify(!!chatbotEnabled)}
     };
+    window.openChat = function() {};
   script(src='/public/js/script.js')
   script(src='/public/js/postFunctionalities.js')
-  script(src='/public/js/chatbot.js')
+  if chatbotEnabled
+    script(src='/public/js/chatbot.js')

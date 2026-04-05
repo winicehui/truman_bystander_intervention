@@ -4,6 +4,13 @@ const dotenv = require('dotenv');
 dotenv.config({ path: '.env' }); // See the file .env.example for the structure of .env
 const User = require('../models/User');
 
+function normalizeProfilePicture(picture) {
+    if (!picture) return null;
+    return picture.startsWith('/profile_pictures/') || picture.startsWith('/user_avatar/')
+        ? picture
+        : `/profile_pictures/${picture.replace(/^.*\//, '')}`;
+}
+
 // create random id for guest accounts
 function makeid(length) {
     var result = '';
@@ -23,10 +30,14 @@ exports.getLogin = (req, res) => {
     if (req.user) {
         return res.redirect('/');
     }
+    const responseID = req.query.ResponseID || req.query.r_id;
+    const condition = req.query.Condition || req.query.condition;
     res.render('account/login', {
         title: 'Login',
         site_picture: process.env.SITE_PICTURE,
-        r_id: req.query.r_id
+        r_id: responseID,
+        ResponseID: responseID,
+        Condition: condition
     });
 };
 
@@ -95,6 +106,8 @@ exports.getSignup = (req, res) => {
     if (req.user) {
         return res.redirect('/');
     }
+    const responseID = req.query.ResponseID || req.query.r_id;
+    const condition = req.query.Condition || req.query.condition;
     const fs = require('fs');
     const path = require('path');
     const files = [
@@ -112,8 +125,8 @@ exports.getSignup = (req, res) => {
     const profilePictures = fs.readdirSync(path.join(__dirname, '../profile_pictures')).filter(file => files.includes(file));
     res.render('account/signup', {
         title: 'Create Account',
-        ResponseID: req.query.ResponseID,
-        Condition: req.query.Condition,
+        ResponseID: responseID,
+        Condition: condition,
         profilePictures
     });
 };
@@ -141,22 +154,27 @@ exports.postSignup = async(req, res, next) => {
         const numConditions = process.env.NUM_EXP_CONDITIONS;
         const experimentalConditionNames = process.env.EXP_CONDITIONS_NAMES.split(",");
         const experimentalCondition = experimentalConditionNames[Math.floor(Math.random() * numConditions)];
+        const responseID = req.query.ResponseID || req.query.r_id;
+        const condition = req.query.Condition || req.query.condition;
 
         const surveyLink = process.env.POST_SURVEY ?
             process.env.POST_SURVEY +
             (process.env.POST_SURVEY_WITH_QUALTRICS == 'TRUE' && process.env.POST_SURVEY.includes("?r_id=") &&
-                req.query.r_id != 'null' && req.query.r_id && req.query.r_id != 'undefined' ? req.query.r_id : "") :
+                responseID != 'null' && responseID && responseID != 'undefined' ? responseID : "") :
             "";
         const currDate = Date.now();
-        const ResponseID = (req.query.ResponseID=='undefined') ? makeid(10) : req.query.ResponseID; // If no ResponseID is provided, generate a random one. This allows for guest accounts that are not created through Qualtrics.
+        const ResponseID = (!responseID || responseID == 'undefined') ? makeid(10) : responseID; // If no ResponseID is provided, generate a random one. This allows for guest accounts that are not created through Qualtrics.
 
         // const existingUser = await User.findOne({ $or: [{ email: req.body.email }, { mturkID: req.body.mturkID }] }).exec();
         const existingUser = await User.findOne({ ResponseID: ResponseID }).exec();
         console.log(existingUser)
         if (existingUser) {
             existingUser.username = req.body.username;
-            existingUser.profile.picture = req.body.profile_picture;
+            existingUser.profile.picture = normalizeProfilePicture(req.body.profile_picture);
             existingUser.profile.name = req.body.username;
+            if (condition && condition != 'undefined' && experimentalConditionNames.includes(condition)) {
+                existingUser.experimentalCondition = condition;
+            }
             user = existingUser;
         } else {
             user = new User({
@@ -164,7 +182,7 @@ exports.postSignup = async(req, res, next) => {
                 // password: req.body.password,
                 // mturkID: req.body.mturkID,
                 ResponseID: ResponseID, // If no ResponseID is provided, generate a random one. This allows for guest accounts that are not created through Qualtrics.
-                experimentalCondition: (req.query.Condition=='undefined') || !experimentalConditionNames.includes(req.query.Condition) ? experimentalCondition : req.query.Condition, // If no condition is provided in the query, randomly assign one. This allows for guest accounts that are not created through Qualtrics.
+                experimentalCondition: (!condition || condition == 'undefined') || !experimentalConditionNames.includes(condition) ? experimentalCondition : condition, // If no condition is provided in the query, randomly assign one. This allows for guest accounts that are not created through Qualtrics.
                 username: req.body.username,
                 endSurveyLink: surveyLink,
                 active: true,
@@ -175,7 +193,7 @@ exports.postSignup = async(req, res, next) => {
                     // name: req.body.name.trim() || '',
                     // location: req.body.location.trim() || '',
                     // bio: req.body.bio.trim() || '',
-                    picture: req.body.profilePicture || null
+                    picture: normalizeProfilePicture(req.body.profile_picture)
                 }
             });
         }
@@ -263,12 +281,14 @@ exports.getMe = async(req, res) => {
  */
 exports.postUpdateProfile = async(req, res, next) => {
     const validationErrors = [];
-    if (!validator.isEmail(req.body.email)) validationErrors.push({ msg: 'Please enter a valid email address.' });
+    if (req.body.email && !validator.isEmail(req.body.email)) validationErrors.push({ msg: 'Please enter a valid email address.' });
     if (validationErrors.length) {
         req.flash('errors', validationErrors);
         return res.redirect('/account');
     }
-    req.body.email = validator.normalizeEmail(req.body.email, { gmail_remove_dots: false });
+    if (req.body.email) {
+        req.body.email = validator.normalizeEmail(req.body.email, { gmail_remove_dots: false });
+    }
     try {
         const user = await User.findById(req.user.id).exec();
         user.email = req.body.email || '';
@@ -419,7 +439,12 @@ exports.getUserProfile = async(req, res) => {
         const user = await User.findById(req.user.id).exec();
         res.set('Content-Type', 'application/json; charset=UTF-8');
         res.send({
-            userProfile: user.profile,
+            userProfile: {
+                ...user.profile.toObject(),
+                pictureSrc: user.profile.picture && user.profile.picture.startsWith('/')
+                    ? user.profile.picture
+                    : (user.profile.picture ? `/user_avatar/${user.profile.picture}` : null)
+            },
             numComments: user.numComments,
             username: user.username
         });

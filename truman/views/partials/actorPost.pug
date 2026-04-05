@@ -42,7 +42,7 @@
             if comment.new_comment
               a.avatar.image(href='/me')
                 if user.profile.picture
-                  img(src='/user_avatar/'+user.profile.picture)
+                  img(src=getUserAvatarSrc(user.profile.picture))
                 else
                   img(src=user.gravatar(60))
             else 
@@ -73,7 +73,7 @@
                       .image(style="background-color:"+user.profile.color+";")
                         a.avatar.image(href='/me')
                           if user.profile.picture
-                            img(src='/user_avatar/'+user.profile.picture)
+                            img(src=getUserAvatarSrc(user.profile.picture))
                           else
                             img(src=user.gravatar(60))
                     else
@@ -101,7 +101,7 @@
     .ui.form
       .inline.field
         if user && user.profile && user.profile.picture
-          img.ui.image.rounded(src='/user_avatar/'+user.profile.picture)
+          img.ui.image.rounded(src=getUserAvatarSrc(user.profile.picture))
         else
           img.ui.image.rounded(src=user.gravatar(60))
         textarea.replyToPost(name='replyToPost' type='text' placeholder='Add a Comment...' rows='1' data-autoresize)

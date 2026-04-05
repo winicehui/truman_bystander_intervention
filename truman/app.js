@@ -162,6 +162,11 @@ app.disable('x-powered-by');
 app.use((req, res, next) => {
     res.locals.user = req.user;
     res.locals.cdn = process.env.CDN;
+    res.locals.getUserAvatarSrc = (picture) => {
+        if (!picture) return null;
+        if (picture.startsWith('/')) return picture;
+        return `/user_avatar/${picture}`;
+    };
     next();
 });
 
@@ -193,7 +198,12 @@ app.get('/', (req, res) => {
     if (req.isAuthenticated()) {
         return scriptController.getScript(req, res);
     } else {
-        return res.render('landing', { title: 'Welcome' });
+        return res.render('landing', {
+            title: 'Welcome',
+            ResponseID: req.query.ResponseID || req.query.r_id,
+            Condition: req.query.Condition || req.query.condition,
+            r_id: req.query.r_id || req.query.ResponseID
+        });
     }
 });
 
@@ -220,6 +230,13 @@ app.get('/training', function(req, res) {
         title: 'Training Module'
     });
 });
+app.get('/training_intro', function(req, res) {
+    res.render('training', {
+        title: 'Training Module'
+    });
+});
+app.get('/training-module', passportConfig.isAuthenticated, scriptController.getTrainingModule);
+app.get('/api/training-status', passportConfig.isAuthenticated, scriptController.getTrainingStatus);
 app.get('/tos', function(req, res) { res.render('tos', { title: 'Terms of Service' }); });
 
 app.get('/completed', passportConfig.isAuthenticated, userController.userTestResults);
