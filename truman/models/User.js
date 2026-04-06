@@ -64,7 +64,19 @@ const userSchema = new mongoose.Schema({
             new_comment: { type: Boolean, default: false }, // Indicates if the comment is user-made
             liked: { type: Boolean, default: false }, // Indicates if the user has liked the comment
             flagged: { type: Boolean, default: false }, // Indicates if the user has flagged the comment
-            likes: { type: Number, default: 0 } // Indicates the # of likes on the comment by actors (excludes the user's own like)
+            likes: { type: Number, default: 0 }, // Indicates the # of likes on the comment by actors (excludes the user's own like)
+
+            subcomments: [new Schema({
+                actor: { type: Schema.ObjectId, ref: 'Actor' }, // Indicates which actor made the subcomment if subcomment is by an Actor
+                body: { type: String, default: '', trim: true }, // Text(body) of comment
+                commentID: Number, // ID of the comment
+                relativeTime: Number, // Indicates when the comment is made on the post relative to how much time has passed since the user created their account, in milliseconds
+                absTime: Date, // Absolute Time; Indicates when the comment is made on the post
+                new_comment: { type: Boolean, default: false }, // Indicates if the comment is user-made
+                liked: { type: Boolean, default: false }, // Indicates if the user has liked the comment
+                flagged: { type: Boolean, default: false }, // Indicates if the user has flagged the comment
+                likes: { type: Number, default: 0 }, // Indicates the # of likes on the comment by actors (excludes the user's own like)
+            })]
         }, { versionKey: false })],
 
         absTime: Date, // Absolute Time; Indicates the exact time the post was made

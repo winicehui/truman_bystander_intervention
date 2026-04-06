@@ -84,7 +84,7 @@ exports.getScript = async(req, res, next) => {
         });
 
         // Get the newsfeed and render it.
-        const finalfeed = helpers.getFeed(user_posts, script_feed, user, process.env.FEED_ORDER, (process.env.REMOVE_FLAGGED_CONTENT == 'TRUE'), true);
+        const finalfeed = helpers.getFeed(user_posts, script_feed, user, process.env.FEED_ORDER, (process.env.REMOVE_FLAGGED_CONTENT == 'TRUE'), false);
         console.log("Script Size is now: " + finalfeed.length);
         res.render('script', { script: finalfeed, showNewPostIcon: true });
     } catch (err) {
@@ -132,7 +132,7 @@ exports.getChat = async(req, res, next) => {
 exports.newPost = async(req, res) => {
     try {
         const user = await User.findById(req.user.id).exec();
-        if (req.file) {
+        if (req.body.body) {
             user.numPosts = user.numPosts + 1; // Count begins at 0
             const currDate = Date.now();
 
@@ -140,7 +140,7 @@ exports.newPost = async(req, res) => {
                 type: "user_post",
                 postID: user.numPosts,
                 body: req.body.body,
-                picture: req.file.filename,
+                picture: req.file ? req.file.filename : null,
                 liked: false,
                 likes: 0,
                 comments: [],
@@ -169,7 +169,8 @@ exports.newPost = async(req, res) => {
                         new_comment: false,
                         liked: false,
                         flagged: false,
-                        likes: 0
+                        likes: 0, 
+                        subcomments: []
                     };
                     post.comments.push(tmp_actor_reply);
                 }
@@ -178,7 +179,7 @@ exports.newPost = async(req, res) => {
             await user.save();
             res.redirect('/');
         } else {
-            req.flash('errors', { msg: 'ERROR: Your post did not get sent. Please include a photo and a caption.' });
+            req.flash('errors', { msg: 'ERROR: Your post did not get sent. Please include some text with your post.' });
             res.redirect('/');
         }
     } catch (err) {
@@ -192,6 +193,7 @@ exports.newPost = async(req, res) => {
  */
 exports.postUpdateFeedAction = async(req, res, next) => {
     try {
+        console.log(req.body);
         const user = await User.findById(req.user.id).exec();
         // Check if user has interacted with the post before.
         let feedIndex = _.findIndex(user.feedAction, function(o) { return o.post.equals(req.body.postID); });
@@ -206,11 +208,12 @@ exports.postUpdateFeedAction = async(req, res, next) => {
         }
 
         // User created a new comment on the post.
+        // TO DO: Return the new comment's ID so that the frontend can keep track of it and use it for future interactions with the comment (like, flag, etc.)
         if (req.body.new_comment) {
             user.numComments = user.numComments + 1;
             const cat = {
                 new_comment: true,
-                new_comment_id: user.numComments,
+                new_comment_id: user.numComments + 78,
                 body: req.body.comment_text,
                 relativeTime: req.body.new_comment - user.createdAt,
                 absTime: req.body.new_comment,
@@ -334,28 +337,76 @@ exports.postUpdateUserPostFeedAction = async(req, res, next) => {
         }
         // User created a new comment on the post.
         else if (req.body.new_comment) {
+            console.log("New comment on user post.");
             user.numComments = user.numComments + 1;
-            const cat = {
+            let cat = {
                 body: req.body.comment_text,
-                commentID: user.numComments,
+                commentID: user.numComments + 78,
                 relativeTime: req.body.new_comment - user.createdAt,
                 absTime: req.body.new_comment,
                 new_comment: true,
                 liked: false,
                 flagged: false,
-                likes: 0, 
-                reply_to: req.body.reply_to,
-                parent_commentID: req.body.parent_comment
+                likes: 0,
+            }
+            if (req.body.reply_to) {
+                const parent_comment_index = _.findIndex(user.posts[feedIndex].comments, function(o) {
+                    return o.commentID == req.body.parent_comment;
+                });
+                console.log(parent_comment_index) ;
+                if (parent_comment_index == -1) {
+                    console.log("Should not happen.");
+                } else {
+                    cat.reply_to = req.body.reply_to;
+                    cat.parent_comment = req.body.parent_comment;
+                    user.posts[feedIndex].comments[parent_comment_index].subcomments.push(cat);
+                }
+            } else {
+                cat.subcomments = [];
+                user.posts[feedIndex].comments.push(cat);   
             };
-            user.posts[feedIndex].comments.push(cat);
         }
         // User interacted with a comment on the post.
         else if (req.body.commentID) {
-            const commentIndex = _.findIndex(user.posts[feedIndex].comments, function(o) {
-                return o.commentID == req.body.commentID && o.new_comment == (req.body.isUserComment == 'true');
-            });
+            const isUserComment = (req.body.isUserComment == 'true');
+            const commentIndex = (isUserComment) ?
+                _.findIndex(user.posts[feedIndex].comments, function(o) {
+                    return o.commentID == req.body.commentID && o.new_comment == isUserComment;
+                }) :
+                _.findIndex(user.posts[feedIndex].comments, function(o) {
+                    return o._id.equals(req.body.commentID) && o.new_comment == isUserComment;
+                });
+
             if (commentIndex == -1) {
-                console.log("Should not happen.");
+                // It'sa subcomment. 
+                const parentcommentIndex = _.findIndex(user.posts[feedIndex].comments, function(o) {
+                    return o.subcomments.find(subcomment => (isUserComment) ? (subcomment.commentID == req.body.commentID && subcomment.new_comment == isUserComment) : (subcomment._id.equals(req.body.commentID) && subcomment.new_comment == isUserComment)) !== undefined;
+                });
+                if (parentcommentIndex == -1) {
+                    console.log("Should not happen.");
+                }
+                const subcommentIndex = _.findIndex(user.posts[feedIndex].comments[parentcommentIndex].subcomments, function(o) {
+                    return o.commentID == req.body.commentID && o.new_comment == isUserComment;
+                });
+                console.log("Subcomment index is: " + subcommentIndex);
+                if (subcommentIndex == -1) {
+                    console.log("Should not happen.");
+                } else {
+                    // User liked the subcomment.
+                    if (req.body.like) {
+                        user.posts[feedIndex].comments[parentcommentIndex].subcomments[subcommentIndex].liked = true;
+                    }
+                    // User unliked the subcomment.
+                    else if (req.body.unlike) {
+                        user.posts[feedIndex].comments[parentcommentIndex].subcomments[subcommentIndex].liked = false;
+                    }
+                    // User flagged the subcomment.
+                    else if (req.body.flag) {
+                        user.posts[feedIndex].comments[parentcommentIndex].subcomments[subcommentIndex].flagged = true;
+                    } else if (req.body.unflag) {
+                        user.posts[feedIndex].comments[parentcommentIndex].subcomments[subcommentIndex].flagged = false;
+                    }
+                }
             }
             // User liked the comment.
             else if (req.body.like) {
@@ -368,6 +419,10 @@ exports.postUpdateUserPostFeedAction = async(req, res, next) => {
             // User flagged the comment.
             else if (req.body.flag) {
                 user.posts[feedIndex].comments[commentIndex].flagged = true;
+            }
+            // User unflagged the comment.
+            else if (req.body.unflag) {
+                user.posts[feedIndex].comments[commentIndex].flagged = false;
             }
         }
         // User interacted with the post. 

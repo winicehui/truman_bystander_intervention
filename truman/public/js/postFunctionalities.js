@@ -8,7 +8,8 @@ async function getUserInformation() {
 function likePost(e) {
     const target = $(e.target).closest('.ui.like.button');
     const label = target.closest('.ui.like.button').next("a.ui.basic.red.left.pointing.label.count");
-    const postID = target.closest(".ui.fluid.card").attr("postID");
+    const post = target.closest(".ui.fluid.card");
+    const postID = post.attr("postID");
     const postCondition = target.closest(".ui.fluid.card").attr("postCondition");
     const currDate = Date.now();
 
@@ -52,8 +53,8 @@ function likePost(e) {
                 _csrf: $('meta[name="csrf-token"]').attr('content')
             });
     }
-    if (target.closest(".ui.fluid.card").find(".description.cyberbullying").length > 0) {
-        openChat(e);
+    if (post.find(".description.cyberbullying").length > 0) {
+        openChat(e, post);
     }
 }
 
@@ -91,8 +92,8 @@ function flagPost(e) {
         });
         // post.find(".ui.dimmer.flag").dimmer({ closable: true }).dimmer('show');
     }
-    if (target.closest(".ui.fluid.card").find(".description.cyberbullying").length > 0) {
-        openChat(e);
+    if (post.find(".description.cyberbullying").length > 0) {
+        openChat(e, post);
     }
 }
 
@@ -105,7 +106,7 @@ function likeComment(e) {
     const postID = target.closest(".ui.fluid.card").attr("postID");
     const postCondition = target.closest(".ui.fluid.card").attr("postCondition");
     const commentID = comment.attr("commentID");
-    const isUserComment = comment.find("a.author").attr('href') === '/me';
+    const isUserComment = comment.find("a.author").attr("href") == "/me";
     const currDate = Date.now();
 
     if (target.hasClass("red")) { // Unlike comment
@@ -155,7 +156,7 @@ function likeComment(e) {
             });
     }
     if (comment.hasClass("cyberbullying")) {
-        openChat(e);
+        openChat(e, comment);
     }
 }
 
@@ -170,38 +171,53 @@ function flagComment(e) {
 
     const currDate = Date.now();
 
-    if (target.closest(".ui.fluid.card").attr("type") == 'userPost'){
-        console.log("Should never be here.");
-        return; 
-    }
-
     if (target.hasClass("orange")) { // Unflag comment
         target.removeClass("orange");
         icon.removeClass("orange");
         commentElement.removeClass("flagged");
         label.text(" Flag");
-        $.post("/feed", {
-            postID: postID,
-            commentID: commentID,
-            unflag: currDate,
-            postCondition: postCondition,
-            _csrf: $('meta[name="csrf-token"]').attr('content')
-        });
+        if (target.closest(".ui.fluid.card").attr("type") == 'userPost') {
+            $.post("/userPost_feed", {
+                postID: postID,
+                commentID: commentID,
+                unflag: currDate,
+                postCondition: postCondition,
+                _csrf: $('meta[name="csrf-token"]').attr('content')
+            });
+        } else {
+            $.post("/feed", {
+                postID: postID,
+                commentID: commentID,
+                unflag: currDate,
+                postCondition: postCondition,
+                _csrf: $('meta[name="csrf-token"]').attr('content')
+            });
+        }
     } else { // Flag comment
         target.addClass("orange");
         icon.addClass("orange");
         commentElement.addClass("flagged");
         label.text(" Flagged");
-        $.post("/feed", {
-            postID: postID,
-            commentID: commentID,
-            flag: currDate,
-            postCondition: postCondition,
-            _csrf: $('meta[name="csrf-token"]').attr('content')
-        });
+        if (target.closest(".ui.fluid.card").attr("type") == 'userPost') {
+            $.post("/userPost_feed", {
+                postID: postID,
+                commentID: commentID,
+                flag: currDate,
+                postCondition: postCondition,
+                _csrf: $('meta[name="csrf-token"]').attr('content')
+            });
+        } else {
+            $.post("/feed", {
+                postID: postID,
+                commentID: commentID,
+                flag: currDate,
+                postCondition: postCondition,
+                _csrf: $('meta[name="csrf-token"]').attr('content')
+            });
+        }
     }
     if (commentElement.hasClass("cyberbullying")) {
-        openChat(e);
+        openChat(e, commentElement);
     }
 }
 
@@ -220,17 +236,12 @@ function addComment(e) {
     }
     if (text.trim() !== '') {
         const currDate = Date.now();
-        const ava = target.siblings('.ui.label').find('img.ui.avatar.image');
-        const ava_img = ava.attr("src");
-        const ava_name = ava.attr("name");
         const postID = card.attr("postID");
-        const commentID = script.numComments + 1;
+        const commentID = script.numComments + 1 + 78; // TO DO: Change this to the actual commentID returned from the backend once that is implemented. The +77 is to ensure reply_to/parent_comment functionality don't coincide with actor replies.
 
         const mess = `
         <div class="comment" commentID=${commentID} index=${commentID}>
-            <div class="image" style="background-color:${script.userProfile.color}">
-                <a class="avatar"><img src="${script.userProfile.picture}"></a>
-            </div>
+            <a class="avatar"><img src="${script.userProfile.picture}"></a>
             <div class="content"> 
                 <a class="author" href="/me">${script.userProfile.name || script.username} (me)</a>
                 <div class="metadata"> 
@@ -257,7 +268,7 @@ function addComment(e) {
                 comment_text: text,
                 _csrf: $('meta[name="csrf-token"]').attr('content')
             }).then(function(json) {
-                script.nunComments = json.numComments;
+                script.numComments = json.numComments;
             });
         else
             $.post("/feed", {
@@ -267,12 +278,12 @@ function addComment(e) {
                 postCondition: postCondition,
                 _csrf: $('meta[name="csrf-token"]').attr('content')
             }).then(function(json) {
-                script.nunComments = json.numComments;
+                script.numComments = json.numComments;
             });
     }
-    if (card.find(".cyberbullying").length > 0) {
-        openChat(e);
-    }
+    // if (card.find(".cyberbullying").length > 0) {
+    //     openChat(e, card);
+    // }
 }
 
 function changeColor(e, string = "") {
@@ -285,8 +296,6 @@ function changeColor(e, string = "") {
 }
 
 function openCommentReply(e) {
-    const photo = script.userProfile.picture;
-    const color = script.userProfile.color;
     const target = $(e.target).parents('.content');
     const reply_to = target.children('a.author').text().replace(" (me)", "");
     const form = target.children('.ui.form');
@@ -298,7 +307,7 @@ function openCommentReply(e) {
         const comment_area = (
             `<div class="ui form">
                 <div class="inline field">
-                    <img class="ui image rounded" src=${script.userProfile.picture ? ('/user_avatar/' + script.userProfile.picture) : null} style="background-color:${color};">
+                    <img class="ui image rounded" src=${script.userProfile.picture}>
                     <textarea class="replyToComment" type="text" placeholder="Add a Reply..." rows="1" onInput="changeColor(event${", '@"+reply_to +"'"})">${"@"+reply_to+" "}</textarea>
                 </div>
                 <div class="ui submit button replyToComment" onClick="addCommentToComment(event)">
@@ -324,6 +333,9 @@ function openCommentReply(e) {
             // };
         comment_area_element.focus();
         comment_area_element[0].scrollIntoView({ block: 'center', behavior: 'smooth' });
+    }
+    if (target.closest(".comment").hasClass("cyberbullying")) {
+        openChat(e, target.closest(".comment"));
     }
 }
 
@@ -362,15 +374,14 @@ function addCommentToComment(e) {
         const date = Date.now();
         const postID = card.attr("postID");
         const postClass = card.attr("postClass");
-        const commentID = script.numComments + 1;
+        const commentID = script.numComments + 1 + 78; // TO DO: Change this to the actual commentID returned from the backend once that is implemented. The +77 is to ensure reply_to/parent_comment functionality don't coincide with actor replies.
+        
         const reply_to = orig_comment.children(".content").children("a.author").hasClass('/me') ? orig_comment.attr('commentID') : orig_comment.attr('index');
         const parent_comment = form.parents(".comment").last().attr('index');
 
         const mess =
-            `<div class="comment" commentID=${commentID}>
-            <div class="image" style="background-color:${script.userProfile.color}">
-                <a class="avatar"><img src="${script.userProfile.picture}"></a>
-            </div>
+        `<div class="comment" commentID=${commentID} index=${commentID}>
+            <a class="avatar"><img src="${script.userProfile.picture}"></a>
             <div class="content"> 
                 <a class="author" href="/me">${script.userProfile.name || script.username} (me)</a>
                 <div class="metadata">
@@ -396,17 +407,30 @@ function addCommentToComment(e) {
         comments.append(mess);
         $(`.comment[commentID=${commentID}]`).last()[0].scrollIntoView({ block: 'center', behavior: 'smooth' });
 
-        $.post("/feed", {
-            postID: postID,
-            new_comment: date,
-            comment_text: text,
-            postClass: postClass,
-            reply_to: reply_to,
-            parent_comment: parent_comment,
-            _csrf: $('meta[name="csrf-token"]').attr('content')
-        }).then(function(json) {
-            script.numComments = json.numComments;
-        });
+         if (card.attr("type") == 'userPost')
+            $.post("/userPost_feed", {
+                postID: postID,
+                new_comment: date,
+                comment_text: text,
+                postClass: postClass,
+                reply_to: reply_to,
+                parent_comment: parent_comment,
+                _csrf: $('meta[name="csrf-token"]').attr('content')
+            }).then(function(json) {
+                script.numComments = json.numComments;
+            });
+        else
+            $.post("/feed", {
+                postID: postID,
+                new_comment: date,
+                comment_text: text,
+                postClass: postClass,
+                reply_to: reply_to,
+                parent_comment: parent_comment,
+                _csrf: $('meta[name="csrf-token"]').attr('content')
+            }).then(function(json) {
+                script.numComments = json.numComments;
+            });
     }
 }
 
@@ -440,7 +464,7 @@ $(window).on('load', async () => {
     await getUserInformation();
 
     // add humanized time to all posts
-    $('.right.floated.time.meta, .date').each(function() {
+    $('.time.meta, .date').each(function() {
         const ms = parseInt($(this).text(), 10);
         const time = new Date(ms);
         $(this).text(humanized_time_span(time));
@@ -458,20 +482,22 @@ $(window).on('load', async () => {
 
     // Press enter to submit a comment
     window.addEventListener("keydown", function(event) {
+        if ($(event.target).hasClass("replyToPost") && 
+            $(event.target).closest(".ui.fluid.card").find(".description.cyberbullying").length > 0) {
+            openChat(event);
+        }    
+        if ($(event.target).hasClass("replyToComment") && 
+            $(event.target).closest(".comment").hasClass("cyberbullying")) {
+            openChat(event);
+        }
         if (!event.shiftKey && event.key === "Enter" && $(event.target).hasClass("replyToPost")) {
             event.preventDefault();
             event.stopImmediatePropagation();
             addComment(event);
-            if ($(event.target).closest(".ui.fluid.card").find(".description.cyberbullying").length > 0) {
-                openChat(e);
-            }
         } else if (!event.shiftKey && event.key === "Enter" && $(event.target).hasClass("replyToComment")) {
             event.preventDefault();
             event.stopImmediatePropagation();
             addCommentToComment(event);
-            if ($(event.target).closest(".comment").hasClass("cyberbullying")) {
-                openChat(e);    
-            }
         }
     }, true);
 
@@ -509,7 +535,6 @@ $(window).on('load', async () => {
 
             // Element is visible in the viewport-50px (defined by rootMargin)
             if (entry.isIntersecting) {
-                console.log(`Element with postID ${postID} is visible in the viewport-50px.`);
                 // If chat has already been opened for this post or a timer is already running, do nothing.
                 if (cyberbullyingState.has(postID)) {
                     return;
@@ -531,7 +556,6 @@ $(window).on('load', async () => {
                 } else if (state === true) {
                     cyberbullyingState.delete(postID); // If chat was opened and user scrolls away, allow chat to be opened again if they scroll back
                 }
-                console.log(`Element with postID ${postID} is no longer visible in the viewport-50px.`);
             }
         });
     }, { 

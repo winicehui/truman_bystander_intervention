@@ -5,7 +5,7 @@ block styles
   
 block content
   .computer.only.tablet.only.four.wide.column
-    .ui.card
+    .ui.card.profile-card
       .image
         img(src='/public/picture.svg', data-src=cdn+'/profile_pictures/'+actor.profile.picture)
       .content
@@ -16,12 +16,12 @@ block content
           if actor.profile.location
             i.marker.icon
             span=actor.profile.location
-        .ui.basic.primary.follow.button(style=" margin-top: 15px", actor_un = actor.username)
-          if user.followed.includes(actor.username)
-            i.check.icon 
-            | Following
-          else 
-            | Follow
+        //- .ui.basic.primary.follow.button(style=" margin-top: 15px", actor_un = actor.username)
+        //-   if user.followed.includes(actor.username)
+        //-     i.check.icon 
+        //-     | Following
+        //-   else 
+        //-     | Follow
       .two.ui.bottom.attached.icon.buttons
         button.ui.button.block(data-tooltip='Block User', data-position='bottom left', username=actor.username)
           i.ban.icon
@@ -89,7 +89,7 @@ block content
       .ui.left.floated.red.inverted.button
         i.flag.icon
         | Report User
-      .ui.home.inverted.button
+      .ui.home.blue.inverted.button
         i.home.icon
         | Go Back to Homepage
       .ui.green.ok.inverted.button

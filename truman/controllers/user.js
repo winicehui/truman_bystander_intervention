@@ -175,7 +175,7 @@ exports.postSignup = async(req, res, next) => {
                     // name: req.body.name.trim() || '',
                     // location: req.body.location.trim() || '',
                     // bio: req.body.bio.trim() || '',
-                    picture: req.body.profilePicture || null
+                    picture: req.body.profile_picture || null
                 }
             });
         }

@@ -110,20 +110,32 @@ exports.getNotifications = async(req, res) => {
                     } //end of userPost (read, like, comment)
                 } //Notification is about a userReply (read, like)
                 else if (notification.userReplyID >= 0) {
-                    const userReplyID = notification.userReplyID;
-                    const userReply_userPost = user.posts.find(post => post.comments.find(comment => comment.commentID == userReplyID && comment.new_comment == true) !== undefined);
-                    const userReply_actorPost_feedAction = user.feedAction.find(feedAction => feedAction.comments.find(comment => comment.new_comment_id == userReplyID && comment.new_comment == true) !== undefined);
+                    const userReplyID = notification.userReplyID + 78;
+                    // Find the original post that this userReply is on. It can either be on a user post or an actor post. We first look for it in user posts, then in actor posts.
+                    const userReply_userPost = user.posts.find(post => post.comments.find(comment => 
+                        comment.commentID == userReplyID && comment.new_comment == true || 
+                        comment.subcomments.find(subcomment => subcomment.commentID == userReplyID && subcomment.new_comment == true) !== undefined) !== undefined);
+                    const userReply_actorPost_feedAction = user.feedAction.find(feedAction => feedAction.comments.find(comment => 
+                        comment.new_comment_id == userReplyID && comment.new_comment == true) !== undefined);
                     let userReply_actorPost;
                     if (userReply_actorPost_feedAction) {
                         userReply_actorPost = userReply_actorPost_feedAction.post;
                     }
                     const userReply_originalPost = userReply_userPost || userReply_actorPost;
-
+                    
                     const postType = userReply_originalPost.relativeTime ? "user" : "actor";
                     const userPostID = (postType == "user") ? userReply_originalPost.postID : userReply_originalPost._id;
-                    const userReply_comment = (postType == "user") ?
+                    let userReply_comment = (postType == "user") ?
                         userReply_originalPost.comments.find(comment => comment.commentID == userReplyID && comment.new_comment == true) :
                         userReply_actorPost_feedAction.comments.find(comment => comment.new_comment_id == userReplyID && comment.new_comment == true);
+                    
+                    if (userReply_comment == undefined) {
+                        // This is a subcomment. 
+                        const parentComment = 
+                            userReply_originalPost.comments.find(comment => comment.subcomments.find(subcomment => subcomment.commentID == userReplyID && subcomment.new_comment == true) !== undefined) 
+                        userReply_comment = 
+                            parentComment.subcomments.find(subcomment => subcomment.commentID == userReplyID && subcomment.new_comment == true) 
+                    }
 
                     const time = userReply_comment.absTime.getTime();
                     const time_diff = currDate - time; //Time difference between now and the time comment was created.
@@ -173,11 +185,23 @@ exports.getNotifications = async(req, res) => {
                             if (postType == "user") {
                                 const postIndex = _.findIndex(user.posts, function(o) { return o.postID == userPostID; });
                                 const commentIndex = _.findIndex(user.posts[postIndex].comments, function(o) { return o.commentID == userReplyID && o.new_comment == true });
-                                user.posts[postIndex].comments[commentIndex].likes = final_notify[notifyIndex].numLikes;
+                                if (commentIndex == -1) {
+                                    const subcommentIndex = _.findIndex(user.posts[postIndex].comments, function(o) { return o.subcomments.find(subcomment => subcomment.commentID == userReplyID && subcomment.new_comment == true) !== undefined });
+                                    const subcomment_subIndex = _.findIndex(user.posts[postIndex].comments[subcommentIndex].subcomments, function(o) { return o.commentID == userReplyID && o.new_comment == true });
+                                    user.posts[postIndex].comments[subcommentIndex].subcomments[subcomment_subIndex].likes = final_notify[notifyIndex].numLikes;
+                                } else {
+                                    user.posts[postIndex].comments[commentIndex].likes = final_notify[notifyIndex].numLikes;
+                                }
                             } else {
                                 const postIndex = _.findIndex(user.feedAction, function(o) { return o.post.equals(userPostID); });
                                 const commentIndex = _.findIndex(user.feedAction[postIndex].comments, function(o) { return o.new_comment_id == userReplyID && o.new_comment == true });
+                                if (commentIndex == -1) {
+                                    const subcommentIndex = _.findIndex(user.feedAction[postIndex].comments, function(o) { return o.subcomments.find(subcomment => subcomment.commentID == userReplyID && subcomment.new_comment == true) !== undefined });
+                                    const subcomment_subIndex = _.findIndex(user.feedAction[postIndex].comments[subcommentIndex].subcomments, function(o) { return o.commentID == userReplyID && o.new_comment == true });
+                                    user.feedAction[postIndex].comments[subcommentIndex].subcomments[subcomment_subIndex].likes = final_notify[notifyIndex].numLikes;
+                                } else {
                                 user.feedAction[postIndex].comments[commentIndex].likes = final_notify[notifyIndex].numLikes;
+                            }
                             }
                         }
                     }

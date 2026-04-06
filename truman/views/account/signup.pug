@@ -30,7 +30,7 @@ block content
           label Profile Picture 
           .images
             each filename in profilePictures
-              .image
+              .image(tabindex='0')
                 a.avatar
                   img(src=`/profile_pictures/${filename}`)
         .field

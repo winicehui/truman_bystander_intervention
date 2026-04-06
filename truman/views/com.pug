@@ -11,35 +11,33 @@ block content
       .com-content
         if user.experimentalCondition === 'C1'
           p Congratulations on creating your profile, fresher! 👋 Here are some tips before diving into the community.
-          p FreshView is built on two simple ideas: authentic sharing and honest feedback. People come here to share real moments from everyday life—photos, questions, opinions—and to get honest perspectives from others. Of course, when people share openly, conversations can sometimes get a little messy. The line between honest feedback and hurtful behavior isn’t always obvious.
-          p Remember if you encounter anything in the following list, be sure to <strong>Flag It 🚩</strong> so our moderators can investigate and help out. In addition to our moderators, FreshView also invites our <strong>community members to help shape the tone of the platform</strong>.
+          p <strong style="color: black;">FreshView</strong> is built on two simple ideas: authentic sharing and honest feedback. People come here to share real moments from everyday life—photos, questions, opinions—and to get honest perspectives from others. Of course, when people share openly, conversations can sometimes get a little messy. The line between honest feedback and hurtful behavior isn’t always obvious.
+          p Remember if you encounter anything in the following list, be sure to <strong>Flag It 🚩</strong> so our moderators can investigate and help out. In addition to our moderators, <strong style="color: black;">FreshView</strong> also invites our <strong>community members to help shape the tone of the platform</strong>.
           p For new members, we run a <strong>short community training</strong>. You'll see an example problematic post similar to what you might encounter on the platform and practice being a constructive community member. Sometimes the situation might feel a bit tricky, and we encourage you to think about how you might respond in a way that keeps the conversation constructive.
           p See you soon, Fresher! 🎉
         else if user.experimentalCondition === 'C2'
           p Congratulations on creating your profile, fresher! 👋 Here are some tips before diving into the community.
-          p FreshView is built on two simple ideas: authentic sharing and honest feedback. People come here to share real moments from everyday life—photos, questions, opinions—and to get honest perspectives from others.
+          p <strong style="color: black;">FreshView</strong> is built on two simple ideas: authentic sharing and honest feedback. People come here to share real moments from everyday life—photos, questions, opinions—and to get honest perspectives from others.
           p Of course, when people share openly, conversations can sometimes get a little messy. The line between honest feedback and hurtful behavior isn’t always obvious. Remember if you encounter anything in the following list, be sure to <strong>Flag It 🚩</strong> so our moderators can investigate and help out.
-          p In addition to our moderators, FreshView also invites our <strong>community members to help shape the tone of the platform</strong>. We're currently <strong>testing a beta feature</strong> that uses AI to help support community members in responding constructively.
+          p In addition to our moderators, <strong style="color: black;">FreshView</strong> also invites our <strong>community members to help shape the tone of the platform</strong>. We're currently <strong>testing a beta feature</strong> that uses AI to help support community members in responding constructively.
           p You've been invited to try out this beta experience. Jump in and see how it works.
         else if user.experimentalCondition === 'C3'
           p Congratulations on creating your profile, fresher! 👋 Here are some tips before diving into the community.
-          p FreshView is built on two simple ideas: authentic sharing and honest feedback. People come here to share real moments from everyday life—photos, questions, opinions—and to get honest perspectives from others.
+          p <strong style="color: black;">FreshView</strong> is built on two simple ideas: authentic sharing and honest feedback. People come here to share real moments from everyday life—photos, questions, opinions—and to get honest perspectives from others.
           p Of course, when people share openly, conversations can sometimes get a little messy. The line between honest feedback and hurtful behavior isn’t always obvious. Remember if you encounter anything in the following list, be sure to <strong>Flag It 🚩</strong> so our moderators can investigate and help out.
-          p In addition to our moderators, FreshView also invites our <strong>community members to help shape the tone of the platform</strong> by keeping discussions constructive and respectful.
+          p In addition to our moderators, <strong style="color: black;">FreshView</strong> also invites our <strong>community members to help shape the tone of the platform</strong> by keeping discussions constructive and respectful.
           p Thanks for being part of the community.
           p See you soon, Fresher! 🎉
       .com-footer
         .com-footer-content
-          img.com-logo(src='/public/favicon.svg', alt='FreshView Logo')
+          img.com-logo(src='/public/favicon.svg', alt='<strong style="color: black;">FreshView</strong> Logo')
           .com-enter
             .ui.large.primary.button.enter Enter
 
   script.
     $('.ui.large.primary.button.enter').on('click', function() {
-      console.log("button pressed")
       $.post('/account/consent', { _csrf: $('meta[name="csrf-token"]').attr('content') })
         .done(function() {
-          console.log("done setting consent")
           window.location.href = '/';
         })
         .fail(function() {

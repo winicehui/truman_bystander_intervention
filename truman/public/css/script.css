@@ -6,7 +6,12 @@
     margin-top: 1em;
 }
 
-.ui.fluid.card {
+.profile-card {
+    margin-top: 1em !important; 
+    overflow: hidden;
+}
+
+.ui.fluid.card, .ui.card {
     border-radius: 12px;
     box-shadow: 0 6px 18px rgba(23, 32, 51, 0.08);
     border: 1px solid rgba(34,36,38,.06);
@@ -43,25 +48,48 @@
 /* CSS for Actor and User Posts */
 /* POST */
 
-.ui.fluid.card.cyberbullying {
-    border: 2px solid red;
+.ui.fluid.card.chat-highlight, 
+.comment.chat-highlight, 
+.comment.flagged.chat-highlight{
+    border: 2px solid #2966c2 !important;
+    z-index: 5;
 }
 
-.ui.fluid.card>.content>a{
+.comment.chat-highlight, 
+.comment.flagged.chat-highlight {
+    border-radius: 12px;
+    margin: 1em 1em 1em 0em;
+    padding: 0.5em !important;
+}
+
+.ui.fluid.card>.content.post-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.ui.fluid.card>.content.post-header>a{
     display: flex;
     align-items: center;
 }
 
-.ui.fluid.card .username { 
+.ui.fluid.card>.content.post-header>a>.image {
+    width: 38px;
+    height: 38px;
+}
+
+.ui.fluid.card>.content.post-header .username { 
     font-weight: 700; 
     font-size: 1.1em;
     margin-left: .5rem; 
     color: #222;
 }
 
-.ui.fluid.card .time.meta { 
+.ui.fluid.card>.content.post-header .time.meta { 
     color: #8a8d91; 
-    margin-top: .4rem;
+    margin-left: auto;
 }
 
 .ui.fluid.card>.content>.image {
@@ -136,13 +164,22 @@
 
 
 /* COMMMENT */
+.ui.comments{
+    /* font-size: 1.25em; */
+}
+
 .ui.comments>.comment:first-child {
-    margin: 0.5em 0 0 !important;
+    margin-top: 0.5em !important;
 }
 
 .comment {
     margin: 1em 1em 1em 0em;
     padding: 0.5em !important;
+}
+
+.comment > a.avatar {
+    width: 38px;
+    height: 38px;
 }
 
 .comment.flagged {
@@ -151,46 +188,9 @@
     border-radius: 12px;
 }
 
-.ui.comments{
-    /* font-size: 1.25em; */
-}
-
-.ui.comments>form.ui.reply.form {
-    width: 100%;
-}
-
 .comment>.comments {
     padding-left: 3em !important;
     padding-bottom: 0em !important;
-}
-
-.comment>.image {
-    width: 2.5em;
-    height: 2.5em;
-    margin: 0.2em 0.2em 0 0;
-    float: left;
-    background-color: inherit;
-    border-radius: 50% !important;
-    display: flex !important;
-    justify-content: center;
-    align-items: center;
-    align-content: center;
-}
-
-.comment .image.hidden {    
-    display: none !important;
-}
-
-.comment>.image>a.avatar {
-    margin: 0 !important;
-}
-
-.comment>.image>a.avatar>img {
-    width: 65% !important;
-}
-
-.comment>.image~.content {
-    margin-left: 3.5em
 }
 
 a.reply, a.like {
@@ -260,10 +260,63 @@ a.flag.orange {
 
 /* CSS for reporting and blocking modals */
 
-.modal .ui.form label {
-    font-size: medium !important;
+.ui.modal {
+    border-radius: 16px !important;
+    box-shadow: 0 20px 48px rgba(23, 32, 51, 0.2) !important;
+    border: none !important;
+    overflow: hidden;
+    background: white !important;
+    color: black !important;
 }
 
-.modal .ui.form .grouped.fields .field {
-    margin-left: 5px !important;
+.ui.modal .header {
+    background: linear-gradient(90deg, #1575f4 0%, #2966c2 100%) !important;
+    color: #fff !important;
+    font-weight: 700;
+    font-size: 1.1rem;
+    letter-spacing: 0.01em;
+    border-bottom: none !important;
+}
+
+.ui.small.report.coupled.modal .content,
+.ui.small.second.coupled.modal .content,
+.ui.small.blocked.modal .content {
+    padding: 1.2rem 1.25rem !important;
+    color: #2a2c35;
+    font-size: 1rem;
+}
+
+.ui.small.report.coupled.modal .actions, 
+.ui.small.second.coupled.modal .actions,
+.ui.small.blocked.modal .actions {
+    background: #f6f8fd !important;
+    border-top: 1px solid #e8ecf5 !important;
+    padding: 0.9rem 1rem !important;
+}
+
+.ui.tiny.post.modal .actions .ui.button {
+    min-width: 100px;
+    font-weight: 600;
+    box-shadow: 0 10px 20px rgba(21, 117, 244, 0.2);
+    background: linear-gradient(90deg,#2966c2 0%, #1575f4 100%) !important;
+    color: #fff;
+}
+
+.ui.modal .actions .ui.button {
+    box-shadow: 0 0 0 2px;
+    min-width: 100px;
+    font-weight: 600;
+    box-shadow: 0 10px 20px rgba(21, 117, 244, 0.2);
+    background: linear-gradient(90deg,#2966c2 0%, #1575f4 100%) !important;
+    color: #fff;
+}
+
+.ui.modal .actions .ui.red.button {
+    box-shadow: 0 10px 20px rgba(21, 117, 244, 0.2);
+    background: linear-gradient(to right, #ce001a, #d70020) !important;
+}
+
+.ui.modal .actions .ui.green.button {
+    box-shadow: 0 10px 20px rgba(21, 117, 244, 0.2);
+    background: linear-gradient(to right, #208f1f, #249f23) !important;
 }
