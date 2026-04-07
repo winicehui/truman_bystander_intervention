@@ -1,3 +1,5 @@
+const cyberbullyingState = new Map(); // Map to track each element (key: PostID, value: timeout or true if chat has already been opened)
+
 async function getUserInformation() {
     const data = await $.get("/userProfile");
     script.userProfile = data.userProfile;
@@ -54,7 +56,7 @@ function likePost(e) {
             });
     }
     if (post.find(".description.cyberbullying").length > 0) {
-        openChat(e, post);
+        openChat(post);
     }
 }
 
@@ -93,7 +95,7 @@ function flagPost(e) {
         // post.find(".ui.dimmer.flag").dimmer({ closable: true }).dimmer('show');
     }
     if (post.find(".description.cyberbullying").length > 0) {
-        openChat(e, post);
+        openChat(post);
     }
 }
 
@@ -156,7 +158,7 @@ function likeComment(e) {
             });
     }
     if (comment.hasClass("cyberbullying")) {
-        openChat(e, comment);
+        openChat(comment);
     }
 }
 
@@ -217,7 +219,7 @@ function flagComment(e) {
         }
     }
     if (commentElement.hasClass("cyberbullying")) {
-        openChat(e, commentElement);
+        openChat(commentElement);
     }
 }
 
@@ -281,9 +283,9 @@ function addComment(e) {
                 script.numComments = json.numComments;
             });
     }
-    // if (card.find(".cyberbullying").length > 0) {
-    //     openChat(e, card);
-    // }
+    if (card.find(".description.cyberbullying").length > 0) {
+        openChat(card);
+    }
 }
 
 function changeColor(e, string = "") {
@@ -334,8 +336,8 @@ function openCommentReply(e) {
         comment_area_element.focus();
         comment_area_element[0].scrollIntoView({ block: 'center', behavior: 'smooth' });
     }
-    if (target.closest(".comment").hasClass("cyberbullying")) {
-        openChat(e, target.closest(".comment"));
+    if ($(e.target).closest(".comment").hasClass("cyberbullying")) {
+        openChat($(e.target).closest(".comment"));
     }
 }
 
@@ -432,6 +434,9 @@ function addCommentToComment(e) {
                 script.numComments = json.numComments;
             });
     }
+    if ($(e.target).closest(".comment").hasClass("cyberbullying")) {
+        openChat($(e.target).closest(".comment"));
+    }
 }
 
 function followUser(e) {
@@ -473,10 +478,10 @@ $(window).on('load', async () => {
     // ************ Actions on Main Post ***************
     // Focus new comment element if "Reply" button is clicked
     $('.ui.reply.button').on('click', function(event) {
-        let parent = $(this).closest(".ui.fluid.card");
+        let parent = $(event.target).closest(".ui.fluid.card");
         parent.find("textarea.replyToPost").focus();
         if (parent.find(".cyberbullying").length > 0) { 
-            openChat(event);
+            openChat(   parent);
         }
     });
 
@@ -484,11 +489,11 @@ $(window).on('load', async () => {
     window.addEventListener("keydown", function(event) {
         if ($(event.target).hasClass("replyToPost") && 
             $(event.target).closest(".ui.fluid.card").find(".description.cyberbullying").length > 0) {
-            openChat(event);
+            openChat($(event.target).closest(".ui.fluid.card"));
         }    
         if ($(event.target).hasClass("replyToComment") && 
             $(event.target).closest(".comment").hasClass("cyberbullying")) {
-            openChat(event);
+            openChat($(event.target).closest(".comment"));
         }
         if (!event.shiftKey && event.key === "Enter" && $(event.target).hasClass("replyToPost")) {
             event.preventDefault();
@@ -522,51 +527,6 @@ $(window).on('load', async () => {
 
     //Reply to comment
     $('a.reply').on('click', openCommentReply);
-
-    const cyberbullyingContent = $('.cyberbullying');
-
-    const cyberbullyingState = new Map(); // Map to track each element (key: PostID, value: timeout or true if chat has already been opened)
-   
-    const cyberbullyingObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            const element = entry.target;
-            const post = $(element).closest(".ui.fluid.card");
-            const postID = post.attr("postID");
-
-            // Element is visible in the viewport-50px (defined by rootMargin)
-            if (entry.isIntersecting) {
-                // If chat has already been opened for this post or a timer is already running, do nothing.
-                if (cyberbullyingState.has(postID)) {
-                    return;
-                } else {
-                    // Start a 3 second countdown to open chat
-                    const timeout = setTimeout(() => {
-                        openChat(entry);
-                        cyberbullyingState.set(postID, true); // Mark that chat has been opened for this post
-                    }, 3000);
-                    cyberbullyingState.set(postID, timeout);
-                }
-            } 
-            // Element is not visible in the viewport-50px (defined by rootMargin)
-            else {
-                const state = cyberbullyingState.get(postID);
-                if (state && state !== true) {
-                    clearTimeout(state); // Clear the timeout if it exists and chat hasn't been opened yet
-                    cyberbullyingState.delete(postID); // Remove from map
-                } else if (state === true) {
-                    cyberbullyingState.delete(postID); // If chat was opened and user scrolls away, allow chat to be opened again if they scroll back
-                }
-            }
-        });
-    }, { 
-        threshold: 1,
-        rootMargin: '-50px'
-     });
-
-    cyberbullyingContent.each(function(index, element) {
-        cyberbullyingObserver.observe(element);
-    });
-
 
     // Track how long a post is on the screen (borders are defined by image)
     // Start time: When the entire photo is visible in the viewport.
