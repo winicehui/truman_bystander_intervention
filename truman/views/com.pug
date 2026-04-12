@@ -28,17 +28,20 @@ block content
           p In addition to our moderators, <strong style="color: black;">FreshView</strong> also invites our <strong>community members to help shape the tone of the platform</strong> by keeping discussions constructive and respectful.
           p Thanks for being part of the community.
           p See you soon, Fresher! 🎉
-      .com-footer
-        .com-footer-content
-          img.com-logo(src='/public/favicon.svg', alt='<strong style="color: black;">FreshView</strong> Logo')
-          .com-enter
-            .ui.large.primary.button.enter Enter
+        .com-footer
+          .com-footer-content
+            img.com-logo(src='/public/favicon.svg', alt='<strong style="color: black;">FreshView</strong> Logo')
+            if !fromFeed
+              .com-enter
+                .ui.large.primary.button.enter Enter
 
   script.
     $('.ui.large.primary.button.enter').on('click', function() {
       $.post('/account/consent', { _csrf: $('meta[name="csrf-token"]').attr('content') })
-        .done(function() {
-          window.location.href = '/';
+        .done(function(json) {
+          if (json["result"] === "success") {
+            window.location.href = !{JSON.stringify(user.experimentalCondition === 'C1' ? '/training_intro' : '/')};
+          }
         })
         .fail(function() {
           alert('Error setting consent. Please try again.');

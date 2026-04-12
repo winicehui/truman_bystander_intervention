@@ -228,13 +228,13 @@ function addComment(e) {
     const form = target.parents(".ui.form");
     const text = form.find("textarea.replyToPost").val().trim();
     const card = target.parents(".ui.fluid.card");
-    let comments = card.find(".ui.comments");
+    let comments = card.find(".ui.comments").not(".icon");;
     const postCondition = target.closest(".ui.fluid.card").attr("postCondition");
     // no comments area - add it
     if (!comments.length) {
         const buttons = card.find(".ui.bottom.attached.icon.buttons")
         buttons.after('<div class="content"><div class="ui comments"></div>');
-        comments = card.find(".ui.comments")
+        comments = card.find(".ui.comments").not(".icon");
     }
     if (text.trim() !== '') {
         const currDate = Date.now();

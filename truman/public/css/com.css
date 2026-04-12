@@ -6,10 +6,12 @@ html, body {
 
 #pagecontainer, #pagegrid {
     width: 100% !important;
+    margin: 0; 
+    padding: 0;
 }
 
 .sixteen.wide.column.centered#com {
-    min-height: calc(100vh - 50px);
+    min-height: calc(100vh - 20px);
     width: 100vw;
     margin: 0;
     padding: 0;
@@ -26,6 +28,7 @@ html, body {
     max-width: 800px;
     width: 100%;
     padding: 3rem;
+    margin: 3rem;
     text-align: center;
 }
 

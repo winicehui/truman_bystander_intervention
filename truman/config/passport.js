@@ -42,5 +42,9 @@ exports.isAuthenticated = (req, res, next) => {
     if (req.isAuthenticated()) {
         return next();
     }
-    res.redirect('/login' + (req.query.r_id ? `?r_id=${req.query.r_id}` : ""));
+
+    const ResponseID = req.query.ResponseID || req.query.r_id;
+    const Condition = req.query.Condition || req.query.condition;
+    const redirectURL = (ResponseID || Condition) ? `/?ResponseID=${ResponseID || ''}&Condition=${Condition || ''}` : '/';
+    res.redirect(redirectURL);
 };

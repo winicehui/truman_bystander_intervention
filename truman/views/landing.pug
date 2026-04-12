@@ -9,7 +9,7 @@ block content
         .landing-content
             img.ui.large.centered.image(src='/public/freshview_logo2.svg', alt='Logo')
             h1.ui.header.centered#typewriter
-            a.ui.large.primary.button(href='/signup') Sign Up
+            a.ui.large.primary.button(href=(ResponseID || Condition) ? `/signup?ResponseID=${ResponseID || ''}&Condition=${Condition || ''}` : '/signup') Sign Up
 
 block scripts
     script.

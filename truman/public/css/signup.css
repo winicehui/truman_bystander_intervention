@@ -24,23 +24,23 @@ h3 {
     margin-bottom: 40px;
 }
 
-.ui.form .field {
+.ui.form#signup-form .field {
     justify-content: center;
     text-align: center;
 }
 
-.ui.form .field label{
+.ui.form#signup-form .field label{
     justify-content: center;
     text-align: center;
     font-size: 1.38571429rem !important;
 }
 
-.ui.form .field input{
+.ui.form#signup-form .field input{
     width: 80%;
     font-size: 1rem;
 }
 
-.ui.form .field input.selected{
+.ui.form#signup-form .field input.selected{
     background-color: #eef3fc !important;
     border: 2px solid #2966C2;
     box-shadow: 0 0 0 3px rgba(41, 102, 194, 0.15);
@@ -56,14 +56,15 @@ h3 {
 }
 
 .images .image {
-  width: 20%;
+width: 20%;
   min-width: 120px;
-  height: 120px;
+  height: 100%;
   position: relative;
   border-radius: 1em;
   border: 3px solid transparent; /* reserve space so layout doesn't shift on select */
   cursor: pointer;
   transition: all 0.15s ease;
+  padding: 5px;
 }
 
 a.avatar {
@@ -112,6 +113,10 @@ button[type='submit'].ui.large.button {
   cursor: not-allowed;
   transition: background-color 0.2s ease, color 0.2s ease;
   pointer-events: none;
+}
+button[type='submit'].ui.large.button.green {
+    background: linear-gradient(to right, #208f1f, #249f23) !important;
+    color: white;
 }
 
 button[type='submit'].ui.large.button.ready {

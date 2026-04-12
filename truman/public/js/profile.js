@@ -1,47 +1,67 @@
-$(window).on("load", function () {
-  let selectedImage = null;
+$(window).on('load', function () {
+    const $button = $('button[type="submit"]');
 
-  // Photo selection
-  $('.images .image').on('click', function () {
-    // Deselect all
-    $('.images .image').removeClass('selected');
-
-    // Select clicked
-    $(this).addClass('selected');
-
-    // Track selected image
-    selectedImage = $(this).find('img').attr('src');
-
-    // Add or update hidden input for form submission
-    if ($('input[name="profile_picture"]').length === 0) {
-      $('<input>').attr({ type: 'hidden', name: 'profile_picture' }).appendTo('#signup-form');
+    function setButtonSuccess() {
+      $button
+        .removeClass('ready disabled')
+        .addClass('green')
+        .html('<i class="check icon"></i> Updated')
     }
-    $('input[name="profile_picture"]').val(selectedImage);
 
-    checkReady();
-  });
-
-  // Check fields on username input and checkbox change
-  $('#username').on('input', checkReady);
-  $('#tos').on('change', checkReady);
-
-  function checkReady() {
-    const hasUsername = $('#username').val().trim().length > 3;
-    const hasPhoto = selectedImage !== null;
-    const hasTos = $('#tos').is(':checked');
-
-    if (hasUsername) {
-      $('#username').addClass('selected');
-    } else {
-      $('#username').removeClass('selected');
+    function setButtonEnabled() {
+      $button
+        .removeClass('green disabled')
+        .addClass('ready')
+        .html('Update Profile')
+        .prop('disabled', false);
     }
-    if (hasUsername && hasPhoto && hasTos) {
-      $('button[type="submit"]').addClass('ready').removeClass('disabled');
-    } else {
-      $('button[type="submit"]').removeClass('ready').addClass('disabled');
-    }
-  }
 
-  // Initialize button state
-  checkReady();
+    // Photo selection
+    $('.images .image').on('click', function () {
+      $('.images .image').removeClass('selected');
+      $(this).addClass('selected');
+      const selectedImage = $(this).find('img').attr('src');
+      $('input[name="profile_picture"]').val(selectedImage);
+      setButtonEnabled();
+    });
+
+    // Text field change detection
+    $('#name, #location, #bio').on('input change', function () {
+        setButtonEnabled();
+    });
+
+    // Handle form submission via AJAX
+    $('#profile').on('submit', function (e) {
+        e.preventDefault();
+
+        $.post({
+            url: '/account/profile',
+            data: new FormData(this),
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                if (response.success) {
+                    // Update header name
+                    if (response.name) {
+                      $('.ui.borderless.fixed.menu span, .ui.fluid.top.fixed.item.menu span')
+                          .text(response.name);
+                    }
+                    // Update header profile picture
+                    if (response.picture) {
+                      console.log(response.picture)
+                      console.log($('.ui.borderless.fixed.menu img.ui.mini.spaced.circular.image, .ui.fluid.top.fixed.item.menu img.ui.mini.spaced.circular.image'))
+                      $('.ui.borderless.fixed.menu img.ui.mini.spaced.circular.image, .ui.fluid.top.fixed.item.menu img.ui.mini.spaced.circular.image')
+                          .attr('src', response.picture);
+                    }
+                    setButtonSuccess();
+                }
+            },
+            error: function (xhr) {
+                const response = xhr.responseJSON;
+                if (response && !response.success) {
+                    console.error(response.msg);
+                }
+            }
+        });
+    });
 });

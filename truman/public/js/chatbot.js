@@ -1,7 +1,32 @@
-// ─────────────────────────────────────────────────────────────────
-// Shared state — must be accessible by postFunctionalities.js too
-// ─────────────────────────────────────────────────────────────────
+/** Rules/ functionality of chatbot: 
+ * 1. If chat for a post has not been opened since post has entered viewport, and user interacts with 
+ * cyberbullying content on the post or any cyberbullying content on the post has been in the viewport for >3 seconds, 
+ * then open chat (which also highlights corresponding post) and unhide #continue-chat-button for that post.
+ * 2. If chat was previously opened and user minimized/closed it, and content hasn't left viewport left, 
+ * do nothing (unless forced by clicking #continue-chat-button next to a post).
+ * 3. Minimizing the chatbot: minimizes chat history, keeps post highlighted.
+ * 4. Closing the chatbot: closes chat into a tag, unhighlights post. Clicking the tag reopens chat.
+ * 5. When content has left viewport, all chatbot elements are hidden. Only #continue-chat-button remains for the post.
+ * Chat is reset.
+ * **/
+function getCommentContext(post) {
+    const comments = [];
 
+    post.find('.ui.comments .comment .content').each(function() {
+        const author = $(this).children('.author').first().text().trim();
+        const body = $(this).children('.text').first().text().trim();
+
+        if (body) {
+            comments.push(author ? `${author}: ${body}` : body);
+        }
+    });
+
+    return comments.join('\n');
+}
+
+// ─────────────────────────────────────────────────────────────────
+// postChatState: shared chat state — must be accessible by postFunctionalities.js too
+// ─────────────────────────────────────────────────────────────────
 // Tracks per-post state. Key: postID, value:
 //   'pending'   — 3s timer is running
 //   'open'      — chat is open
@@ -31,7 +56,7 @@ const activeChatObserver = new IntersectionObserver((entries) => {
 // openChat(element)
 // Called by any trigger. element is always a jQuery .comment or .ui.fluid.card
 // ─────────────────────────────────────────────────────────────────
-async function openChat(element) {
+async function openChat(element, force = false) {
     if (!element || !element.jquery || !element.length) return;
 
     const isCard = element.hasClass('card');
@@ -43,9 +68,9 @@ async function openChat(element) {
 
     const state = postChatState.get(chatId);
 
-    // Rule 2 & 3: If chat was previously opened and user minimized/closed it,
-    // and content hasn't left viewport since — do nothing
-    if (state === 'open' || state === 'minimized' || state === 'closed') return;
+    // Rule 2: If chat was previously opened and user minimized/closed it,
+    // and content hasn't left viewport since — do nothing (unless forced)
+    if (!force && (state === 'open' || state === 'minimized' || state === 'closed')) return;
 
     // Cancel any pending 3s timer if a manual interaction fires first
     if (state && state !== 'pending') clearTimeout(state);
@@ -99,6 +124,9 @@ async function openChat(element) {
 
     // ── AI greeting (only if no history) ─────────────────────────
     if (existingMessages.length === 0) {
+        const postContext = post.find('.description').first().text().trim();
+        const commentContext = getCommentContext(post);
+
         chat.addTypingAnimationExternal('Comment Coach');
         try {
             const response = await fetch('/chat/ai', {
@@ -109,9 +137,9 @@ async function openChat(element) {
                 },
                 body: JSON.stringify({
                     chat_id: chatId,
-                    postCondition: post.attr('postcondition') || '',
                     messages: [],
-                    postContext: post.find('.description').first().text().trim()
+                    postContext: postContext,
+                    commentContext: commentContext
                 })
             });
             if (!response.ok) throw new Error(response.status);
@@ -153,6 +181,9 @@ function resetPostChatState(postId) {
     $chat.slideUp(200, function () {
         $(this).addClass('hidden');
     });
+
+    // Hide the toggle button
+    $('#copilot-chat-toggle').addClass('hidden');
 
     // Stop observing the post
     const postEl = $(`[postid="${postId}"]`)[0];
@@ -253,6 +284,9 @@ $(window).on('load', function () {
                 });
 
                 const post = $(`[postid="${this.chatId}"]`);
+                const postContext = post.find('.description').first().text().trim();
+                const commentContext = getCommentContext(post);
+                const csrfToken = $('meta[name="csrf-token"]').attr('content');
                 try {
                     const response = await fetch('/chat/ai', {
                         method: 'POST',
@@ -264,7 +298,8 @@ $(window).on('load', function () {
                             chat_id: this.chatId,
                             postCondition: post.attr('postcondition') || '',
                             messages,
-                            postContext: post.find('.description').first().text().trim()
+                            postContext: postContext,
+                            commentContext: commentContext
                         })
                     });
                     if (!response.ok) throw new Error(response.status);
@@ -366,7 +401,7 @@ $(window).on('load', function () {
     // ── Continue chat button (re-open after close) ────────────────
     $('.continue-chat-button').on('click', function () {
         const post = $(this).closest('.ui.fluid.card');
-        openChat(post);
+        openChat(post, true);
     });
 
     // ── Toggle chat button (re-open when clicked) ────────────────
