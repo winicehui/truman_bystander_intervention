@@ -13,7 +13,8 @@ const scriptSchema = new mongoose.Schema({
         type: String,
             default: '', trim: true
     },
-    condition: { type: String, default: '', trim: true }, // For experimental use (If blank/null, this post is shown to all users. If defined, this post is shown only to users with the same value for their experimental condition)
+    //condition: { type: String, default: '', trim: true }, // For experimental use (If blank/null, this post is shown to all users. If defined, this post is shown only to users with the same value for their experimental condition)
+    condition: { type: [String], default: [] },
 
     // Sorted by least recent --> most recent
     // List of actor comments on the post
@@ -25,8 +26,9 @@ const scriptSchema = new mongoose.Schema({
         time: Number, // Indicates when the comment was created relative to how much time has passed since the user created their account, in milliseconds
 
         class: { type: String, default: '', trim: true },
-        condition: { type: String, default: '', trim: true }, // For experimental use (If blank/null, this comment is shown to all users. If defined, this comment is shown only to users with the same value for their experimental condition)
-
+        //condition: { type: String, default: '', trim: true }, // For experimental use (If blank/null, this comment is shown to all users. If defined, this comment is shown only to users with the same value for their experimental condition)
+        condition: { type: [String], default: [] },
+        
         subcomments: [new Schema({
             commentID: Number, // ID of the comment
             body: { type: String, default: '', trim: true }, //body of comment
