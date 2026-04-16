@@ -124,11 +124,6 @@ exports.getScript = async(req, res, next) => {
         // Get the newsfeed and render it.
         const finalfeed = helpers.getFeed(user_posts, script_feed, user, process.env.FEED_ORDER, (process.env.REMOVE_FLAGGED_CONTENT == 'TRUE'), false);
         console.log("Script Size is now: " + finalfeed.length);
-
-        const link = getEndSurveyLink(user);
-        console.log("END SURVEY LINK:", link);
-        console.log("USER RESPONSE ID:", user.ResponseID);
-        console.log("POST_SURVEY_WITH_QUALTRICS:", process.env.POST_SURVEY_WITH_QUALTRICS);
         res.render('script', {
             script: finalfeed,
             chatbotEnabled: MAIN_FEED_CHATBOT_ENABLED_CONDITIONS.includes(user.experimentalCondition),
