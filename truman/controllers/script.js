@@ -43,6 +43,24 @@ comments about cyberbullying. Let's stay focused on that!"
 - Always treat the user as s bystander.`;
 
 /**
+ * Generate post-survey link.
+ */
+function getEndSurveyLink(user) {
+    const responseID = user.ResponseID;
+
+    if (user.endSurveyLink) { 
+        return user.endSurveyLink;
+    } // Returns a pre-assigned link if already stored on the user
+
+    return process.env.POST_SURVEY
+        ? process.env.POST_SURVEY +
+            (process.env.POST_SURVEY_WITH_QUALTRICS === 'TRUE' && responseID
+                ? `?r_id=${responseID}`
+                : "")
+        : "";  //If not already assigned, appends the Qualtrics response ID (r_id=[ResponseID]).
+}
+
+/**
  * GET /
  * Fetch and render newsfeed.
  */
@@ -105,7 +123,8 @@ exports.getScript = async(req, res, next) => {
         console.log("Script Size is now: " + finalfeed.length);
         res.render('script', {
             script: finalfeed,
-            chatbotEnabled: MAIN_FEED_CHATBOT_ENABLED_CONDITIONS.includes(user.experimentalCondition)
+            chatbotEnabled: MAIN_FEED_CHATBOT_ENABLED_CONDITIONS.includes(user.experimentalCondition),
+            endSurveyLink: getEndSurveyLink(user)
         });
     } catch (err) {
         next(err);

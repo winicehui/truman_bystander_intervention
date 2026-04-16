@@ -39,6 +39,10 @@ block content
         .content
           .description
             |  End of Posts for the last 24 hours.
+            if endSurveyLink
+              br
+              br
+              a.ui.large.primary.button#post-survey-btn(href=endSurveyLink) Proceed to Post-Experience Survey
   if isTrainingModule   
     .four.wide.computer.column
   if chatbotEnabled
