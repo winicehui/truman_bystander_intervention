@@ -533,8 +533,14 @@ exports.postAIChat = async (req, res, next) => {
             },
             input: conversationInput,
             max_output_tokens: 300,
+            reasoning: {
+                summary: "auto"
+            }
         });
         const replyText = response.output_text;
+        // reasoning summary for each message
+        const reasoningItem = response.output.find(item => item.type === "reasoning");
+        const reasoningSummary = reasoningItem?.summary?.[0]?.text ?? null;
 
         // const reply = {
         //     role: 'assistant',
@@ -547,6 +553,7 @@ exports.postAIChat = async (req, res, next) => {
             absTime: new Date(),
             name: 'Comment Coach',
             isAgent: true,
+            reasoning: reasoningSummary ?? null,
         });
 
         await user.save();

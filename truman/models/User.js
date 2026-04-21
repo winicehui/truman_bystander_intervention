@@ -151,6 +151,7 @@ const userSchema = new mongoose.Schema({
             absTime: Date, // The absolute date (time) of when the chat message was made
             name: String, // Indicates who made the chat message
             isAgent: { type: Boolean, default: false }, // Indicates if the user made the chat message
+            reasoning: { type: String, default: null }, // Indicates the reasoning summary for the chat message if the message is made by the agent. 
         }, { _id: true, versionKey: false })],
     }, { _id: false, versionKey: false })],
 
