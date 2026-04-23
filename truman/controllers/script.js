@@ -675,3 +675,67 @@ exports.getTrainingStatus = async(req, res, next) => {
         next(err);
     }
 };
+exports.postChatActivation = async (req, res, next) => {
+    console.log('postChatActivation called', req.body);
+    try {
+        const user = await User.findById(req.user.id).exec();
+        const { chat_id, activationFactor } = req.body;
+ 
+        // Ensure a chatAction entry exists for this post
+        let feedIndex = _.findIndex(user.chatAction, function (o) {
+            return o.post && o.post.equals(chat_id);
+        });
+        if (feedIndex === -1) {
+            feedIndex = user.chatAction.push({ post: chat_id }) - 1;
+        }
+ 
+        // Only record the first activation — never overwrite with a later trigger
+        if (user.chatAction[feedIndex].activationFactor === 0) {
+            user.chatAction[feedIndex].activationFactor = Number(activationFactor);
+        }
+ 
+        await user.save();
+        res.json({ result: 'success' });
+    } catch (err) {
+        next(err);
+    }
+};
+
+exports.postChatTiming = async (req, res, next) => {
+    try {
+        const user = await User.findById(req.user.id).exec();
+        const { chat_id, event, absTime, minimizedDuration } = req.body;
+ 
+        let feedIndex = _.findIndex(user.chatAction, function (o) {
+            return o.post && o.post.equals(chat_id);
+        });
+        if (feedIndex === -1) {
+            feedIndex = user.chatAction.push({ post: chat_id }) - 1;
+        }
+ 
+        const entry = user.chatAction[feedIndex];
+        const ts = new Date(Number(absTime));
+ 
+        if (event === 'message_sent') {
+            // Track first and last message timestamps
+            if (!entry.firstMessageTime) {
+                entry.firstMessageTime = ts;
+            }
+            entry.lastMessageTime = ts;
+        } else if (event === 'minimized' || event === 'closed') {
+            // Nothing to persist yet – the client starts its own timer.
+            // We receive the accumulated duration on 'reopened'.
+        } else if (event === 'reopened') {
+            // Add the duration the chat was hidden to the running total
+            const dur = Number(minimizedDuration);
+            if (!isNaN(dur) && dur > 0) {
+                entry.minimizedDuration = (entry.minimizedDuration || 0) + dur;
+            }
+        }
+ 
+        await user.save();
+        res.json({ result: 'success' });
+    } catch (err) {
+        next(err);
+    }
+};
