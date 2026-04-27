@@ -37,6 +37,7 @@ const scriptSchema = new mongoose.Schema({
             time: Number, //time of comment in reference to video (in milliseconds)
             class: String, //For experimental use (used to define the type of subcomment: null, number 0-17)
 
+            conditions: { type: [String], default: [] },
             new_comment: { type: Boolean, default: false },
             liked: { type: Boolean, default: false },
             unliked: { type: Boolean, default: false }
