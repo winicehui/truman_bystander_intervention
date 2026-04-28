@@ -8,9 +8,9 @@ dotenv.config({ path: '.env' }); // See the file .env.example for the structure 
 const OpenAI = require('openai');
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-const TRAINING_POST_CONDITION = 'C1';
-const MAIN_FEED_CHATBOT_ENABLED_CONDITIONS = ['C2'];
-const TRAINING_CHATBOT_ENABLED_CONDITIONS = ['C1'];
+const TRAINING_POST_CONDITION = ['C1', 'C4'];
+const MAIN_FEED_CHATBOT_ENABLED_CONDITIONS = ['C2', 'C4'];
+const TRAINING_CHATBOT_ENABLED_CONDITIONS = ['C1', 'C4'];
 
 const SYSTEM_PROMPT = `You are a compassionate digital-citizenship coach embedded in a social media platform.
 Your ONLY purpose is to help users craft kind, constructive public comments that fulfill at least 1 of the following:
@@ -80,17 +80,13 @@ exports.getScript = async(req, res, next) => {
             user.save();
         }
 
-        // Array of actor posts that match the user's experimental condition, sorted by descending time. 
-        let script_feed = await Script.find({
-                condition: { "$in": ["", user.experimentalCondition] }
-            })
-            .find({
-                $or: [
-                    { condition: { $ne: TRAINING_POST_CONDITION } },
-                    { condition: '' },
-                    { condition: null },
-                    { condition: { $exists: false } }
-                ]
+        // Array of actor posts that are not found in the training set, sorted by descending time. 
+            let script_feed = await Script.find({
+                condition: { 
+                    // $in: ["", user.experimentalCondition],
+                    //$ne: TRAINING_POST_CONDITION
+                    $nin: TRAINING_POST_CONDITION
+                }
             })
             // .where('time').lte(time_diff).gte(time_limit) // Uncomment for only past 24 hours of actor posts to show up in the feed.
             .sort('-time')
@@ -106,11 +102,11 @@ exports.getScript = async(req, res, next) => {
         });
 
         // Get the newsfeed and render it.
-        const finalfeed = helpers.getFeed(user_posts, script_feed, user, process.env.FEED_ORDER, (process.env.REMOVE_FLAGGED_CONTENT == 'TRUE'), true);
+        const finalfeed = helpers.getFeed(user_posts, script_feed, user, process.env.FEED_ORDER, (process.env.REMOVE_FLAGGED_CONTENT == 'TRUE'), false);
+
         console.log("Script Size is now: " + finalfeed.length);
         res.render('script', {
             script: finalfeed,
-            showNewPostIcon: true,
             chatbotEnabled: MAIN_FEED_CHATBOT_ENABLED_CONDITIONS.includes(user.experimentalCondition)
         });
     } catch (err) {
@@ -128,7 +124,9 @@ exports.getChat = async(req, res, next) => {
             .populate('chatAction.post')
             .exec();
         
-        const feedIndex = _.findIndex(user.chatAction, function(o) { return o.post.equals(req.query.chat_id); });
+        //const feedIndex = _.findIndex(user.chatAction, function(o) { return o.post.equals(req.query.chat_id); });
+        const feedIndex = _.findIndex(user.chatAction, function(o) { return o.post && o.post.equals(req.query.chat_id); });
+
 
         if (feedIndex != -1) {
             let messages = user.chatAction[feedIndex].messages;
@@ -155,10 +153,10 @@ exports.getChat = async(req, res, next) => {
  * Post /post/new
  * Record a new user-made post. Include any actor replies (comments) that go along with it.
  */
-exports.newPost = async(req, res) => {
+exports.newPost = async(req, res, next) => {
     try {
         const user = await User.findById(req.user.id).exec();
-        if (req.file) {
+        if (req.body.body) {
             user.numPosts = user.numPosts + 1; // Count begins at 0
             const currDate = Date.now();
 
@@ -166,7 +164,7 @@ exports.newPost = async(req, res) => {
                 type: "user_post",
                 postID: user.numPosts,
                 body: req.body.body,
-                picture: req.file.filename,
+                picture: req.file ? req.file.filename : null,
                 liked: false,
                 likes: 0,
                 comments: [],
@@ -195,7 +193,8 @@ exports.newPost = async(req, res) => {
                         new_comment: false,
                         liked: false,
                         flagged: false,
-                        likes: 0
+                        likes: 0, 
+                        subcomments: []
                     };
                     post.comments.push(tmp_actor_reply);
                 }
@@ -204,7 +203,7 @@ exports.newPost = async(req, res) => {
             await user.save();
             res.redirect('/');
         } else {
-            req.flash('errors', { msg: 'ERROR: Your post did not get sent. Please include a photo and a caption.' });
+            req.flash('errors', { msg: 'ERROR: Your post did not get sent. Please include some text with your post.' });
             res.redirect('/');
         }
     } catch (err) {
@@ -218,9 +217,11 @@ exports.newPost = async(req, res) => {
  */
 exports.postUpdateFeedAction = async(req, res, next) => {
     try {
+        console.log(req.body);
         const user = await User.findById(req.user.id).exec();
         // Check if user has interacted with the post before.
-        let feedIndex = _.findIndex(user.feedAction, function(o) { return o.post.equals(req.body.postID); });
+        //let feedIndex = _.findIndex(user.feedAction, function(o) { return o.post.equals(req.body.postID); });
+        let feedIndex = _.findIndex(user.feedAction, function(o) { return o.post && o.post.equals(req.body.postID); });
 
         // If the user has not interacted with the post before, add the post to user.feedAction.
         if (feedIndex == -1) {
@@ -232,11 +233,12 @@ exports.postUpdateFeedAction = async(req, res, next) => {
         }
 
         // User created a new comment on the post.
+        // TO DO: Return the new comment's ID so that the frontend can keep track of it and use it for future interactions with the comment (like, flag, etc.)
         if (req.body.new_comment) {
             user.numComments = user.numComments + 1;
             const cat = {
                 new_comment: true,
-                new_comment_id: user.numComments,
+                new_comment_id: user.numComments + 78,
                 body: req.body.comment_text,
                 relativeTime: req.body.new_comment - user.createdAt,
                 absTime: req.body.new_comment,
@@ -360,28 +362,76 @@ exports.postUpdateUserPostFeedAction = async(req, res, next) => {
         }
         // User created a new comment on the post.
         else if (req.body.new_comment) {
+            console.log("New comment on user post.");
             user.numComments = user.numComments + 1;
-            const cat = {
+            let cat = {
                 body: req.body.comment_text,
-                commentID: user.numComments,
+                commentID: user.numComments + 78,
                 relativeTime: req.body.new_comment - user.createdAt,
                 absTime: req.body.new_comment,
                 new_comment: true,
                 liked: false,
                 flagged: false,
-                likes: 0, 
-                reply_to: req.body.reply_to,
-                parent_commentID: req.body.parent_comment
+                likes: 0,
+            }
+            if (req.body.reply_to) {
+                const parent_comment_index = _.findIndex(user.posts[feedIndex].comments, function(o) {
+                    return o.commentID == req.body.parent_comment;
+                });
+                console.log(parent_comment_index) ;
+                if (parent_comment_index == -1) {
+                    console.log("Should not happen.");
+                } else {
+                    cat.reply_to = req.body.reply_to;
+                    cat.parent_comment = req.body.parent_comment;
+                    user.posts[feedIndex].comments[parent_comment_index].subcomments.push(cat);
+                }
+            } else {
+                cat.subcomments = [];
+                user.posts[feedIndex].comments.push(cat);   
             };
-            user.posts[feedIndex].comments.push(cat);
         }
         // User interacted with a comment on the post.
         else if (req.body.commentID) {
-            const commentIndex = _.findIndex(user.posts[feedIndex].comments, function(o) {
-                return o.commentID == req.body.commentID && o.new_comment == (req.body.isUserComment == 'true');
-            });
+            const isUserComment = (req.body.isUserComment == 'true');
+            const commentIndex = (isUserComment) ?
+                _.findIndex(user.posts[feedIndex].comments, function(o) {
+                    return o.commentID == req.body.commentID && o.new_comment == isUserComment;
+                }) :
+                _.findIndex(user.posts[feedIndex].comments, function(o) {
+                    return o._id.equals(req.body.commentID) && o.new_comment == isUserComment;
+                });
+
             if (commentIndex == -1) {
-                console.log("Should not happen.");
+                // It'sa subcomment. 
+                const parentcommentIndex = _.findIndex(user.posts[feedIndex].comments, function(o) {
+                    return o.subcomments.find(subcomment => (isUserComment) ? (subcomment.commentID == req.body.commentID && subcomment.new_comment == isUserComment) : (subcomment._id.equals(req.body.commentID) && subcomment.new_comment == isUserComment)) !== undefined;
+                });
+                if (parentcommentIndex == -1) {
+                    console.log("Should not happen.");
+                }
+                const subcommentIndex = _.findIndex(user.posts[feedIndex].comments[parentcommentIndex].subcomments, function(o) {
+                    return o.commentID == req.body.commentID && o.new_comment == isUserComment;
+                });
+                console.log("Subcomment index is: " + subcommentIndex);
+                if (subcommentIndex == -1) {
+                    console.log("Should not happen.");
+                } else {
+                    // User liked the subcomment.
+                    if (req.body.like) {
+                        user.posts[feedIndex].comments[parentcommentIndex].subcomments[subcommentIndex].liked = true;
+                    }
+                    // User unliked the subcomment.
+                    else if (req.body.unlike) {
+                        user.posts[feedIndex].comments[parentcommentIndex].subcomments[subcommentIndex].liked = false;
+                    }
+                    // User flagged the subcomment.
+                    else if (req.body.flag) {
+                        user.posts[feedIndex].comments[parentcommentIndex].subcomments[subcommentIndex].flagged = true;
+                    } else if (req.body.unflag) {
+                        user.posts[feedIndex].comments[parentcommentIndex].subcomments[subcommentIndex].flagged = false;
+                    }
+                }
             }
             // User liked the comment.
             else if (req.body.like) {
@@ -394,6 +444,10 @@ exports.postUpdateUserPostFeedAction = async(req, res, next) => {
             // User flagged the comment.
             else if (req.body.flag) {
                 user.posts[feedIndex].comments[commentIndex].flagged = true;
+            }
+            // User unflagged the comment.
+            else if (req.body.unflag) {
+                user.posts[feedIndex].comments[commentIndex].flagged = false;
             }
         }
         // User interacted with the post. 
@@ -431,7 +485,8 @@ exports.postchatAction = async(req, res, next) => {
             return res.status(403).send({ result: "disabled" });
         }
         // Check if user has interacted with the post before.
-        let feedIndex = _.findIndex(user.chatAction, function(o) { return o.post.equals(req.body.chat_id); });
+        //let feedIndex = _.findIndex(user.chatAction, function(o) { return o.post.equals(req.body.chat_id); });
+        let feedIndex = _.findIndex(user.chatAction, function(o) { return o.post && o.post.equals(req.body.chat_id); });
 
         // If the user has not interacted with the post chat before, add the post to user.chatAction.
         if (feedIndex == -1) {
@@ -467,23 +522,17 @@ exports.postchatAction = async(req, res, next) => {
 exports.postAIChat = async (req, res, next) => {
     try {
         const user = await User.findById(req.user.id).exec();
-        const scriptPost = await Script.findById(req.body.chat_id).select('condition').lean().exec();
-        const isTrainingChat = scriptPost && scriptPost.condition === TRAINING_POST_CONDITION;
-        const chatbotEnabled = isTrainingChat ?
-            TRAINING_CHATBOT_ENABLED_CONDITIONS.includes(user.experimentalCondition) :
-            MAIN_FEED_CHATBOT_ENABLED_CONDITIONS.includes(user.experimentalCondition);
-
-        if (!chatbotEnabled) {
-            return res.status(403).json({ error: 'Chatbot disabled for this condition.' });
-        }
         const { chat_id, postCondition, messages, postContext, commentContext } = req.body;
 
         // Ensure chatAction entry exists for this post
+        // let feedIndex = _.findIndex(user.chatAction, function(o) {
+        //     return o.post.equals(chat_id);
+        // });
         let feedIndex = _.findIndex(user.chatAction, function(o) {
-            return o.post.equals(chat_id);
+            return o.post && o.post.equals(chat_id);
         });
         if (feedIndex === -1) {
-            feedIndex = user.chatAction.push({ post: chat_id, postCondition }) - 1;
+            feedIndex = user.chatAction.push({ post: chat_id }) - 1;
         }
 
         const contextParts = [`Post: "${postContext}"`];
@@ -533,7 +582,7 @@ exports.postAIChat = async (req, res, next) => {
 };
 
 /**
- * GET /training-module
+ * GET /training_module
  * Fetch and render the training module with the training post only.
  */
 exports.getTrainingModule = async(req, res, next) => {
@@ -557,12 +606,24 @@ exports.getTrainingModule = async(req, res, next) => {
             return;
         }
 
-        if (user.experimentalCondition !== TRAINING_POST_CONDITION) {
+        // if (user.experimentalCondition !== TRAINING_POST_CONDITION) {
+        //     return res.redirect('/');
+        // }
+        if (!TRAINING_POST_CONDITION.includes(user.experimentalCondition)) {
             return res.redirect('/');
         }
 
+        // const trainingFeed = await Script.find({
+        //         condition: TRAINING_POST_CONDITION
+        //     })
+        //     .sort('-time')
+        //     .populate('actor')
+        //     .populate('comments.actor')
+        //     .populate('comments.subcomments.actor')
+        //     .exec();
+        
         const trainingFeed = await Script.find({
-                condition: TRAINING_POST_CONDITION
+                condition: { $in: TRAINING_POST_CONDITION }
             })
             .sort('-time')
             .populate('actor')
@@ -570,16 +631,18 @@ exports.getTrainingModule = async(req, res, next) => {
             .populate('comments.subcomments.actor')
             .exec();
 
-        const trainingPost = trainingFeed[0];
-        if (!trainingPost) {
+
+
+        if (!trainingFeed || trainingFeed.length === 0) {
             req.flash('errors', { msg: 'No training post available yet.' });
             return res.redirect('/');
         }
+        const finalfeed = helpers.getFeed([], trainingFeed, user, process.env.FEED_ORDER, (process.env.REMOVE_FLAGGED_CONTENT == 'TRUE'), false);
 
-        res.render('training_module', {
-            script: [trainingPost],
-            showNewPostIcon: false,
-            chatbotEnabled: TRAINING_CHATBOT_ENABLED_CONDITIONS.includes(user.experimentalCondition)
+        res.render('script', {
+            script: finalfeed,
+            chatbotEnabled: TRAINING_CHATBOT_ENABLED_CONDITIONS.includes(user.experimentalCondition), 
+            isTrainingModule: true
         });
     } catch (err) {
         next(err);
@@ -587,39 +650,100 @@ exports.getTrainingModule = async(req, res, next) => {
 };
 
 /**
- * GET /api/training-status
- * Return training-module progress for the current user.
+ * GET /training_status
+ * Return training_module progress for the current user.
  */
 exports.getTrainingStatus = async(req, res, next) => {
     try {
         const user = await User.findById(req.user.id)
             .populate('chatAction.post')
             .exec();
-
-        if (user.experimentalCondition !== TRAINING_POST_CONDITION) {
-            return res.json({
-                numComments: user.numComments,
-                userTurns: 0
-            });
-        }
+        
+        const trainingPostId = await Script.find({
+                //condition: TRAINING_POST_CONDITION
+                condition: { $in: TRAINING_POST_CONDITION }
+            }).exec()._id;
 
         let userTurns = 0;
-        user.chatAction.forEach((chat) => {
-            if (!chat.post || chat.post.condition !== TRAINING_POST_CONDITION) {
-                return;
-            }
 
-            chat.messages.forEach((message) => {
+        const chatObject = user.chatAction.find(chat => chat.post.equals(trainingPostId));
+
+        if (chatObject) {
+            chatObject.messages.forEach((message) => {
                 if (!message.isAgent) {
                     userTurns++;
                 }
             });
-        });
+        }
 
         res.json({
-            numComments: user.numComments,
+            numComments: user.numComments + 1, // +1 to account for numComments start at -1
             userTurns: userTurns
         });
+    } catch (err) {
+        next(err);
+    }
+};
+exports.postChatActivation = async (req, res, next) => {
+    console.log('postChatActivation called', req.body);
+    try {
+        const user = await User.findById(req.user.id).exec();
+        const { chat_id, activationFactor } = req.body;
+ 
+        // Ensure a chatAction entry exists for this post
+        let feedIndex = _.findIndex(user.chatAction, function (o) {
+            return o.post && o.post.equals(chat_id);
+        });
+        if (feedIndex === -1) {
+            feedIndex = user.chatAction.push({ post: chat_id }) - 1;
+        }
+ 
+        // Only record the first activation — never overwrite with a later trigger
+        if (user.chatAction[feedIndex].activationFactor === 0) {
+            user.chatAction[feedIndex].activationFactor = Number(activationFactor);
+        }
+ 
+        await user.save();
+        res.json({ result: 'success' });
+    } catch (err) {
+        next(err);
+    }
+};
+
+exports.postChatTiming = async (req, res, next) => {
+    try {
+        const user = await User.findById(req.user.id).exec();
+        const { chat_id, event, absTime, minimizedDuration } = req.body;
+ 
+        let feedIndex = _.findIndex(user.chatAction, function (o) {
+            return o.post && o.post.equals(chat_id);
+        });
+        if (feedIndex === -1) {
+            feedIndex = user.chatAction.push({ post: chat_id }) - 1;
+        }
+ 
+        const entry = user.chatAction[feedIndex];
+        const ts = new Date(Number(absTime));
+ 
+        if (event === 'message_sent') {
+            // Track first and last message timestamps
+            if (!entry.firstMessageTime) {
+                entry.firstMessageTime = ts;
+            }
+            entry.lastMessageTime = ts;
+        } else if (event === 'minimized' || event === 'closed') {
+            // Nothing to persist yet – the client starts its own timer.
+            // We receive the accumulated duration on 'reopened'.
+        } else if (event === 'reopened') {
+            // Add the duration the chat was hidden to the running total
+            const dur = Number(minimizedDuration);
+            if (!isNaN(dur) && dur > 0) {
+                entry.minimizedDuration = (entry.minimizedDuration || 0) + dur;
+            }
+        }
+ 
+        await user.save();
+        res.json({ result: 'success' });
     } catch (err) {
         next(err);
     }

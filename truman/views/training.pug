@@ -1,19 +1,18 @@
 extends ui_layout
 
+block styles
+  link(type='text/css', rel='stylesheet', href='/public/css/com.css')
+
 block content
-  .ui.text.container(style="margin-top: 2em; margin-bottom: 2em")
-    h2(style="text-align: center;") Training Module Page
-
-    p(style="text-align: center; white-space: pre-wrap; margin-top: 1.5em;")
-      | Welcome to FreshView community training! 🌟
-      br
-      | In this session, you will view a social media post and practice responding constructively.
-      br
-      | When you are ready, press [Start] to begin.
-
-    .ui.center.aligned.container(style="margin-top: 2em;")
-        a.ui.primary.button(href="/training-module") Start
-
-  //- Placeholder for future content
-  .ui.container(style="margin-top: 3em;")
-    //- Additional components can be added here later
+  .sixteen.wide.column.centered#com
+    .ui.card
+      .com-header
+        h1 Welcome to FreshView community training!
+      .com-content
+          p In this session, you will view a social media post and practice responding constructively.
+          p When you are ready, press <strong>Start</strong> to begin.
+      .com-footer
+        .com-footer-content
+          img.com-logo(src='/public/favicon.svg', alt='<strong style="color: black;">FreshView</strong> Logo')
+          .com-enter
+            a.ui.large.primary.button(href='/training_module') Start

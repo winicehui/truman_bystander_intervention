@@ -143,6 +143,8 @@ app.use((req, res, next) => {
         '/signup',
         '/account/signup_info',
         '/chat/ai',
+        '/chat/activation',
+        '/chat/timing',
     ];
     
     if (skipCsrfPaths.includes(req.path)) {
@@ -201,8 +203,7 @@ app.get('/', (req, res) => {
         return res.render('landing', {
             title: 'Welcome',
             ResponseID: req.query.ResponseID || req.query.r_id,
-            Condition: req.query.Condition || req.query.condition,
-            r_id: req.query.r_id || req.query.ResponseID
+            Condition: req.query.Condition || req.query.condition
         });
     }
 });
@@ -212,10 +213,10 @@ app.post('/pageLog', passportConfig.isAuthenticated, userController.postPageLog)
 app.post('/pageTimes', passportConfig.isAuthenticated, userController.postPageTime);
 
 app.get('/com', function(req, res) {
-    const feed = req.query.feed == "true" ? true : false; //Are we accessing the community rules from the feed?
+    const fromFeed = req.query.feed == "true" ? true : false; //Are we accessing the community rules from the feed?
     res.render('com', {
         title: 'Community Guidelines',
-        feed
+        fromFeed
     });
 });
 
@@ -225,18 +226,13 @@ app.get('/info', passportConfig.isAuthenticated, function(req, res) {
     });
 });
 
-app.get('/training', function(req, res) {
-    res.render('training', {
-        title: 'Training Module'
-    });
-});
 app.get('/training_intro', function(req, res) {
     res.render('training', {
         title: 'Training Module'
     });
 });
-app.get('/training-module', passportConfig.isAuthenticated, scriptController.getTrainingModule);
-app.get('/api/training-status', passportConfig.isAuthenticated, scriptController.getTrainingStatus);
+app.get('/training_module', passportConfig.isAuthenticated, scriptController.getTrainingModule);
+app.get('/training_status', passportConfig.isAuthenticated, scriptController.getTrainingStatus);
 app.get('/tos', function(req, res) { res.render('tos', { title: 'Terms of Service' }); });
 
 app.get('/completed', passportConfig.isAuthenticated, userController.userTestResults);
@@ -260,6 +256,7 @@ app.get('/account/signup_info', passportConfig.isAuthenticated, function(req, re
 });
 app.post('/account/signup_info_post', passportConfig.isAuthenticated, useravatarupload.single('picinput'), userController.postSignupInfo);
 app.post('/account/consent', passportConfig.isAuthenticated, userController.postConsent);
+app.post('/account/training', passportConfig.isAuthenticated, userController.postFinishedTraining);
 
 app.get('/me', passportConfig.isAuthenticated, userController.getMe);
 app.get('/user/:userId', passportConfig.isAuthenticated, actorsController.getActor);
@@ -272,6 +269,10 @@ app.get('/feed', passportConfig.isAuthenticated, scriptController.getScript);
 app.post('/feed', passportConfig.isAuthenticated, scriptController.postUpdateFeedAction);
 app.post('/userPost_feed', passportConfig.isAuthenticated, scriptController.postUpdateUserPostFeedAction);
 app.post('/chat/ai', passportConfig.isAuthenticated, scriptController.postAIChat);
+
+app.post('/chat/activation', passportConfig.isAuthenticated, scriptController.postChatActivation);
+app.post('/chat/timing',     passportConfig.isAuthenticated, scriptController.postChatTiming);
+ 
 app.get('/test', passportConfig.isAuthenticated, function(req, res) {
     res.render('test', {
         title: 'Test'

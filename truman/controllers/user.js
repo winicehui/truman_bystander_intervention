@@ -34,10 +34,7 @@ exports.getLogin = (req, res) => {
     const condition = req.query.Condition || req.query.condition;
     res.render('account/login', {
         title: 'Login',
-        site_picture: process.env.SITE_PICTURE,
-        r_id: responseID,
-        ResponseID: responseID,
-        Condition: condition
+        site_picture: process.env.SITE_PICTURE
     });
 };
 
@@ -193,7 +190,7 @@ exports.postSignup = async(req, res, next) => {
                     // name: req.body.name.trim() || '',
                     // location: req.body.location.trim() || '',
                     // bio: req.body.bio.trim() || '',
-                    picture: normalizeProfilePicture(req.body.profile_picture)
+                    picture: req.body.profile_picture || null
                 }
             });
         }
@@ -252,12 +249,45 @@ exports.postConsent = async(req, res, next) => {
 };
 
 /**
+ * POST /account/training
+ * Update user's finished training.
+ */
+exports.postFinishedTraining = async(req, res, next) => {
+    try {
+        const user = await User.findById(req.user.id).exec();
+        user.finishedTraining = true;
+        await user.save();
+        res.set('Content-Type', 'application/json; charset=UTF-8');
+        res.send({ result: "success" });
+    } catch (err) {
+        next(err);
+    }
+};
+
+/**
  * GET /account
  * Render user's Update My Profile page.
  */
 exports.getAccount = (req, res) => {
+    const fs = require('fs');
+    const path = require('path');
+    const files = [
+        'bear.png', 
+        'koala.png',
+        'giraffe.png',
+        'dog.png',
+        'lion.png',
+        'deer.png',
+        'cow.png',
+        'chicken.png', 
+        'cat.png',
+        'bear1.png'
+    ]; // List of available profile pictures. These should be located in the folder truman/profile_pictures. Update this list if you add or remove profile pictures.
+    const profilePictures = fs.readdirSync(path.join(__dirname, '../profile_pictures')).filter(file => files.includes(file));
+
     res.render('account/profile', {
-        title: 'Account Management'
+        title: 'Update My Profile', 
+        profilePictures
     });
 };
 
@@ -280,32 +310,31 @@ exports.getMe = async(req, res) => {
  * Update user's profile information.
  */
 exports.postUpdateProfile = async(req, res, next) => {
-    const validationErrors = [];
-    if (req.body.email && !validator.isEmail(req.body.email)) validationErrors.push({ msg: 'Please enter a valid email address.' });
-    if (validationErrors.length) {
-        req.flash('errors', validationErrors);
-        return res.redirect('/account');
-    }
-    if (req.body.email) {
-        req.body.email = validator.normalizeEmail(req.body.email, { gmail_remove_dots: false });
-    }
     try {
         const user = await User.findById(req.user.id).exec();
         user.email = req.body.email || '';
         user.profile.name = req.body.name.trim() || '';
         user.profile.location = req.body.location.trim() || '';
         user.profile.bio = req.body.bio.trim() || '';
-        if (req.file) {
-            user.profile.picture = req.file.filename;
-        }
+        console.log(req.body)
+        user.profile.picture = req.body.profile_picture || null;
 
         await user.save();
-        req.flash('success', { msg: 'Profile information has been updated.' });
-        res.redirect('/account');
+        
+        res.set('Content-Type', 'application/json; charset=UTF-8');
+        res.json({ 
+            success: true,
+            msg: 'Profile information has been updated.',
+            name: user.profile.name,
+            picture: user.profile.picture
+        });
     } catch (err) {
         if (err.code === 11000) {
-            req.flash('errors', { msg: 'The email address you have entered is already associated with an account.' });
-            return res.redirect('/account');
+            res.set('Content-Type', 'application/json; charset=UTF-8');
+            return res.status(400).json({ 
+                success: false,
+                msg: 'The email address you have entered is already associated with an account.' 
+            });
         }
         next(err);
     }
@@ -451,4 +480,4 @@ exports.getUserProfile = async(req, res) => {
     } catch (err) {
         next(err);
     }
-}
+};

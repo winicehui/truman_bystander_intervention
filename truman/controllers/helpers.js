@@ -64,8 +64,10 @@ exports.getFeed = function(user_posts, script_feed, user, order, removeFlaggedCo
             }
         } else {
             // Filter comments to include only comments labeled with the experimental condition the user is in.
-            script_feed[0].comments = script_feed[0].comments.filter(comment => !comment.condition || comment.condition == user.experimentalCondition);
-
+            //script_feed[0].comments = script_feed[0].comments.filter(comment => !comment.condition || comment.condition == user.experimentalCondition);
+            
+            //script_feed[0].comments = script_feed[0].comments.filter(comment => !comment.condition || comment.condition.split(',').map(c => c.trim()).includes(user.experimentalCondition));
+            script_feed[0].comments = script_feed[0].comments.filter(comment => !comment.condition || comment.condition.length === 0 || comment.condition.includes(user.experimentalCondition));
             // Filter comments to include only past simulated comments, not future simulated comments.
             script_feed[0].comments = script_feed[0].comments.filter(comment => user.createdAt.getTime() + comment.time < Date.now());
 
@@ -92,7 +94,7 @@ exports.getFeed = function(user_posts, script_feed, user, order, removeFlaggedCo
                                 cat.reply_to = commentObject.reply_to;
                                 cat.parent_comment = commentObject.parent_comment;
                                 if (replyDictionary[commentObject.parent_comment]) {
-                                    replyDictionary[commentObject.parent_comment].push(cat)
+                                    replyDictionary[commentObject.parent_comment].push(cat);
                                 } else {
                                     replyDictionary[commentObject.parent_comment] = [cat];
                                 }
@@ -118,23 +120,23 @@ exports.getFeed = function(user_posts, script_feed, user, order, removeFlaggedCo
                                     }
                                 }
                                 // Check if this comment is by a blocked user: If true and removedBlockedUserContent is true, remove the comment.
-                                if (user.blocked.includes(script_feed[0].comments[commentIndex].actor.username) && removedBlockedUserContent) {
+                                if (!script_feed[0].comments[commentIndex].new_comment && user.blocked.includes(script_feed[0].comments[commentIndex].actor.username) && removedBlockedUserContent) {
                                     script_feed[0].comments.splice(commentIndex, 1);
                                 }
                             } else {
                                 // Check if user conducted any actions on subcomments
                                 script_feed[0].comments.forEach(function(comment, index) {
-                                const subcommentIndex = _.findIndex(comment.subcomments, function(o) { return o.id == commentObject.comment; });
-                                if (subcommentIndex != -1) {
-                                    // Check if there is a like recorded for this subcomment.
-                                    if (commentObject.liked) {
-                                        // Update the comment in script_feed.
-                                        script_feed[0].comments[index].subcomments[subcommentIndex].liked = true;
-                                    }
-                                    // Check if there is a flag recorded for this subcomment.
-                                    if (commentObject.flagged) {
-                                        script_feed[0].comments[index].subcomments[subcommentIndex].flagged = true;
-                                    }
+                                    const subcommentIndex = _.findIndex(comment.subcomments, function(o) { return o._id.equals(commentObject.comment); });
+                                    if (subcommentIndex != -1) {
+                                        // Check if there is a like recorded for this subcomment.
+                                        if (commentObject.liked) {
+                                            // Update the comment in script_feed.
+                                            script_feed[0].comments[index].subcomments[subcommentIndex].liked = true;
+                                        }
+                                        // Check if there is a flag recorded for this subcomment.
+                                        if (commentObject.flagged) {
+                                            script_feed[0].comments[index].subcomments[subcommentIndex].flagged = true;
+                                        }
                                 }
                                 // Check if this comment is by a blocked user: If true and removedBlockedUserContent is true, remove the comment.
                                 if (user.blocked.includes(script_feed[0].comments[index].subcomments[subcommentIndex].actor.username) && removedBlockedUserContent) {
@@ -151,7 +153,7 @@ exports.getFeed = function(user_posts, script_feed, user, order, removeFlaggedCo
                 });
 
                 for (const [key, value] of Object.entries(replyDictionary)) {
-                    const commentIndex = _.findIndex(script_feed[0].comments, function(o) { return o.commentID == key; });
+                    const commentIndex = _.findIndex(script_feed[0].comments, function(o) { return o.commentID == parseInt(key); });
                     script_feed[0].comments[commentIndex]["subcomments"] =
                         script_feed[0].comments[commentIndex]["subcomments"].concat(value)
                         .sort(function(a, b) {
@@ -195,6 +197,17 @@ exports.getFeed = function(user_posts, script_feed, user, order, removeFlaggedCo
                     script_feed.splice(0, 1);
                 } else {
                     for (const commentObject of script_feed[0].comments) {
+                        for (const subcomment of commentObject.subcomments) {
+                            // Check if this subcomment is by a blocked user: If true and removedBlockedUserContent is true, remove the subcomment.
+                            if (user.blocked.includes(subcomment.actor.username) && removedBlockedUserContent) {
+                                script_feed[0].comments.forEach(function(comment, index) {
+                                    const subcommentIndex = _.findIndex(comment.subcomments, function(o) { return o._id.equals(subcomment._id); });
+                                    if (subcommentIndex != -1) {
+                                        script_feed[0].comments[index].subcomments.splice(subcommentIndex, 1);
+                                    }
+                                })
+                            }
+                        }
                         // Check if this comment is by a blocked user: If true and removedBlockedUserContent is true, remove the comment.
                         if (user.blocked.includes(commentObject.actor.username) && removedBlockedUserContent) {
                             script_feed[0].comments.splice(script_feed[0].comments.indexOf(commentObject), 1);

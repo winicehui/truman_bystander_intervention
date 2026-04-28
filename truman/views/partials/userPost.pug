@@ -1,18 +1,15 @@
 .ui.fluid.card(u_postID=val.id, type='userPost', postID=val.postID)
-  .content
-    .right.floated.time.meta=(val.absTime.getTime())
-    a.ui.avatar.image(href='/me')
-      if user.profile.picture
-        img(src=getUserAvatarSrc(user.profile.picture))
-      else
-        img(src=user.gravatar(60))
+  .content.post-header
     a(href='/me')
-      span=user.profile.name || user.username || user.id
-  .image
-    img(src='/user_post/'+val.picture)
+      img.ui.avatar.image(src=user.profile.picture)
+      span.username=user.profile.name || user.username + " (me)"
+    .time.meta=(val.absTime.getTime())
   .content
+    if val.picture
+      .img.post.image
+        img(src='/user_post/'+val.picture)
     .description=val.body
-  .two.ui.bottom.attached.icon.buttons
+  .ui.bottom.two.attached.icon.buttons
     .ui.reply.button(tabindex='0')
       i.reply.icon
       |  Reply
@@ -25,51 +22,63 @@
     .content
       .ui.comments
         each comment in val.comments
-          if !comment.flagged
-            //-IF this comment is USER made, do this
+          .comment(commentID=comment.new_comment ? comment.commentID : comment.id, class=(comment.class || "") + (comment.flagged ? " flagged" : ""), index=comment.commentID)
             if comment.new_comment
-              .comment(commentID=comment.commentID)
-                a.avatar.image(href='/me')
-                  if user.profile.picture
-                    img(src=getUserAvatarSrc(user.profile.picture))
-                  else
-                    img(src=user.gravatar(60))
-                .content
-                  a.author(href='/me')=user.profile.name || user.username || user.id
-                  .metadata
-                    span.date=(comment.absTime.getTime())
-                    .rating
-                      i.heart.icon(class=comment.liked ? "red" : null)
-                      span.num=comment.likes+(comment.liked ? 1 : 0)
-                      |  Likes
-                  .text=comment.body
-                  .actions
-                    a.like.comment(class=comment.liked ? "red" : null) !{comment.liked ? "Unlike" : "Like"}
-            //- Else this is a normal comment from the script
-            else
-              .comment(commentID=comment.commentID)
-                a.avatar(href='/user/'+comment.actor.username)
-                  img(src='/public/picture.svg', data-src=cdn+"/profile_pictures/"+comment.actor.profile.picture)
-                .content
-                  a.author(href='/user/'+comment.actor.username)=comment.actor.profile.name
-                  .metadata
-                    span.date=(comment.absTime.getTime())
-                    .rating
-                      i.heart.icon(class=comment.liked ? "red" : null)
-                      span.num=comment.likes+(comment.liked ? 1 : 0)
-                      |  Likes
-                  .text=comment.body
-                  .actions
-                    a.like.comment(class=comment.liked ? "red" : null) !{comment.liked ? "Unlike" : "Like"}
-                    a.flag.comment(class=comment.flagged ? "orange" : null) !{comment.flagged ? "Unflag" : "Flag"}
+              a.avatar(href='/me')
+                img(src=user.profile.picture)
+            else 
+              a.avatar(href='/user/'+comment.actor.username)                  
+                img(src='/public/picture.svg', data-src=cdn+"/profile_pictures/"+comment.actor.profile.picture)
+            .content
+              if comment.new_comment
+                a.author(href='/me') !{user.profile.name || user.username} (me)
+              else 
+                a.author(href='/user/'+comment.actor.username) !{comment.actor.username}
+              .metadata
+                span.date=comment.absTime.getTime()
+              .text=comment.body
+              .actions
+                a.reply Reply
+                a.like(class=comment.liked ? "red" : null )
+                  i.icon.heart(class=comment.liked ? "red" : null)
+                  span.num=comment.likes+(comment.liked ? 1 : 0)
+                if !comment.new_comment
+                  a.flag(class=comment.flagged ? "orange" : null)
+                    i.icon.flag(class=comment.flagged ? "orange" : null)
+                    span.label=(comment.flagged ? " Flagged" : " Flag")
+            if comment.subcomments.length!==0
+              .comments.subcomments
+                each subcomment in comment.subcomments
+                  .comment(commentID=subcomment.new_comment ? subcomment.commentID : subcomment.id, index=subcomment.commentID, class=(subcomment.class || "") + (subcomment.flagged ? " flagged" : ""))
+                    if subcomment.new_comment 
+                      a.avatar.image(href='/me')
+                        img(src=user.profile.picture)
+                    else
+                      a.avatar
+                        img(src=cdn+'/profile_pictures/'+subcomment.actor.profile.picture)
+                    .content
+                        if subcomment.new_comment
+                          a.author(href='/me') !{user.profile.name || user.username} (me)
+                        else 
+                          a.author(href='/user/'+subcomment.actor.username) !{subcomment.actor.username}
+                        .metadata
+                          span.date=subcomment.absTime.getTime()
+                        .text !{subcomment.body}
+                        .actions
+                          a.reply Reply
+                          a.like(class=subcomment.liked ? "red" : null)
+                            i.icon.heart(class=subcomment.liked ? "red" : null)
+                            span.num=subcomment.likes+(subcomment.liked ? 1 : 0)
+                          if !subcomment.new_comment 
+                            a.flag(class=subcomment.flagged ? "orange" : null)  
+                              i.icon.flag(class=subcomment.flagged ? "orange" : null)
+                              span.label=(subcomment.flagged ? " Flagged" : " Flag")
   .extra.content
-    .ui.fluid.left.labeled.right.icon.input
-      .ui.label
-        if user.profile.picture
-          img.ui.avatar.image.small(src=getUserAvatarSrc(user.profile.picture), name=user.profile.name || user.username || user.id)
+    .ui.form
+      .inline.field
+        if user && user.profile && user.profile.picture
+          img.ui.image.rounded(src=user.profile.picture)
         else
-          img.ui.avatar.image.small(src=user.gravatar(60), name=user.profile.name || user.username || user.id)            
-      .ui.form
-        .field 
-          textarea.replytoPost(type='text', placeholder='Write a Comment' rows='1')
-      i.big.send.link.icon
+          img.ui.image.rounded(src=user.gravatar(60))
+        textarea.replyToPost(name='replyToPost' type='text' placeholder='Add a Comment...' rows='1' data-autoresize)
+        i.big.send.link.icon.replyToPost

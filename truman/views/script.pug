@@ -6,20 +6,27 @@ block styles
     link(type='text/css', rel='stylesheet', href='/public/css/chatbot.css')
 
 block content
-  //- .computer.only.tablet.only.four.wide.column 
-  //-   include ./partials/userCard
+  if isTrainingModule   
+    .four.wide.computer.column
+      .ui.message
+        h2 Done with Training?
+        .ui.large.primary.button#proceed-btn Proceed to Feed
+        .ui.hidden.message#error-msg
+          p You need to interact with the chatbot for more than 5 turns or post a public comment before proceeding.
+          
   #loading.eight.wide.computer.ten.wide.tablet.sixteen.wide.mobile.column
     img.ui.centered.small.image(src='/public/heart.svg')
-  #content.twelve.wide.computer.ten.wide.tablet.sixteen.wide.mobile.column.hidden
-    //- Input for creating new post at top of feed
-    #newpost.ui.segment
-      .ui.fluid.left.labeled.right.icon.input
-        if user.profile.picture
-          img.ui.image.rounded(src=getUserAvatarSrc(user.profile.picture))
-        else
-          img.ui.image.rounded(src=user.gravatar(60))
-        input(type='text', placeholder='Create a post')
-        i.big.photo.link.icon
+  #content.eight.wide.computer.ten.wide.tablet.sixteen.wide.mobile.column.hidden
+    if !isTrainingModule
+      //- Input for creating new post at top of feed
+      #newpost.ui.segment
+        .ui.fluid.left.labeled.right.icon.input
+          if user.profile.picture
+            img.ui.image.rounded(src=user.profile.picture)
+          else
+            img.ui.image.rounded(src=user.gravatar(60))
+          input(type='text', placeholder='Create a post')
+          i.big.photo.link.icon
     each val in script
       if val.relativeTime 
         //- This is a User made post
@@ -27,36 +34,36 @@ block content
       else 
         //- This is an Actor post
         include partials/actorPost
-    .ui.fluid.card
-      .content
-        .description
-        |  End of Posts for the last 24 hours.
+    if !isTrainingModule
+      .ui.fluid.card
+        .content
+          .description
+            |  End of Posts for the last 24 hours.
+  if isTrainingModule   
+    .four.wide.computer.column
   if chatbotEnabled
     include partials/chatbot
     
   .ui.tiny.post.modal
     i.close.icon
-    .header Add a New Post
+    .header Get some new takes
     .scrolling.content
       form#postform.ui.feed.form(action='/post/new', method='POST', enctype='multipart/form-data')
         input(type='hidden', name='_csrf', value=_csrf)
         .field
-          textarea(rows='2', placeholder='Share your meal', name='body')
+          textarea(rows='2', placeholder='Share to get some takes', name='body')
         .field.image-upload
           label(for='picinput')
             .image.content
               img#imgInp.ui.fluid.image(src='/public/photo-camera.svg')
           input#picinput(type='file', accept='image/*', name='picinput')
     .actions
-      input.ui.green.button(type='submit', form='postform', value='Submit')
+      input.ui.button(type='submit', form='postform', value='Post')
           
 block scripts
-  script().
-    window.script={
-      chatbotEnabled: !{JSON.stringify(!!chatbotEnabled)}
-    };
-    window.openChat = function() {};
   script(src='/public/js/script.js')
   script(src='/public/js/postFunctionalities.js')
   if chatbotEnabled
     script(src='/public/js/chatbot.js')
+  if isTrainingModule
+    script(src='/public/js/trainingModule.js')
