@@ -8,27 +8,20 @@
 }
 
 .chat {
-    /* width: 490px;
-    float: left;
-    background: #F2F5F8;
-    border-top-right-radius: 5px;
-    border-bottom-right-radius: 5px;
-    color: #434651; */
-    background: transparent;
     bottom: 0px;
     font-size: 12px;
     position: fixed;
     width: 400px;
     float: right;
     z-index: 10;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 18px 40px rgba(23,32,51,0.08);
+    overflow: hidden;
 }
 
 #copilot-chat .chat {
     right: 24px;
-}
-
-.actor-chat .chat {
-    right: 450px;
 }
 
 .chat-close {
@@ -45,18 +38,19 @@
 }
 
 .chat .chat-header {
-    background: #e03997;
-    border-radius: 5px 5px 0 0;
-    border-bottom: 2px solid white;
+    background: linear-gradient(90deg,#1575f4 0%, #2966c2 100%);
+    border-radius: 12px 12px 0 0;
     color: #fff;
     cursor: pointer;
-    padding: 16px 24px;
+    padding: 16px;
+    box-shadow: 0 8px 20px rgba(23,32,51,0.10);
 }
 
-.chat .chat-header img {
+.chat .bot-header-icon {
     float: left;
-    width: 3em !important;
-    height: 3em !important;
+    margin-right: 10px;
+    font-size: 28px !important;
+    line-height: 36px;
 }
 
 .chat .chat-header .chat-about {
@@ -79,12 +73,10 @@
 }
 
 .chat .chat-history {
-    height: 300px;
-    border-bottom: 2px solid #e0dcdc;
-    border-left: 2px solid #e0dcdc;
-    padding: 10px 10px;
-    overflow-y: scroll;
-    background: #fff;
+    height: 320px;
+    padding: 12px 12px 6px 12px;
+    overflow-y: auto;
+    background: #f6f8fb; /* subtle panel to contrast message cards */
 }
 
 .chat .chat-history ul {
@@ -106,8 +98,9 @@
 }
 
 .chat .chat-history .message-data-time {
-    color: #a8aab1;
+    color: #8f98a6;
     padding-left: 6px;
+    font-size: 0.8rem;
 }
 
 .chat .chat-history .message-data-name {
@@ -115,8 +108,24 @@
 }
 
 .chat .chat-history .message-avatar {
-    width: 3em;
-    height: 3em;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 4px 12px rgba(23,32,51,0.06);
+}
+
+.bot-avatar.icon,
+.bot-avatar {
+    display: inline-flex;
+    width: 40px;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: linear-gradient(90deg,#fea832 0%, #ffcc33 100%);
+    color: #fff !important;
+    box-shadow: 0 6px 18px rgba(23,32,51,0.06);
 }
 
 .chat .chat-history .my-message-div {
@@ -133,16 +142,13 @@
 
 .chat .chat-history .my-message,
 .chat .chat-history .other-message {
-    color: white;
-    padding: 10px 10px;
-    line-height: 15px;
+    padding: 10px 14px;
+    line-height: 1.25;
     font-size: 14px;
-    border-radius: 7px;
-    margin-bottom: 4px;
-    /* width: 100%; */
-    width: fit-content;
+    border-radius: 14px;
+    margin-bottom: 10px;
+    max-width: 78%;
     position: relative;
-    text-wrap: wrap;
     word-break: break-word;
 }
 
@@ -162,14 +168,21 @@
 } */
 
 .chat .chat-history .other-message {
-    background: #DCDCDC;
-    margin-right: 2em;
-    color: black;
+    background: #ffffff;
+    color: #222;
+    box-shadow: 0 8px 20px rgba(23,32,51,0.06);
+    margin-right: 1rem;
 }
 
 .chat .chat-history .my-message {
-    background: #2185d0;
-    margin-left: 2em;
+    background: linear-gradient(90deg,#1575f4 0%, #2966c2 100%);
+    color: #fff;
+    margin-left: 1rem;
+}
+
+.chat .chat-history .my-message,
+.chat .chat-history .other-message {
+    transition: transform .18s ease, box-shadow .18s ease, opacity .18s ease;
 }
 
 .chat .chat-history .other-message img,
@@ -190,38 +203,63 @@
 } */
 
 .chat .chat-message {
-    padding: 15px;
-    border-left: 2px solid #e0dcdc;
-    background: #fff;
+    padding: 12px;
+    background: transparent;
 }
 
+.chat .chat-message textarea,
 .chat .chat-message textarea,
 .chat .chat-message textarea:active,
 .chat .chat-message textarea:hover {
     width: 100%;
-    padding: 5px 10px;
-    font: 14px/22px "Lato", Arial, sans-serif;
-    border-radius: 5px 0px 0px 5px;
+    padding: 10px 12px;
+    font: 14px/20px "Lato", Arial, sans-serif;
+    border-radius: 10px;
     resize: none;
+    border: 1px solid rgba(34,36,38,0.08);
+    background: #fff;
 }
 
 .chat .chat-message button {
     float: right;
-    color: #2185d0;
-    font-size: 16px;
-    text-transform: uppercase;
-    border: 1px solid rgba(34, 36, 38, .15);
-    border-radius: 0px 5px 5px 0px;
+    color: #fff;
+    font-size: 14px;
+    border: none;
+    border-radius: 10px;
     cursor: pointer;
-    font-weight: bold;
-    background: #F2F5F8;
+    font-weight: 600;
+    background: linear-gradient(90deg,#2966c2 0%, #1575f4 100%) !important;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.chat .chat-message button:hover {
-    color: #75b1e8;
+.chat .chat-message button:hover { 
+    opacity: .95; 
 }
 
+/* Avatar column spacing */
+.avatar-col { display:flex; align-items:flex-end; }
+.avatar-col .message-avatar { margin: 0 8px; }
 
+/* Responsive */
+@media (max-width: 600px) {
+    .chat { width: 92%; right: 4%; }
+    .chat .chat-history { height: 260px; }
+}
+/* message entry animation */
+.chat .chat-history ul li { opacity: 0; transform: translateY(6px) scale(.995); animation: fadeInUp .22s ease forwards; }
+
+@keyframes fadeInUp {
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+        .chat { width: 92%; right: 4%; }
+        .chat .chat-history { height: 260px; }
+}
 /* not currently used, but can keep for potential future use */
 
 .chat .chat-header .chat-num-messages {
@@ -279,6 +317,39 @@
     float: right;
     font-size: 10px;
 }
+
+#copilot-chat-toggle {
+    position: fixed;
+    bottom: 16px;
+    right: 24px;
+    z-index: 11;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 1rem 2rem;
+    border-radius: 26px;
+    background: linear-gradient(90deg, #1575f4, #2966c2);
+    color: white;
+    border: none;
+    box-shadow: 0 18px 38px rgba(23, 32, 51, 0.28);
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1.2rem;
+}
+
+#copilot-chat-toggle.hidden {
+    display: none;
+}
+
+#copilot-chat-toggle i.icon {
+    margin: 0;
+}
+
+#copilot-chat .chat {
+    right: 24px;
+    bottom: 16px;
+}
+
 
 .chat-feedback {
     font-style: italic;

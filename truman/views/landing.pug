@@ -1,0 +1,71 @@
+extends ui_layout
+
+block styles
+    link(type='text/css', rel='stylesheet', href='/public/css/landing.css')
+    link(href="https://fonts.googleapis.com/css2?family=Lato:wght@900&display=swap" rel="stylesheet")
+    
+block content
+    .sixteen.wide.column.centered#landing
+        .landing-content
+            img.ui.large.centered.image(src='/public/freshview_logo2.svg', alt='Logo')
+            h1.ui.header.centered#typewriter
+            a.ui.large.primary.button(href=(ResponseID || Condition) ? `/signup?ResponseID=${ResponseID || ''}&Condition=${Condition || ''}` : '/signup') Sign Up
+
+block scripts
+    script.
+        const line1 = "Share your real life";
+        const line2Parts = [
+            { text: "Get a ", color: "#fea832" },
+            { text: "fresh view", color: "#2966C2" }
+        ];
+        const speed = 100;
+        const cursorSpan = '<span class="cursor"></span>';
+
+        function typeWriter() {
+            const el = document.getElementById("typewriter");
+            let index = 0;
+
+            function typeLine1() {
+                if (index <= line1.length) {
+                el.innerHTML =
+                    '<span style="color:#fea832; font-weight:900">' + line1.substring(0, index) + '</span>' +
+                    cursorSpan;
+                index++;
+                setTimeout(typeLine1, speed);
+                } else {
+                // Pause with cursor blinking, then start line 2
+                setTimeout(typeLine2, 1000);
+                }
+            }
+
+            function typeLine2() {
+                const fullLine2 = line2Parts[0].text + line2Parts[1].text;
+                let index2 = 0;
+
+                function type() {
+                const part0 = fullLine2.substring(0, Math.min(index2, line2Parts[0].text.length));
+                const part1 = index2 > line2Parts[0].text.length
+                    ? fullLine2.substring(line2Parts[0].text.length, index2)
+                    : "";
+
+                el.innerHTML =
+                    '<span style="color:#fea832; font-weight:900">' + line1 + '</span><br>' +
+                    '<span style="color:#fea832; font-weight:900">' + part0 + '</span>' +
+                    '<span style="color:#2966C2; font-style:italic; font-weight:900">' + part1 + '</span>' +
+                    cursorSpan;
+
+                if (index2 <= fullLine2.length) {
+                    index2++;
+                    setTimeout(type, speed);
+                }
+                // No else — cursor stays in place and keeps blinking forever
+                }
+                type();
+            }
+
+            typeLine1();
+        }
+
+        window.onload = function () {
+            typeWriter();
+        };

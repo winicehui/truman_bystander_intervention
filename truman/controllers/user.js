@@ -4,6 +4,17 @@ const dotenv = require('dotenv');
 dotenv.config({ path: '.env' }); // See the file .env.example for the structure of .env
 const User = require('../models/User');
 
+// create random id for guest accounts
+function makeid(length) {
+    var result = '';
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for (var i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+}
+
 /**
  * GET /login
  * Render the login page.
@@ -14,8 +25,7 @@ exports.getLogin = (req, res) => {
     }
     res.render('account/login', {
         title: 'Login',
-        site_picture: process.env.SITE_PICTURE,
-        r_id: req.query.r_id
+        site_picture: process.env.SITE_PICTURE
     });
 };
 
@@ -55,7 +65,7 @@ exports.postLogin = (req, res, next) => {
             if (user.consent) {
                 res.redirect(req.session.returnTo || '/');
             } else {
-                res.redirect('/account/signup_info');
+                res.redirect('/');
             }
         });
     })(req, res, next);
@@ -84,9 +94,28 @@ exports.getSignup = (req, res) => {
     if (req.user) {
         return res.redirect('/');
     }
+    const responseID = req.query.ResponseID || req.query.r_id;
+    const condition = req.query.Condition || req.query.condition;
+    const fs = require('fs');
+    const path = require('path');
+    const files = [
+        'bear.png', 
+        'koala.png',
+        'giraffe.png',
+        'dog.png',
+        'lion.png',
+        'deer.png',
+        'cow.png',
+        'chicken.png', 
+        'cat.png',
+        'bear1.png'
+    ]; // List of available profile pictures. These should be located in the folder truman/profile_pictures. Update this list if you add or remove profile pictures.
+    const profilePictures = fs.readdirSync(path.join(__dirname, '../profile_pictures')).filter(file => files.includes(file));
     res.render('account/signup', {
         title: 'Create Account',
-        r_id: req.query.r_id
+        ResponseID: responseID,
+        Condition: condition,
+        profilePictures
     });
 };
 
@@ -96,48 +125,67 @@ exports.getSignup = (req, res) => {
  */
 exports.postSignup = async(req, res, next) => {
     const validationErrors = [];
-    if (!validator.isEmail(req.body.email)) validationErrors.push({ msg: 'Please enter a valid email address.' });
-    if (!validator.isLength(req.body.password, { min: 4 })) validationErrors.push({ msg: 'Password must be at least 4 characters long.' });
-    if (validator.escape(req.body.password) !== validator.escape(req.body.confirmPassword)) validationErrors.push({ msg: 'Passwords do not match.' });
-    if (validationErrors.length) {
-        req.flash('errors', validationErrors);
-        return res.redirect('/signup');
-    }
-    req.body.email = validator.normalizeEmail(req.body.email, { gmail_remove_dots: false });
+    // if (!validator.isEmail(req.body.email)) validationErrors.push({ msg: 'Please enter a valid email address.' });
+    // if (!validator.isLength(req.body.password, { min: 4 })) validationErrors.push({ msg: 'Password must be at least 4 characters long.' });
+    // if (validator.escape(req.body.password) !== validator.escape(req.body.confirmPassword)) validationErrors.push({ msg: 'Passwords do not match.' });
+    // if (!req.body.username || req.body.username.trim().length === 0) validationErrors.push({ msg: 'Username is required.' });
+    // if (validationErrors.length) {
+    //     req.flash('errors', validationErrors);
+    //     return res.redirect('/signup?RespondentID=' + (req.query.RespondentID || '')+'&Condition=' + (req.query.Condition || ''));
+    // }
+    // req.body.email = validator.normalizeEmail(req.body.email, { gmail_remove_dots: false });
 
-    try {
-        const existingUser = await User.findOne({ $or: [{ email: req.body.email }, { mturkID: req.body.mturkID }] }).exec();
-        if (existingUser) {
-            req.flash('errors', { msg: 'An account with that email address or MTurkID already exists.' });
-            return res.redirect('/signup');
-        }
+    try { 
         /*###############################
         Place Experimental Varibles Here!
         ###############################*/
         const numConditions = process.env.NUM_EXP_CONDITIONS;
         const experimentalConditionNames = process.env.EXP_CONDITIONS_NAMES.split(",");
         const experimentalCondition = experimentalConditionNames[Math.floor(Math.random() * numConditions)];
+        const responseID = req.query.ResponseID || req.query.r_id;
+        const condition = req.query.Condition || req.query.condition;
 
         const surveyLink = process.env.POST_SURVEY ?
             process.env.POST_SURVEY +
             (process.env.POST_SURVEY_WITH_QUALTRICS == 'TRUE' && process.env.POST_SURVEY.includes("?r_id=") &&
-                req.query.r_id != 'null' && req.query.r_id && req.query.r_id != 'undefined' ? req.query.r_id : "") :
+                responseID != 'null' && responseID && responseID != 'undefined' ? responseID : "") :
             "";
         const currDate = Date.now();
-        const user = new User({
-            email: req.body.email,
-            password: req.body.password,
-            mturkID: req.body.mturkID,
-            username: req.body.username,
-            experimentalCondition: experimentalCondition,
-            endSurveyLink: surveyLink,
-            active: true,
-            lastNotifyVisit: currDate,
-            createdAt: currDate
-        });
-        if (req.query.r_id) {
-            user.ResponseID = req.query.r_id;
+        const ResponseID = (!responseID || responseID == 'undefined') ? makeid(10) : responseID; // If no ResponseID is provided, generate a random one. This allows for guest accounts that are not created through Qualtrics.
+
+        // const existingUser = await User.findOne({ $or: [{ email: req.body.email }, { mturkID: req.body.mturkID }] }).exec();
+        const existingUser = await User.findOne({ ResponseID: ResponseID }).exec();
+        console.log(existingUser)
+        if (existingUser) {
+            existingUser.username = req.body.username;
+            existingUser.profile.picture = req.body.profile_picture;
+            existingUser.profile.name = req.body.username;
+            if (condition && condition != 'undefined' && experimentalConditionNames.includes(condition)) {
+                existingUser.experimentalCondition = condition;
+            }
+            user = existingUser;
+        } else {
+            user = new User({
+                // email: req.body.email,
+                // password: req.body.password,
+                // mturkID: req.body.mturkID,
+                ResponseID: ResponseID, // If no ResponseID is provided, generate a random one. This allows for guest accounts that are not created through Qualtrics.
+                experimentalCondition: (!condition || condition == 'undefined') || !experimentalConditionNames.includes(condition) ? experimentalCondition : condition, // If no condition is provided in the query, randomly assign one. This allows for guest accounts that are not created through Qualtrics.
+                username: req.body.username,
+                endSurveyLink: surveyLink,
+                active: true,
+                lastNotifyVisit: currDate,
+                createdAt: currDate,
+                consent: false,
+                profile: {
+                    // name: req.body.name.trim() || '',
+                    // location: req.body.location.trim() || '',
+                    // bio: req.body.bio.trim() || '',
+                    picture: req.body.profile_picture || null
+                }
+            });
         }
+
         await user.save();
         req.logIn(user, (err) => {
             if (err) {
@@ -146,7 +194,7 @@ exports.postSignup = async(req, res, next) => {
             const userAgent = req.headers['user-agent'];
             const user_ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
             user.logUser(currDate, userAgent, user_ip);
-            res.redirect('/account/signup_info');
+            res.redirect('/com');
         });
     } catch (err) {
         next(err);
@@ -192,12 +240,45 @@ exports.postConsent = async(req, res, next) => {
 };
 
 /**
+ * POST /account/training
+ * Update user's finished training.
+ */
+exports.postFinishedTraining = async(req, res, next) => {
+    try {
+        const user = await User.findById(req.user.id).exec();
+        user.finishedTraining = true;
+        await user.save();
+        res.set('Content-Type', 'application/json; charset=UTF-8');
+        res.send({ result: "success" });
+    } catch (err) {
+        next(err);
+    }
+};
+
+/**
  * GET /account
  * Render user's Update My Profile page.
  */
 exports.getAccount = (req, res) => {
+    const fs = require('fs');
+    const path = require('path');
+    const files = [
+        'bear.png', 
+        'koala.png',
+        'giraffe.png',
+        'dog.png',
+        'lion.png',
+        'deer.png',
+        'cow.png',
+        'chicken.png', 
+        'cat.png',
+        'bear1.png'
+    ]; // List of available profile pictures. These should be located in the folder truman/profile_pictures. Update this list if you add or remove profile pictures.
+    const profilePictures = fs.readdirSync(path.join(__dirname, '../profile_pictures')).filter(file => files.includes(file));
+
     res.render('account/profile', {
-        title: 'Account Management'
+        title: 'Update My Profile', 
+        profilePictures
     });
 };
 
@@ -220,30 +301,31 @@ exports.getMe = async(req, res) => {
  * Update user's profile information.
  */
 exports.postUpdateProfile = async(req, res, next) => {
-    const validationErrors = [];
-    if (!validator.isEmail(req.body.email)) validationErrors.push({ msg: 'Please enter a valid email address.' });
-    if (validationErrors.length) {
-        req.flash('errors', validationErrors);
-        return res.redirect('/account');
-    }
-    req.body.email = validator.normalizeEmail(req.body.email, { gmail_remove_dots: false });
     try {
         const user = await User.findById(req.user.id).exec();
         user.email = req.body.email || '';
         user.profile.name = req.body.name.trim() || '';
         user.profile.location = req.body.location.trim() || '';
         user.profile.bio = req.body.bio.trim() || '';
-        if (req.file) {
-            user.profile.picture = req.file.filename;
-        }
+        console.log(req.body)
+        user.profile.picture = req.body.profile_picture || null;
 
         await user.save();
-        req.flash('success', { msg: 'Profile information has been updated.' });
-        res.redirect('/account');
+        
+        res.set('Content-Type', 'application/json; charset=UTF-8');
+        res.json({ 
+            success: true,
+            msg: 'Profile information has been updated.',
+            name: user.profile.name,
+            picture: user.profile.picture
+        });
     } catch (err) {
         if (err.code === 11000) {
-            req.flash('errors', { msg: 'The email address you have entered is already associated with an account.' });
-            return res.redirect('/account');
+            res.set('Content-Type', 'application/json; charset=UTF-8');
+            return res.status(400).json({ 
+                success: false,
+                msg: 'The email address you have entered is already associated with an account.' 
+            });
         }
         next(err);
     }
@@ -365,5 +447,23 @@ exports.userTestResults = async(req, res) => {
         } catch (err) {
             next(err);
         }
+    }
+};
+
+/**
+ * GET /userInfo
+ * Get user profile and number of user comments
+ */
+exports.getUserProfile = async(req, res) => {
+    try {
+        const user = await User.findById(req.user.id).exec();
+        res.set('Content-Type', 'application/json; charset=UTF-8');
+        res.send({
+            userProfile: user.profile,
+            numComments: user.numComments,
+            username: user.username
+        });
+    } catch (err) {
+        next(err);
     }
 };

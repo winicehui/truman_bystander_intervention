@@ -6,8 +6,8 @@ const dotenv = require('dotenv');
 dotenv.config({ path: '.env' });
 
 const userSchema = new mongoose.Schema({
-    email: { type: String, unique: true },
-    password: String,
+    // email: { type: String, unique: false },
+    // password: String,
     username: String,
     active: { type: Boolean, default: true }, // Indicates if the user is still active
     isAdmin: { type: Boolean, default: false }, // Indicates if the user is an administrator
@@ -24,9 +24,10 @@ const userSchema = new mongoose.Schema({
     lastNotifyVisit: Date, // Absolute Time; Indicates the most recent visit to /notifications. First initialization is at account creation.
     createdAt: Date, // Absolute Time the user was created
     consent: { type: Boolean, default: false }, // Indicates if user has proceeded through the Welcome & community rule pages
+    finishedTraining: {type: Boolean, default: false}, // Indicates if user has finished training (applicable to C1 and C4)
 
-    mturkID: { type: String, unique: true }, // MTurkID
-    ResponseID: { type: String, unique: false }, // Qualtric's ResponseID
+    // mturkID: { type: String, unique: false }, // MTurkID
+    ResponseID: { type: String, unique: true }, // Qualtric's ResponseID
 
     experimentalCondition: String, // Indicates the experimental condition user is assigned to. Values are defined in the .env file by the variable EXP_CONDITIONS_NAMES and assigned at account creation in the users controller.
 
@@ -64,7 +65,19 @@ const userSchema = new mongoose.Schema({
             new_comment: { type: Boolean, default: false }, // Indicates if the comment is user-made
             liked: { type: Boolean, default: false }, // Indicates if the user has liked the comment
             flagged: { type: Boolean, default: false }, // Indicates if the user has flagged the comment
-            likes: { type: Number, default: 0 } // Indicates the # of likes on the comment by actors (excludes the user's own like)
+            likes: { type: Number, default: 0 }, // Indicates the # of likes on the comment by actors (excludes the user's own like)
+
+            subcomments: [new Schema({
+                actor: { type: Schema.ObjectId, ref: 'Actor' }, // Indicates which actor made the subcomment if subcomment is by an Actor
+                body: { type: String, default: '', trim: true }, // Text(body) of comment
+                commentID: Number, // ID of the comment
+                relativeTime: Number, // Indicates when the comment is made on the post relative to how much time has passed since the user created their account, in milliseconds
+                absTime: Date, // Absolute Time; Indicates when the comment is made on the post
+                new_comment: { type: Boolean, default: false }, // Indicates if the comment is user-made
+                liked: { type: Boolean, default: false }, // Indicates if the user has liked the comment
+                flagged: { type: Boolean, default: false }, // Indicates if the user has flagged the comment
+                likes: { type: Number, default: 0 }, // Indicates the # of likes on the comment by actors (excludes the user's own like)
+            })]
         }, { versionKey: false })],
 
         absTime: Date, // Absolute Time; Indicates the exact time the post was made
@@ -121,6 +134,8 @@ const userSchema = new mongoose.Schema({
             unflagTime: [Date], // List of absolute times when the user has unflagged the comment
             new_comment: { type: Boolean, default: false }, // Indicates if this comment is made by the user
             new_comment_id: Number, // ID for the comment if this comment is made by the user
+            reply_to: Number, // Indicates the commentID of the comment this comment is replying
+            parent_comment: Number, // Indicates the commentID of the top-level comment this comment is under
             body: String, // Body (text) of the comment if this comment is made by the user
             absTime: Date, // Exact time comment was made if this comment is made by the user
             relativeTime: Number, // Indicates the time the comment was made relative to when the user created their account, in milliseconds
@@ -137,6 +152,10 @@ const userSchema = new mongoose.Schema({
             name: String, // Indicates who made the chat message
             isAgent: { type: Boolean, default: false }, // Indicates if the user made the chat message
         }, { _id: true, versionKey: false })],
+        activationFactor: { type: Number, default: 0 }, // 0=view-timer,1=view,2=like,3=comment,4=flag
+        firstMessageTime: { type: Date, default: null }, // time of first message in chat
+        lastMessageTime:  { type: Date, default: null }, // time of most recent message
+        minimizedDuration:{ type: Number, default: 0 },  // accumulated ms while minimized/closed
     }, { _id: false, versionKey: false })],
 
     profile: {

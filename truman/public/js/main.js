@@ -68,6 +68,7 @@ $(window).on("load", function() {
     $('.checkbox').checkbox();
 
     // Check if user has any notifications every 5 seconds.
+    const skipNotifications = ['/login', '/signup', '/forgot', '/training_intro', '/training_module', '/com' ];
     if (window.location.pathname !== '/login' && window.location.pathname !== '/signup' && window.location.pathname !== '/forgot') {
         $.post("/pageLog", {
             path: window.location.pathname,

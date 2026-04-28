@@ -1,0 +1,106 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+#pagecontainer, #pagegrid {
+    width: 100% !important;
+    margin: 0; 
+    padding: 0;
+}
+
+.sixteen.wide.column.centered#com {
+    min-height: calc(100vh - 20px);
+    width: 100vw;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.ui.card {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 12px 32px rgba(23, 32, 51, 0.12);
+    max-width: 800px;
+    width: 100%;
+    padding: 3rem;
+    margin: 3rem;
+    text-align: center;
+}
+
+.ui.card h1 {
+    font-size: 2.5rem;
+    color: #333;
+    margin-bottom: 2rem;
+    font-weight: 700;
+}
+
+.com-content p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #555;
+    margin-bottom: 1.5rem;
+    text-align: left;
+}
+
+.com-content strong {
+    color: #2966c2;
+    font-weight: 600;
+}
+
+.com-footer {
+    margin-top: 3rem;
+    border-top: 1px solid #e0e6ed;
+    padding-top: 2rem;
+}
+
+.com-footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.com-logo {
+    width: 48px;
+    height: 48px;
+}
+
+.com-enter .ui.large.primary.button {
+    background: linear-gradient(90deg, #1575f4 0%, #2966c2 100%);
+    color: white;
+    font-size: 1.2rem;
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    pointer-events: all;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.com-enter .ui.large.primary.button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(21, 117, 244, 0.3);
+}
+
+@media (max-width: 768px) {
+    .com-card {
+        padding: 2rem;
+    }
+
+    .com-header h1 {
+        font-size: 2rem;
+    }
+
+    .com-content p {
+        font-size: 1rem;
+    }
+
+    .com-footer-content {
+        flex-direction: column;
+        gap: 1rem;
+    }
+}

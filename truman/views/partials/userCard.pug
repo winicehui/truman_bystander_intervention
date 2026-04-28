@@ -1,11 +1,11 @@
-.ui.card
+.ui.card.profile-card
   .image
     if user.profile.picture
-      img(src='/user_avatar/'+user.profile.picture)
+      img(src=user.profile.picture, style="background-color: #f9f9f9;")
     else
       img(src=user.gravatar(60))
   .content
-    a.header(href='/me')= user.profile.name || user.email || user.id
+    a.header(href='/me')= user.profile.name || user.profile.username
     .meta="@"+user.username
     .description(style='white-space: pre-wrap')=user.profile.bio
     if user.profile.location

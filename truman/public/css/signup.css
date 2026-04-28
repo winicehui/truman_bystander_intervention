@@ -1,0 +1,132 @@
+.ui.fluid.card {
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(23, 32, 51, 0.08);
+    border: 1px solid rgba(34,36,38,.06);
+    padding: 20px; 
+    margin-top: 20px;
+}
+
+/**Title*/
+
+h2 {
+    margin-top: 0.5em !important;
+}
+
+h3 {
+    font-weight: normal;
+    line-height: 1.5;
+}
+
+/**Username Form*/
+
+.ui.form {
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+
+.ui.form#signup-form .field {
+    justify-content: center;
+    text-align: center;
+}
+
+.ui.form#signup-form .field label{
+    justify-content: center;
+    text-align: center;
+    font-size: 1.38571429rem !important;
+}
+
+.ui.form#signup-form .field input{
+    width: 80%;
+    font-size: 1rem;
+}
+
+.ui.form#signup-form .field input.selected{
+    background-color: #eef3fc !important;
+    border: 2px solid #2966C2;
+    box-shadow: 0 0 0 3px rgba(41, 102, 194, 0.15);
+    transition: all 0.15s ease;
+}
+
+/**Photo*/
+
+.images {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.images .image {
+width: 20%;
+  min-width: 120px;
+  height: 100%;
+  position: relative;
+  border-radius: 1em;
+  border: 3px solid transparent; /* reserve space so layout doesn't shift on select */
+  cursor: pointer;
+  transition: all 0.15s ease;
+  padding: 5px;
+}
+
+a.avatar {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+}
+
+.ui.card a.avatar img {
+    width: 80%;
+    height: 80%;
+}
+
+.images .image:hover {
+  border: 3px solid rgba(41, 102, 194, 0.35);
+  border-radius: 1em;
+  background-color: #f5f7fc;
+}
+
+.images .image.selected {
+  background-color: #eef3fc !important;
+  border: 3px solid #2966C2;
+  border-radius: 1em;
+  box-shadow: 0 0 0 4px rgba(41, 102, 194, 0.15);
+  transition: all 0.15s ease;
+}
+
+.images .image.selected:hover {
+  background-color: #eef3fc !important;
+  border: 3px solid #2966C2;
+  border-radius: 1em;
+}
+
+.images .image.selected a.avatar img {
+  transform: scale(0.92);
+  transition: transform 0.15s ease;
+}
+
+/* Submit button states */
+button[type='submit'].ui.large.button {
+  background-color: #e0e1e2;
+  color: rgba(0,0,0,0.4);
+  cursor: not-allowed;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  pointer-events: none;
+}
+button[type='submit'].ui.large.button.green {
+    background: linear-gradient(to right, #208f1f, #249f23) !important;
+    color: white;
+}
+
+button[type='submit'].ui.large.button.ready {
+  background: linear-gradient(90deg, #1575f4 0%, #2966c2 100%);
+  color: white;
+  cursor: pointer;
+  pointer-events: all;
+}
+
+button[type='submit'].ui.large.button.ready:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(21, 117, 244, 0.3);
+}

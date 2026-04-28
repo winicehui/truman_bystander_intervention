@@ -3,6 +3,31 @@ body {
     padding: 0em;
 }
 
+.ui.borderless.fixed.menu {
+    background: #ffffff;
+    border: none;
+    box-shadow: 0 6px 18px rgba(23,32,51,0.06);
+    padding: .5rem 0;
+}
+
+#logo { 
+    height: 42px; 
+    width: 100%
+}
+
+#mobile_logo { 
+    height: 36px; 
+    width: 100%;
+}
+
+.ui.menu .item { 
+    padding: .6rem 1rem; 
+}
+
+.ui.simple.dropdown.item img.ui.mini.spaced.circular.image { 
+    box-shadow: 0 2px 8px rgba(23,32,51,0.06);
+ }
+
 
 /*Page Container*/
 
