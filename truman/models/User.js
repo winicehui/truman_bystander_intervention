@@ -151,6 +151,7 @@ const userSchema = new mongoose.Schema({
             absTime: Date, // The absolute date (time) of when the chat message was made
             name: String, // Indicates who made the chat message
             isAgent: { type: Boolean, default: false }, // Indicates if the user made the chat message
+            reasoning: { type: String, default: null }, // Indicates the reasoning summary for the chat message if the message is made by the agent. 
         }, { _id: true, versionKey: false })],
         activationFactor: { type: Number, default: 0 }, // 0=view-timer,1=view,2=like,3=comment,4=flag
         firstMessageTime: { type: Date, default: null }, // time of first message in chat
