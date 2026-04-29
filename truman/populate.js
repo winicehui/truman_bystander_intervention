@@ -175,7 +175,7 @@ async function doPopulate() {
                                 actor: act,
                                 time: timeStringToNum(new_post.time) || null,
                                 class: new_post.class,
-                                condition: new_post.condition
+                                condition: new_post.condition ? new_post.condition.split(',').map(c => c.trim()) : []
                             }
 
                             const script = new Script(postdetail);
@@ -228,7 +228,7 @@ async function doPopulate() {
                                     actor: act,
                                     time: timeStringToNum(new_reply.time),
                                     class: new_reply.class,
-                                    condition: new_reply.condition
+                                    condition: new_reply.condition ? new_reply.condition.split(',').map(c => c.trim()) : []
                                 };
 
                                 pr.comments.push(comment_detail);

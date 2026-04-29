@@ -8,9 +8,9 @@ dotenv.config({ path: '.env' }); // See the file .env.example for the structure 
 const OpenAI = require('openai');
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-const TRAINING_POST_CONDITION = 'C1';
-const MAIN_FEED_CHATBOT_ENABLED_CONDITIONS = ['C2'];
-const TRAINING_CHATBOT_ENABLED_CONDITIONS = ['C1'];
+const TRAINING_POST_CONDITION = ['C1', 'C4'];
+const MAIN_FEED_CHATBOT_ENABLED_CONDITIONS = ['C2', 'C4'];
+const TRAINING_CHATBOT_ENABLED_CONDITIONS = ['C1', 'C4'];
 const OPENAI_PROMPT_ID = 'pmpt_69e1794d22d081938a69e9538dddaebf0a6a2fd6f73bdb7d';
 const OPENAI_PROMPT_VERSION = '3';
 
@@ -56,7 +56,8 @@ exports.getScript = async(req, res, next) => {
             let script_feed = await Script.find({
                 condition: { 
                     // $in: ["", user.experimentalCondition],
-                    $ne: TRAINING_POST_CONDITION
+                    //$ne: TRAINING_POST_CONDITION
+                    $nin: TRAINING_POST_CONDITION
                 }
             })
             // .where('time').lte(time_diff).gte(time_limit) // Uncomment for only past 24 hours of actor posts to show up in the feed.
@@ -74,6 +75,7 @@ exports.getScript = async(req, res, next) => {
 
         // Get the newsfeed and render it.
         const finalfeed = helpers.getFeed(user_posts, script_feed, user, process.env.FEED_ORDER, (process.env.REMOVE_FLAGGED_CONTENT == 'TRUE'), false);
+
         console.log("Script Size is now: " + finalfeed.length);
         res.render('script', {
             script: finalfeed,
@@ -94,7 +96,9 @@ exports.getChat = async(req, res, next) => {
             .populate('chatAction.post')
             .exec();
         
-        const feedIndex = _.findIndex(user.chatAction, function(o) { return o.post.equals(req.query.chat_id); });
+        //const feedIndex = _.findIndex(user.chatAction, function(o) { return o.post.equals(req.query.chat_id); });
+        const feedIndex = _.findIndex(user.chatAction, function(o) { return o.post && o.post.equals(req.query.chat_id); });
+
 
         if (feedIndex != -1) {
             let messages = user.chatAction[feedIndex].messages;
@@ -121,7 +125,7 @@ exports.getChat = async(req, res, next) => {
  * Post /post/new
  * Record a new user-made post. Include any actor replies (comments) that go along with it.
  */
-exports.newPost = async(req, res) => {
+exports.newPost = async(req, res, next) => {
     try {
         const user = await User.findById(req.user.id).exec();
         if (req.body.body) {
@@ -188,7 +192,8 @@ exports.postUpdateFeedAction = async(req, res, next) => {
         console.log(req.body);
         const user = await User.findById(req.user.id).exec();
         // Check if user has interacted with the post before.
-        let feedIndex = _.findIndex(user.feedAction, function(o) { return o.post.equals(req.body.postID); });
+        //let feedIndex = _.findIndex(user.feedAction, function(o) { return o.post.equals(req.body.postID); });
+        let feedIndex = _.findIndex(user.feedAction, function(o) { return o.post && o.post.equals(req.body.postID); });
 
         // If the user has not interacted with the post before, add the post to user.feedAction.
         if (feedIndex == -1) {
@@ -443,7 +448,8 @@ exports.postchatAction = async(req, res, next) => {
     try {
         const user = await User.findById(req.user.id).exec();
         // Check if user has interacted with the post before.
-        let feedIndex = _.findIndex(user.chatAction, function(o) { return o.post.equals(req.body.chat_id); });
+        //let feedIndex = _.findIndex(user.chatAction, function(o) { return o.post.equals(req.body.chat_id); });
+        let feedIndex = _.findIndex(user.chatAction, function(o) { return o.post && o.post.equals(req.body.chat_id); });
 
         // If the user has not interacted with the post chat before, add the post to user.chatAction.
         if (feedIndex == -1) {
@@ -482,8 +488,11 @@ exports.postAIChat = async (req, res, next) => {
         const { chat_id, postCondition, messages, postContext, commentContext } = req.body;
 
         // Ensure chatAction entry exists for this post
+        // let feedIndex = _.findIndex(user.chatAction, function(o) {
+        //     return o.post.equals(chat_id);
+        // });
         let feedIndex = _.findIndex(user.chatAction, function(o) {
-            return o.post.equals(chat_id);
+            return o.post && o.post.equals(chat_id);
         });
         if (feedIndex === -1) {
             feedIndex = user.chatAction.push({ post: chat_id }) - 1;
@@ -571,18 +580,32 @@ exports.getTrainingModule = async(req, res, next) => {
             return;
         }
 
-        if (user.experimentalCondition !== TRAINING_POST_CONDITION) {
+        // if (user.experimentalCondition !== TRAINING_POST_CONDITION) {
+        //     return res.redirect('/');
+        // }
+        if (!TRAINING_POST_CONDITION.includes(user.experimentalCondition)) {
             return res.redirect('/');
         }
 
+        // const trainingFeed = await Script.find({
+        //         condition: TRAINING_POST_CONDITION
+        //     })
+        //     .sort('-time')
+        //     .populate('actor')
+        //     .populate('comments.actor')
+        //     .populate('comments.subcomments.actor')
+        //     .exec();
+        
         const trainingFeed = await Script.find({
-                condition: TRAINING_POST_CONDITION
+                condition: { $in: TRAINING_POST_CONDITION }
             })
             .sort('-time')
             .populate('actor')
             .populate('comments.actor')
             .populate('comments.subcomments.actor')
             .exec();
+
+
 
         if (!trainingFeed || trainingFeed.length === 0) {
             req.flash('errors', { msg: 'No training post available yet.' });
@@ -611,7 +634,8 @@ exports.getTrainingStatus = async(req, res, next) => {
             .exec();
         
         const trainingPostId = await Script.find({
-                condition: TRAINING_POST_CONDITION
+                //condition: TRAINING_POST_CONDITION
+                condition: { $in: TRAINING_POST_CONDITION }
             }).exec()._id;
 
         let userTurns = 0;
@@ -630,6 +654,70 @@ exports.getTrainingStatus = async(req, res, next) => {
             numComments: user.numComments + 1, // +1 to account for numComments start at -1
             userTurns: userTurns
         });
+    } catch (err) {
+        next(err);
+    }
+};
+exports.postChatActivation = async (req, res, next) => {
+    console.log('postChatActivation called', req.body);
+    try {
+        const user = await User.findById(req.user.id).exec();
+        const { chat_id, activationFactor } = req.body;
+ 
+        // Ensure a chatAction entry exists for this post
+        let feedIndex = _.findIndex(user.chatAction, function (o) {
+            return o.post && o.post.equals(chat_id);
+        });
+        if (feedIndex === -1) {
+            feedIndex = user.chatAction.push({ post: chat_id }) - 1;
+        }
+ 
+        // Only record the first activation — never overwrite with a later trigger
+        if (user.chatAction[feedIndex].activationFactor === 0) {
+            user.chatAction[feedIndex].activationFactor = Number(activationFactor);
+        }
+ 
+        await user.save();
+        res.json({ result: 'success' });
+    } catch (err) {
+        next(err);
+    }
+};
+
+exports.postChatTiming = async (req, res, next) => {
+    try {
+        const user = await User.findById(req.user.id).exec();
+        const { chat_id, event, absTime, minimizedDuration } = req.body;
+ 
+        let feedIndex = _.findIndex(user.chatAction, function (o) {
+            return o.post && o.post.equals(chat_id);
+        });
+        if (feedIndex === -1) {
+            feedIndex = user.chatAction.push({ post: chat_id }) - 1;
+        }
+ 
+        const entry = user.chatAction[feedIndex];
+        const ts = new Date(Number(absTime));
+ 
+        if (event === 'message_sent') {
+            // Track first and last message timestamps
+            if (!entry.firstMessageTime) {
+                entry.firstMessageTime = ts;
+            }
+            entry.lastMessageTime = ts;
+        } else if (event === 'minimized' || event === 'closed') {
+            // Nothing to persist yet – the client starts its own timer.
+            // We receive the accumulated duration on 'reopened'.
+        } else if (event === 'reopened') {
+            // Add the duration the chat was hidden to the running total
+            const dur = Number(minimizedDuration);
+            if (!isNaN(dur) && dur > 0) {
+                entry.minimizedDuration = (entry.minimizedDuration || 0) + dur;
+            }
+        }
+ 
+        await user.save();
+        res.json({ result: 'success' });
     } catch (err) {
         next(err);
     }

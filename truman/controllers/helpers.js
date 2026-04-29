@@ -64,8 +64,10 @@ exports.getFeed = function(user_posts, script_feed, user, order, removeFlaggedCo
             }
         } else {
             // Filter comments to include only comments labeled with the experimental condition the user is in.
-            script_feed[0].comments = script_feed[0].comments.filter(comment => !comment.condition || comment.condition == user.experimentalCondition);
-
+            //script_feed[0].comments = script_feed[0].comments.filter(comment => !comment.condition || comment.condition == user.experimentalCondition);
+            
+            //script_feed[0].comments = script_feed[0].comments.filter(comment => !comment.condition || comment.condition.split(',').map(c => c.trim()).includes(user.experimentalCondition));
+            script_feed[0].comments = script_feed[0].comments.filter(comment => !comment.condition || comment.condition.length === 0 || comment.condition.includes(user.experimentalCondition));
             // Filter comments to include only past simulated comments, not future simulated comments.
             script_feed[0].comments = script_feed[0].comments.filter(comment => user.createdAt.getTime() + comment.time < Date.now());
 
