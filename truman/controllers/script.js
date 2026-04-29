@@ -15,27 +15,6 @@ const OPENAI_PROMPT_ID = 'pmpt_69e1794d22d081938a69e9538dddaebf0a6a2fd6f73bdb7d'
 const OPENAI_PROMPT_VERSION = '3';
 
 /**
- * Generate post-survey link.
- */
-function getEndSurveyLink(user) {
-    const responseID = user.ResponseID;
-
-    if (user.endSurveyLink) { 
-        if (process.env.POST_SURVEY_WITH_QUALTRICS === 'TRUE' && responseID && !user.endSurveyLink.includes('r_id=')) {
-            return `${user.endSurveyLink}${user.endSurveyLink.includes('?') ? '&' : '?'}r_id=${responseID}`;
-        }
-        return user.endSurveyLink;
-    } // Returns a pre-assigned link if already stored on the user
-
-    return process.env.POST_SURVEY
-        ? process.env.POST_SURVEY +
-            (process.env.POST_SURVEY_WITH_QUALTRICS === 'TRUE' && responseID
-                ? `?r_id=${responseID}`
-                : "")
-        : "";  //If not already assigned, appends the Qualtrics response ID (r_id=[ResponseID]).
-}
-
-/**
  * GET /
  * Fetch and render newsfeed.
  */
@@ -98,8 +77,7 @@ exports.getScript = async(req, res, next) => {
         console.log("Script Size is now: " + finalfeed.length);
         res.render('script', {
             script: finalfeed,
-            chatbotEnabled: MAIN_FEED_CHATBOT_ENABLED_CONDITIONS.includes(user.experimentalCondition),
-            endSurveyLink: getEndSurveyLink(user)
+            chatbotEnabled: MAIN_FEED_CHATBOT_ENABLED_CONDITIONS.includes(user.experimentalCondition)
         });
     } catch (err) {
         next(err);
