@@ -39,7 +39,7 @@ block content
         .content
           .description
             |  End of Posts for the last 24 hours.
-    if user.endSurveyLink
+    if !isTrainingModule && user.endSurveyLink
       a.ui.large.primary.button#proceed-btn(href=user.endSurveyLink) Proceed to Post-Study Survey
   if isTrainingModule   
     .four.wide.computer.column
