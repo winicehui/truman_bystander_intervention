@@ -689,10 +689,11 @@ exports.postChatActivation = async (req, res, next) => {
             feedIndex = user.chatAction.push({ post: chat_id }) - 1;
         }
  
-        // Only record the first activation — never overwrite with a later trigger
-        if (user.chatAction[feedIndex].activationFactor === 0) {
-            user.chatAction[feedIndex].activationFactor = Number(activationFactor);
-        }
+        
+        user.chatAction[feedIndex].activationEvents.push({
+            activationFactor: Number(activationFactor),
+            absTime: new Date()
+        });
  
         await user.save();
         res.json({ result: 'success' });
@@ -723,11 +724,17 @@ exports.postChatTiming = async (req, res, next) => {
             }
             entry.lastMessageTime = ts;
         } else if (event === 'minimized' || event === 'closed') {
-            // Nothing to persist yet – the client starts its own timer.
-            // We receive the accumulated duration on 'reopened'.
+            entry.hideEvents.push({
+                event: event,
+                absTime: ts
+            });
         } else if (event === 'reopened') {
-            // Add the duration the chat was hidden to the running total
             const dur = Number(minimizedDuration);
+            entry.hideEvents.push({
+                event: 'reopened',
+                absTime: ts,
+                durationMs: (!isNaN(dur) && dur > 0) ? dur : 0
+            });
             if (!isNaN(dur) && dur > 0) {
                 entry.minimizedDuration = (entry.minimizedDuration || 0) + dur;
             }

@@ -152,10 +152,19 @@ const userSchema = new mongoose.Schema({
             name: String, // Indicates who made the chat message
             isAgent: { type: Boolean, default: false }, // Indicates if the user made the chat message
         }, { _id: true, versionKey: false })],
-        activationFactor: { type: Number, default: 0 }, // 0=view-timer,1=view,2=like,3=comment,4=flag
+        
+        activationEvents: { type: [new Schema({
+            activationFactor: { type: Number }, // 1=view,2=like,3=comment,4=flag
+            absTime: { type: Date }
+        }, { _id: false, versionKey: false })], default: [] },
         firstMessageTime: { type: Date, default: null }, // time of first message in chat
         lastMessageTime:  { type: Date, default: null }, // time of most recent message
         minimizedDuration:{ type: Number, default: 0 },  // accumulated ms while minimized/closed
+        hideEvents: { type: [new Schema({
+            event: { type: String }, // 'minimized', 'closed', 'reopened'
+            absTime: { type: Date },
+            durationMs: { type: Number, default: null } // only populated on 'reopened'
+        }, { _id: false, versionKey: false })], default: [] },
     }, { _id: false, versionKey: false })],
 
     profile: {
