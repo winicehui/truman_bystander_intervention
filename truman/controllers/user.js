@@ -162,6 +162,7 @@ exports.postSignup = async(req, res, next) => {
             existingUser.profile.name = req.body.username;
             if (condition && condition != 'undefined' && experimentalConditionNames.includes(condition)) {
                 existingUser.experimentalCondition = condition;
+                existingUser.endSurveyLink = surveyLink;
             }
             user = existingUser;
         } else {
