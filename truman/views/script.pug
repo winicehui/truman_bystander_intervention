@@ -40,7 +40,9 @@ block content
           .description
             |  End of Posts for the last 24 hours.
     if !isTrainingModule && user.endSurveyLink
-      a.ui.large.primary.button#proceed-btn(href=user.endSurveyLink) Proceed to Post-Study Survey
+      a.ui.large.primary.button#proceed-btn(href='/end-survey') Proceed to Post-Study Survey
+      .ui.hidden.message#error-msg
+          p Please interact with the feed for a bit before proceeding to the survey.
   if isTrainingModule   
     .four.wide.computer.column
   if chatbotEnabled
@@ -63,9 +65,17 @@ block content
       input.ui.button(type='submit', form='postform', value='Post')
           
 block scripts
+  if chatbotEnabled
+    script.
+      window.chatbotConfig = {
+        requireMainFeedChatOnboarding: !{JSON.stringify(!!requireMainFeedChatOnboarding)},
+        isTrainingModule: !{JSON.stringify(!!isTrainingModule)}
+      };
   script(src='/public/js/script.js')
   script(src='/public/js/postFunctionalities.js')
   if chatbotEnabled
     script(src='/public/js/chatbot.js')
   if isTrainingModule
     script(src='/public/js/trainingModule.js')
+  else if endSurveyLink
+    script(src='/public/js/endSurvey.js')

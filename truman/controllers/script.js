@@ -14,6 +14,41 @@ const TRAINING_CHATBOT_ENABLED_CONDITIONS = ['C1', 'C4'];
 const OPENAI_PROMPT_ID = 'pmpt_69e1794d22d081938a69e9538dddaebf0a6a2fd6f73bdb7d';
 const OPENAI_PROMPT_VERSION = '4';
 const CHAT_MESSAGE_CAP = 80; // Max number of user messages allowed in the chat to prevent abuse and manage costs. This does not include messages from the AI.
+const END_SURVEY_MIN_PAGE_TIME_MS = 1 * 60 * 1000;
+
+function hasUserSentAnyChatMessage(user) {
+    return Array.isArray(user.chatAction) && user.chatAction.some((chatEntry) =>
+        Array.isArray(chatEntry.messages) && chatEntry.messages.some((message) => !message.isAgent)
+    );
+}
+
+function getEndSurveyEligibility(user) {
+    const totalPageTime = Array.isArray(user.pageTimes) ?
+        user.pageTimes.reduce((sum, time) => sum + (Number(time) || 0), 0) :
+        0;
+
+    const trainingPostConditions = new Set(['C1', 'C4', '["C1","C4"]']);
+
+    const hasFeedAction = Array.isArray(user.feedAction) && user.feedAction.some((action) => {
+        if (trainingPostConditions.has(action.postCondition)) {
+            return false;
+        }
+
+        if (action.liked || action.flagged) {
+            return true;
+        }
+
+        return Array.isArray(action.comments) && action.comments.some((comment) =>
+            comment.new_comment || comment.liked || comment.flagged
+        );
+    });
+
+    return {
+        totalPageTime,
+        hasFeedAction,
+        canProceed: totalPageTime >= END_SURVEY_MIN_PAGE_TIME_MS && hasFeedAction
+    };
+}
 
 /**
  * GET /
@@ -78,9 +113,14 @@ exports.getScript = async(req, res, next) => {
         const finalfeed = helpers.getFeed(user_posts, script_feed, user, process.env.FEED_ORDER, (process.env.REMOVE_FLAGGED_CONTENT == 'TRUE'), false);
 
         console.log("Script Size is now: " + finalfeed.length);
+        const chatbotEnabled = MAIN_FEED_CHATBOT_ENABLED_CONDITIONS.includes(user.experimentalCondition);
         res.render('script', {
             script: finalfeed,
-            chatbotEnabled: MAIN_FEED_CHATBOT_ENABLED_CONDITIONS.includes(user.experimentalCondition)
+            user: user,
+            endSurveyLink: user.endSurveyLink,
+            chatbotEnabled: chatbotEnabled,
+            requireMainFeedChatOnboarding: chatbotEnabled && !hasUserSentAnyChatMessage(user),
+            isTrainingModule: false
         });
     } catch (err) {
         next(err);
@@ -629,7 +669,8 @@ exports.getTrainingModule = async(req, res, next) => {
         res.render('script', {
             script: finalfeed,
             chatbotEnabled: TRAINING_CHATBOT_ENABLED_CONDITIONS.includes(user.experimentalCondition), 
-            isTrainingModule: true
+            isTrainingModule: true,
+            requireMainFeedChatOnboarding: false
         });
     } catch (err) {
         next(err);
@@ -671,6 +712,26 @@ exports.getTrainingStatus = async(req, res, next) => {
         next(err);
     }
 };
+
+exports.redirectToEndSurvey = async(req, res, next) => {
+    try {
+        const user = await User.findById(req.user.id).exec();
+        const endSurveyEligibility = getEndSurveyEligibility(user);
+
+        if (!user.endSurveyLink) {
+            return res.redirect('/?surveyBlocked=true');
+        }
+
+        if (!endSurveyEligibility.canProceed) {
+            return res.redirect('/?surveyBlocked=true');
+        }
+
+        return res.redirect(user.endSurveyLink);
+    } catch (err) {
+        next(err);
+    }
+};
+
 exports.postChatActivation = async (req, res, next) => {
     console.log('postChatActivation called', req.body);
     try {
