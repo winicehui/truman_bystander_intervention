@@ -15,7 +15,7 @@ $(window).on('load', function() {
                 $.post('/account/training', { _csrf: $('meta[name="csrf-token"]').attr('content') })
                     .done(function(json) {
                             if (json["result"] === "success") {
-                                window.location.href = '/';
+                                window.location.href = '/training_complete';
                             }
                     })
                     .fail(function() {

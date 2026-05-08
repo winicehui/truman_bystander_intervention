@@ -227,6 +227,14 @@ app.get('/training_intro', function(req, res) {
     });
 });
 app.get('/training_module', passportConfig.isAuthenticated, scriptController.getTrainingModule);
+app.get('/training_complete', passportConfig.isAuthenticated, function(req, res) {
+    if (!req.user.finishedTraining) {
+        return res.redirect('/training_module');
+    }
+    res.render('training_complete', {
+        title: 'Training Complete'
+    });
+});
 app.get('/training_status', passportConfig.isAuthenticated, scriptController.getTrainingStatus);
 app.get('/tos', function(req, res) { res.render('tos', { title: 'Terms of Service' }); });
 
