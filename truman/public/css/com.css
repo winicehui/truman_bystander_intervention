@@ -86,6 +86,10 @@ html, body {
     box-shadow: 0 8px 20px rgba(21, 117, 244, 0.3);
 }
 
+.com-content h3.left-align {
+    text-align: left;
+}
+
 @media (max-width: 768px) {
     .com-card {
         padding: 2rem;
