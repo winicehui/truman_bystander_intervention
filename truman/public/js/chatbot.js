@@ -507,6 +507,13 @@ $(window).on('load', function () {
                     }, 3000);
                     postChatState.set(postID, timeout); // store timer ref as value
                 }
+            } else {
+                // Cyberbullying content left viewport before 3s timer fired
+                const state = postChatState.get(postID);
+                if (state && state !== 'open' && state !== 'minimized' && state !== 'closed' && state !== 'pending') {
+                    clearTimeout(state); // cancel the pending 3s timer
+                    postChatState.delete(postID); // reset so timer can restart next time content enters viewport
+                }
             }
         });
     }, {
