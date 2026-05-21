@@ -303,16 +303,22 @@ $(window).on('load', function () {
                     });
                 }
             
+                try {
+                    await $.post('/chat', {
+                        chat_id: this.chatId,
+                        body: message,
+                        absTime: Date.now(),
+                        name,
+                        isAgent: false,
+                        _csrf: $('meta[name="csrf-token"]').attr('content')
+                    });
+                } catch (err) {
+                    const errorMessage = err?.responseJSON?.message || 'You have reached the chat limit.';
+                    this.addMessageExternal(errorMessage, this.getCurrentTime(), 'Comment Coach', true);
+                    return;
+                }
+
                 this.render(message, this.getCurrentTime(), name, false, false, false);
-            
-                await $.post('/chat', {
-                    chat_id: this.chatId,
-                    body: message,
-                    absTime: Date.now(),
-                    name,
-                    isAgent: false,
-                    _csrf: $('meta[name="csrf-token"]').attr('content')
-                });
             
                 // ── NEW: record message timestamp for net-interaction-time calc ──
                 await logChatTiming(this.chatId, 'message_sent');
