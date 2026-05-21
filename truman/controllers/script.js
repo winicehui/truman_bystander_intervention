@@ -15,6 +15,12 @@ const OPENAI_PROMPT_ID = 'pmpt_69e1794d22d081938a69e9538dddaebf0a6a2fd6f73bdb7d'
 const OPENAI_PROMPT_VERSION = '4';
 const CHAT_MESSAGE_CAP = 80; // Max number of user messages allowed in the chat to prevent abuse and manage costs. This does not include messages from the AI.
 
+function hasUserSentAnyChatMessage(user) {
+    return Array.isArray(user.chatAction) && user.chatAction.some((chatEntry) =>
+        Array.isArray(chatEntry.messages) && chatEntry.messages.some((message) => !message.isAgent)
+    );
+}
+
 /**
  * GET /
  * Fetch and render newsfeed.
@@ -78,9 +84,12 @@ exports.getScript = async(req, res, next) => {
         const finalfeed = helpers.getFeed(user_posts, script_feed, user, process.env.FEED_ORDER, (process.env.REMOVE_FLAGGED_CONTENT == 'TRUE'), false);
 
         console.log("Script Size is now: " + finalfeed.length);
+        const chatbotEnabled = MAIN_FEED_CHATBOT_ENABLED_CONDITIONS.includes(user.experimentalCondition);
         res.render('script', {
             script: finalfeed,
-            chatbotEnabled: MAIN_FEED_CHATBOT_ENABLED_CONDITIONS.includes(user.experimentalCondition)
+            chatbotEnabled: chatbotEnabled,
+            requireMainFeedChatOnboarding: chatbotEnabled && !hasUserSentAnyChatMessage(user),
+            isTrainingModule: false
         });
     } catch (err) {
         next(err);
@@ -629,7 +638,8 @@ exports.getTrainingModule = async(req, res, next) => {
         res.render('script', {
             script: finalfeed,
             chatbotEnabled: TRAINING_CHATBOT_ENABLED_CONDITIONS.includes(user.experimentalCondition), 
-            isTrainingModule: true
+            isTrainingModule: true,
+            requireMainFeedChatOnboarding: false
         });
     } catch (err) {
         next(err);

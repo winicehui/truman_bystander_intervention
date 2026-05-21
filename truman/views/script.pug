@@ -63,6 +63,12 @@ block content
       input.ui.button(type='submit', form='postform', value='Post')
           
 block scripts
+  if chatbotEnabled
+    script.
+      window.chatbotConfig = {
+        requireMainFeedChatOnboarding: !{JSON.stringify(!!requireMainFeedChatOnboarding)},
+        isTrainingModule: !{JSON.stringify(!!isTrainingModule)}
+      };
   script(src='/public/js/script.js')
   script(src='/public/js/postFunctionalities.js')
   if chatbotEnabled

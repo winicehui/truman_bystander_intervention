@@ -1,4 +1,8 @@
 //- Chat Box  
+#chatbot-onboarding-overlay.hidden
+#chatbot-onboarding-bubble.hidden
+  .chatbot-onboarding-title Meet the Community Assistant!
+  .chatbot-onboarding-body An AI assistant that detects potentially harmful content and helps you craft the right response. Send a message below to get started.
 #copilot-chat.container.clearfix
   .chat.hidden
     .chat-header.clearfix
@@ -11,6 +15,8 @@
     .chat-history
       ul
     .chat-message.clearfix
+      #chatbot-onboarding-dot.hidden
+        span.chatbot-onboarding-dot-pulse
       .ui.form
         .inline.field
           textarea#message-to-send(type='text', name='message-to-send', placeholder='Type your message', rows=2)
