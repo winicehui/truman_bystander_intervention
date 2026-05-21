@@ -576,7 +576,7 @@ $(window).on('load', async () => {
         // Handling scrolling down like normal
         // Called when bottomVisible turns true (bottom of a picture is visible): bottom can enter from top or bottom of viewport
         onBottomVisible: function(element) {
-            var startTime = parseInt($(this).siblings(".content").children(".myTimer").text());
+            var startTime = parseInt($(this).siblings(".myTimer").text());
             // Bottom of picture enters from bottom (scrolling down the feed; as normal)
             if (element.topVisible) { // Scrolling Down AND entire post is visible on the viewport 
                 // If this is the first time bottom is visible
@@ -586,13 +586,13 @@ $(window).on('load', async () => {
             } else { // Scrolling up and this event does not matter, since entire photo isn't visible anyways.
                 var startTime = 0;
             }
-            $(this).siblings(".content").children(".myTimer").text(startTime);
+            $(this).siblings(".myTimer").text(startTime);
         },
 
         // Element's bottom edge has passed top of the screen (disappearing); happens only when Scrolling Up
         onBottomPassed: function(element) {
             var endTime = Date.now();
-            var startTime = parseInt($(this).siblings(".content").children(".myTimer").text());
+            var startTime = parseInt($(this).siblings(".myTimer").text());
             var totalViewTime = endTime - startTime; // TOTAL TIME HERE
 
             var parent = $(this).parents(".ui.fluid.card");
@@ -607,17 +607,17 @@ $(window).on('load', async () => {
                     _csrf: $('meta[name="csrf-token"]').attr('content')
                 });
                 // Reset Timer
-                $(this).siblings(".content").children(".myTimer").text(0);
+                $(this).siblings(".myTimer").text(0);
             }
         },
 
         // Handling scrolling up
         // Element's top edge has passed top of the screen (appearing); happens only when Scrolling Up
         onTopPassedReverse: function(element) {
-            var startTime = parseInt($(this).siblings(".content").children(".myTimer").text());
+            var startTime = parseInt($(this).siblings(".myTimer").text());
             if (element.bottomVisible && startTime == 0) { // Scrolling Up AND entire post is visible on the viewport 
                 var startTime = Date.now();
-                $(this).siblings(".content").children(".myTimer").text(startTime);
+                $(this).siblings(".myTimer").text(startTime);
             }
         },
 
@@ -626,7 +626,7 @@ $(window).on('load', async () => {
             if (element.topPassed) { // Scrolling Down, disappears on top; this event doesn't matter (since it is when bottom disappears that time is stopped)
             } else { // False when Scrolling Up (the bottom of photo exits screen.)
                 var endTime = Date.now();
-                var startTime = parseInt($(this).siblings(".content").children(".myTimer").text());
+                var startTime = parseInt($(this).siblings(".myTimer").text());
                 var totalViewTime = endTime - startTime;
 
                 var parent = $(this).parents(".ui.fluid.card");
@@ -641,7 +641,7 @@ $(window).on('load', async () => {
                         _csrf: $('meta[name="csrf-token"]').attr('content')
                     });
                     // Reset Timer
-                    $(this).siblings(".content").children(".myTimer").text(0);
+                    $(this).siblings(".myTimer").text(0);
                 }
             }
         }
