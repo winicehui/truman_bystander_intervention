@@ -12,7 +12,7 @@ const TRAINING_POST_CONDITION = 'C1';
 const MAIN_FEED_CHATBOT_ENABLED_CONDITIONS = ['C2'];
 const TRAINING_CHATBOT_ENABLED_CONDITIONS = ['C1'];
 const OPENAI_PROMPT_ID = 'pmpt_69e1794d22d081938a69e9538dddaebf0a6a2fd6f73bdb7d';
-const OPENAI_PROMPT_VERSION = '3';
+const OPENAI_PROMPT_VERSION = '9';
 
 /**
  * Generate post-survey link.
@@ -524,6 +524,16 @@ exports.postAIChat = async (req, res, next) => {
                 ? [{ role: 'user', content: 'The user opened the chatbot for this post. Begin the conversation.' }]
                 : messages)
         ];
+        console.log({            
+            prompt: {
+                id: OPENAI_PROMPT_ID,
+                version: OPENAI_PROMPT_VERSION
+            },
+            input: conversationInput,
+            max_output_tokens: 300,
+            reasoning: {
+                summary: "auto"
+            }})
 
         // Call OpenAI using the reusable prompt template configured in the dashboard.
         const response = await openai.responses.create({
@@ -537,6 +547,7 @@ exports.postAIChat = async (req, res, next) => {
                 summary: "auto"
             }
         });
+        console.log(response);
         const replyText = response.output_text;
         // reasoning summary for each message
         const reasoningItem = response.output.find(item => item.type === "reasoning");

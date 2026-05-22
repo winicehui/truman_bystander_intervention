@@ -152,6 +152,18 @@
     word-break: break-word;
 }
 
+.align-left {
+    text-align: left;
+}
+
+.align-center {
+    text-align: center;
+}
+
+.align-right {
+    text-align: right;
+}
+
 
 /* .chat .chat-history .message:after {
     bottom: 100%;
