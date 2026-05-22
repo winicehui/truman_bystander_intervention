@@ -1,14 +1,15 @@
+- const trainingConditions = ['C1', 'C4']
 .computer.only.tablet.only.row 
   .ui.borderless.fixed.menu
     .ui.container
-      a.item(href=(user && user.condition != 'C1' || (user && user.condition == 'C1' && user.finishedTraining) ? "/" : "/training_intro"))
+      a.item(href=(!user ? "/" : (!user.consent ? "/com" : (!trainingConditions.includes(user.experimentalCondition) || user.finishedTraining ? "/" : "/training_intro"))))
         img.ui.tiny.image(src=process.env.SITE_LOGO, id='logo')
       .right.menu
         if !user
           //- a.item(href=process.env.POST_SURVEY_WITH_QUALTRICS ? `/login?ResponseID=${ResponseID || r_id || ''}&Condition=${Condition || ''}`: '/login') Log In
           a.item(href=process.env.POST_SURVEY_WITH_QUALTRICS ? `/signup?ResponseID=${ResponseID || r_id || ''}&Condition=${Condition || ''}`: '/signup') Create Account
         else
-          if user.consent && (user.condition != 'C1' ? true : user.conditino=='C1' && user.finishedTraining)
+          if user.consent && (!trainingConditions.includes(user.experimentalCondition) || user.finishedTraining)
             a.item(href='/notifications') 
               i.big.alarm.icon
           .ui.simple.dropdown.item
@@ -16,7 +17,7 @@
             span(style="margin-right: 5px;")= user.profile.name || user.username || user.id
             i.dropdown.icon
             .left.menu
-              if user.consent && (user.condition != 'C1' ? true : user.conditino=='C1' && user.finishedTraining)
+              if user.consent && (!trainingConditions.includes(user.experimentalCondition) || user.finishedTraining)
                 a.item(href='/me') My Profile
                 a.item(href='/account') Update My Profile
                 if user.isAdmin
@@ -26,12 +27,12 @@
               a.item.logoutLink Log Out
 .mobile.only.row
   .ui.fluid.top.fixed.item.menu(class = user ? "four" : "two")
-    a.item(href=(user && user.condition != 'C1' || (user && user.condition == 'C1' && user.finishedTraining) ? "/" : "/training_intro"))
+    a.item(href=(!user ? "/" : (!user.consent ? "/com" : (!trainingConditions.includes(user.experimentalCondition) || user.finishedTraining ? "/" : "/training_intro"))))
       img.ui.tiny.image(src=process.env.SITE_LOGO, id='mobile_logo')
     if !user
       a.item(href=process.env.POST_SURVEY_WITH_QUALTRICS ? `/signup?ResponseID=${ResponseID || r_id || ''}&Condition=${Condition || ''}`: '/signup') Create Account
     else
-      if user.consent && (user.condition != 'C1' ? true : user.conditino=='C1' && user.finishedTraining)
+      if user.consent && (!trainingConditions.includes(user.experimentalCondition) || user.finishedTraining)
         a.item(href='/notifications') 
           i.big.alarm.icon
       else 
@@ -41,7 +42,7 @@
         img.ui.mini.spaced.circular.image(src=user.profile.picture)
         i.dropdown.icon
         .left.menu
-          if user.consent && (user.condition != 'C1' ? true : user.conditino=='C1' && user.finishedTraining)
+          if user.consent && (!trainingConditions.includes(user.experimentalCondition) || user.finishedTraining)
             a.item(href='/me') My Profile
             a.item(href='/account') Update My Profile
             if user.isAdmin

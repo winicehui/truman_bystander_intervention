@@ -143,6 +143,8 @@ app.use((req, res, next) => {
         '/signup',
         '/account/signup_info',
         '/chat/ai',
+        '/chat/activation',
+        '/chat/timing',
     ];
     
     if (skipCsrfPaths.includes(req.path)) {
@@ -162,6 +164,11 @@ app.disable('x-powered-by');
 app.use((req, res, next) => {
     res.locals.user = req.user;
     res.locals.cdn = process.env.CDN;
+    res.locals.getUserAvatarSrc = (picture) => {
+        if (!picture) return null;
+        if (picture.startsWith('/')) return picture;
+        return `/user_avatar/${picture}`;
+    };
     next();
 });
 
@@ -262,6 +269,10 @@ app.get('/feed', passportConfig.isAuthenticated, scriptController.getScript);
 app.post('/feed', passportConfig.isAuthenticated, scriptController.postUpdateFeedAction);
 app.post('/userPost_feed', passportConfig.isAuthenticated, scriptController.postUpdateUserPostFeedAction);
 app.post('/chat/ai', passportConfig.isAuthenticated, scriptController.postAIChat);
+
+app.post('/chat/activation', passportConfig.isAuthenticated, scriptController.postChatActivation);
+app.post('/chat/timing',     passportConfig.isAuthenticated, scriptController.postChatTiming);
+ 
 app.get('/test', passportConfig.isAuthenticated, function(req, res) {
     res.render('test', {
         title: 'Test'

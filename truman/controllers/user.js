@@ -4,6 +4,13 @@ const dotenv = require('dotenv');
 dotenv.config({ path: '.env' }); // See the file .env.example for the structure of .env
 const User = require('../models/User');
 
+function normalizeProfilePicture(picture) {
+    if (!picture) return null;
+    return picture.startsWith('/profile_pictures/') || picture.startsWith('/user_avatar/')
+        ? picture
+        : `/profile_pictures/${picture.replace(/^.*\//, '')}`;
+}
+
 // create random id for guest accounts
 function makeid(length) {
     var result = '';
@@ -23,6 +30,8 @@ exports.getLogin = (req, res) => {
     if (req.user) {
         return res.redirect('/');
     }
+    const responseID = req.query.ResponseID || req.query.r_id;
+    const condition = req.query.Condition || req.query.condition;
     res.render('account/login', {
         title: 'Login',
         site_picture: process.env.SITE_PICTURE
@@ -158,10 +167,11 @@ exports.postSignup = async(req, res, next) => {
         console.log(existingUser)
         if (existingUser) {
             existingUser.username = req.body.username;
-            existingUser.profile.picture = req.body.profile_picture;
+            existingUser.profile.picture = normalizeProfilePicture(req.body.profile_picture);
             existingUser.profile.name = req.body.username;
             if (condition && condition != 'undefined' && experimentalConditionNames.includes(condition)) {
                 existingUser.experimentalCondition = condition;
+                existingUser.endSurveyLink = surveyLink;
             }
             user = existingUser;
         } else {
@@ -459,7 +469,12 @@ exports.getUserProfile = async(req, res) => {
         const user = await User.findById(req.user.id).exec();
         res.set('Content-Type', 'application/json; charset=UTF-8');
         res.send({
-            userProfile: user.profile,
+            userProfile: {
+                ...user.profile.toObject(),
+                pictureSrc: user.profile.picture && user.profile.picture.startsWith('/')
+                    ? user.profile.picture
+                    : (user.profile.picture ? `/user_avatar/${user.profile.picture}` : null)
+            },
             numComments: user.numComments,
             username: user.username
         });
