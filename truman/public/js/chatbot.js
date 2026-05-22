@@ -261,6 +261,7 @@ $(window).on('load', function () {
             formatMessageOutput(body) {
                 if (!body || typeof body !== 'string') return body;
                 return body
+                    .replace(/FINAL COMMENT:(.+)/g, '<strong>FINAL COMMENT:$1</strong>')
                     .replace(/\*\*([\s\S]+?)\*\*/g, '<strong>$1</strong>')
                     .replace(/\n/g, '<br/><br/>');
             },
@@ -357,9 +358,9 @@ $(window).on('load', function () {
                     const replyText = data.message.content;
                     this.addMessageExternal(replyText, this.getCurrentTime(), 'Comment Coach', true);
                         
-                    const match = replyText.match(/FINAL COMMENT:\s*(.+?)(?=\n✅|\n\n|✅|$)/s);
+                    const match = replyText.match(/FINAL COMMENT:\s*(.+)/);
                     if (match) {
-                        post.find('textarea.replyToPost').val(match[1].trim()).focus();
+                        post.find('textarea.replyToPost').val(match[1].trim()).focus().scrollIntoView({ behavior: 'smooth' });;
                         setTimeout(() => $('#copilot-chat .chat').slideUp(200), 2000);
                     }
                 } catch (err) {
