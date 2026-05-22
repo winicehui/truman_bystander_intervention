@@ -211,7 +211,8 @@ app.get('/com', function(req, res) {
     const fromFeed = req.query.feed == "true" ? true : false; //Are we accessing the community rules from the feed?
     res.render('com', {
         title: 'Community Guidelines',
-        fromFeed
+        fromFeed,
+        isTrainingModule: true
     });
 });
 
@@ -223,7 +224,8 @@ app.get('/info', passportConfig.isAuthenticated, function(req, res) {
 
 app.get('/training_intro', function(req, res) {
     res.render('training', {
-        title: 'Training Module'
+        title: 'Training Module',
+        isTrainingModule: true
     });
 });
 app.get('/training_module', passportConfig.isAuthenticated, scriptController.getTrainingModule);
@@ -232,7 +234,8 @@ app.get('/training_complete', passportConfig.isAuthenticated, function(req, res)
         return res.redirect('/training_module');
     }
     res.render('training_complete', {
-        title: 'Training Complete'
+        title: 'Training Complete',
+        isTrainingModule: true
     });
 });
 app.get('/training_status', passportConfig.isAuthenticated, scriptController.getTrainingStatus);
