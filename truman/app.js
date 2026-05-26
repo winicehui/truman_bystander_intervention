@@ -216,6 +216,13 @@ app.get('/com', function(req, res) {
     });
 });
 
+app.get('/community-guidelines', passportConfig.isAuthenticated, function(req, res) {
+    res.render('community_guidelines', {
+        title: 'Community Guidelines',
+        isTrainingModule: false
+    });
+});
+
 app.get('/info', passportConfig.isAuthenticated, function(req, res) {
     res.render('info', {
         title: 'User Docs'
