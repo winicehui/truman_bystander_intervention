@@ -3,6 +3,9 @@
 - Redirect:
   `http://localhost:3000/?ResponseID=${e://Field/ResponseID}&Condition=${e://Field/Condition}`
 
+- Post-survey redirect:
+  `...&PROLIFIC_PID=${ResponseID}`
+
 - Backend:
   Reads the participant identifier via:
   `req.query.ResponseID || req.query.r_id`

@@ -147,7 +147,7 @@ exports.postSignup = async(req, res, next) => {
 
         const surveyLink = process.env.POST_SURVEY ?
             process.env.POST_SURVEY +
-            (process.env.POST_SURVEY_WITH_QUALTRICS == 'TRUE' && process.env.POST_SURVEY.includes("?r_id=") &&
+            (process.env.POST_SURVEY_WITH_QUALTRICS == 'TRUE' && process.env.POST_SURVEY.includes("?PROLIFIC_PID=") &&
                 responseID != 'null' && responseID && responseID != 'undefined' ? responseID : "") :
             "";
         const currDate = Date.now();
