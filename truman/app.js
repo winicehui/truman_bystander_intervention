@@ -235,6 +235,13 @@ app.get('/training_intro', function(req, res) {
         isTrainingModule: true
     });
 });
+
+app.get('/beta_intro', function(req, res) {
+    res.render('beta_intro', {
+        title: 'Beta Feature',
+        isTrainingModule: true
+    });
+});
 app.get('/training_module', passportConfig.isAuthenticated, scriptController.getTrainingModule);
 app.get('/training_complete', passportConfig.isAuthenticated, function(req, res) {
     if (!req.user.finishedTraining) {

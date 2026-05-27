@@ -1,0 +1,20 @@
+extends ui_layout
+
+block styles
+  link(type='text/css', rel='stylesheet', href='/public/css/com.css')
+
+block content
+  .sixteen.wide.column.centered#com
+    .ui.card
+      .com-header
+        h1 Introducing Community Assistant
+      .com-content
+        p As part of your FreshView experience, you'll have access to a beta feature — an <strong>AI community assistant</strong> that can identify potentially harmful content and support you in crafting a thoughtful response when needed.
+        p We are actively testing this feature and would love to see how it works for you. You can share draft comments, ask for suggestions, or talk through any concerns with the assistant. 
+        p Engage with the assistant as much as you'd like, and you're always free to respond however you see fit.
+        p When you're ready, press <strong>Enter Feed</strong> to start engaging with our community.
+      .com-footer
+        .com-footer-content
+          img.com-logo(src='/public/favicon.svg', alt='FreshView Logo')
+          .com-enter
+            a.ui.large.primary.button(href='/') Enter Feed
