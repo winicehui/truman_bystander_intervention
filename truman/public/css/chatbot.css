@@ -24,6 +24,20 @@ body.chat-onboarding-locked {
     overflow: hidden;
 }
 
+body.chat-onboarding-locked .chatbot-onboarding-active-post {
+    max-height: calc(100vh - 32px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-gutter: stable;
+}
+
+body.chat-onboarding-locked .chatbot-onboarding-active-post .extra.content {
+    position: sticky;
+    bottom: 0;
+    z-index: 1;
+}
+
 #chatbot-onboarding-overlay {
     position: fixed;
     inset: 0;

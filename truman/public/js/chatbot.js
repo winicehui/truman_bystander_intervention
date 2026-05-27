@@ -53,9 +53,11 @@ function activateOnboardingLock(post, chatId) {
     onboardingState.locked = true;
     onboardingState.requiredChatId = chatId;
     if (post && post.length && post[0] && typeof post[0].scrollIntoView === 'function') {
+        const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 0;
+        const postHeight = post[0].getBoundingClientRect().height;
         post[0].scrollIntoView({
             behavior: 'smooth',
-            block: 'center',
+            block: postHeight > viewportHeight * 0.85 ? 'start' : 'center',
             inline: 'nearest'
         });
     }
