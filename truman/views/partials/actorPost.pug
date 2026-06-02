@@ -3,7 +3,7 @@
     i.ui.large.comments.icon
   .content.post-header
     a(href='/user/'+val.actor.username)     
-      img.ui.avatar.image(src='/public/picture.svg', data-src=cdn+"/profile_pictures/"+val.actor.profile.picture)
+      img.ui.avatar.image.lazy(src='/public/picture.svg', data-src=cdn+"/profile_pictures/"+val.actor.profile.picture)
       span.username=val.actor.profile.name
     .time.meta= (user.createdAt.getTime() + val.time)
   //- .content.dimmable(class=val.flagged ? "dimmed": "")
@@ -21,9 +21,8 @@
           //-   |  Unflag
     if val.picture
       .img.post.image
-        img(src='/public/picture.svg', data-src=cdn+"/post_pictures/"+val.picture, style="max-width:100%; width:100%;")
+        img.lazy(src='/public/picture.svg', data-src=cdn+"/post_pictures/"+val.picture, style="max-width:100%; width:100%;")
     .description(class=(val.class=="cyberbullying") ? "cyberbullying" : null)=val.body
-    .myTimer.hidden 0
   .ui.bottom.three.attached.icon.buttons
     .ui.reply.button(tabindex='0')
       i.reply.icon
@@ -46,7 +45,7 @@
                 img(src=user.profile.picture)
             else 
               a.avatar(href='/user/'+comment.actor.username)                  
-                img(src='/public/picture.svg', data-src=cdn+"/profile_pictures/"+comment.actor.profile.picture)
+                img.lazy(src='/public/picture.svg', data-src=cdn+"/profile_pictures/"+comment.actor.profile.picture)
             .content
               if comment.new_comment
                 a.author(href='/me') !{user.profile.name || user.username} (me)
@@ -73,7 +72,7 @@
                         img(src=user.profile.picture)
                     else
                       a.avatar
-                        img(src=cdn+'/profile_pictures/'+subcomment.actor.profile.picture)
+                        img.lazy(src='/public/picture.svg', data-src=cdn+'/profile_pictures/'+subcomment.actor.profile.picture)
                     .content
                         if subcomment.new_comment
                           a.author(href='/me') !{user.username} (me)

@@ -28,12 +28,12 @@ block content
                   .label
                     i.large.unhide.icon
                   .content
-                    img.ui.tiny.right.floated.rounded.image(src='/user_post/'+notification.picture)
+                    img.ui.tiny.right.floated.rounded.image.lazy(src='/public/picture.svg', data-src='/user_post/'+notification.picture)
                     .extra.images
                       each actor in best
                         if actor.username != "generic-joe"
                           a.ui.avatar.image(href='/user/'+actor.username, data-tooltip=actor.profile.name, data-position='top center')
-                            img.ui.avatar.image(src='/public/picture.svg', data-src='/profile_pictures/'+actor.profile.picture)
+                            img.ui.avatar.image.lazy(src='/public/picture.svg', data-src='/profile_pictures/'+actor.profile.picture)
                     if best.length == 1
                       .summary
                         a(href='/user/'+best[0].username)=best[0].profile.name
@@ -52,11 +52,11 @@ block content
                   .label
                     i.large.like.icon
                   .content
-                    img.ui.tiny.right.floated.rounded.image(src='/user_post/'+notification.picture)
+                    img.ui.tiny.right.floated.rounded.image.lazy(src='/public/picture.svg', data-src='/user_post/'+notification.picture)
                     .extra.images
                       each actor in best
                         a.ui.avatar.image(href='/user/'+actor.username, data-tooltip=actor.profile.name, data-position='bottom center')                       
-                          img.ui.avatar.image(src='/public/picture.svg', data-src='/profile_pictures/'+actor.profile.picture)
+                          img.ui.avatar.image.lazy(src='/public/picture.svg', data-src='/profile_pictures/'+actor.profile.picture)
                     .summary
                       a(href='/user/'+best[0].username)=best[0].profile.name
                       if best.length != 1
@@ -72,10 +72,10 @@ block content
                   .label
                     i.large.reply.icon
                   .content
-                    img.ui.tiny.right.floated.rounded.image(src='/user_post/'+notification.picture)
+                    img.ui.tiny.right.floated.rounded.image.lazy(src='/public/picture.svg', data-src='/user_post/'+notification.picture)
                     .extra.images
                         a.ui.avatar.image(href='/user/'+notification.actor.username, data-tooltip=notification.actor.profile.name, data-position='bottom center')                       
-                          img.ui.avatar.image(src='/public/picture.svg', data-src='/profile_pictures/'+notification.actor.profile.picture)
+                          img.ui.avatar.image.lazy(src='/public/picture.svg', data-src='/profile_pictures/'+notification.actor.profile.picture)
                     .summary
                       a(href='/user/'+notification.actor.username)
                         span=notification.actor.profile.name
@@ -94,7 +94,7 @@ block content
                       each actor in best
                         if actor.username != "generic-joe"
                           a.ui.avatar.image(href='/user/'+actor.username, data-tooltip=actor.profile.name, data-position='top center')                            
-                            img.ui.avatar.image(src='/public/picture.svg', data-src='/profile_pictures/'+actor.profile.picture)
+                            img.ui.avatar.image.lazy(src='/public/picture.svg', data-src='/profile_pictures/'+actor.profile.picture)
                     .summary
                       a(href='/user/'+best[0].username)=best[0].profile.name
                       if best.length == 1
@@ -118,7 +118,7 @@ block content
                     .extra.images
                       each actor in best
                         a.ui.avatar.image(href='/user/'+actor.username, data-tooltip=actor.profile.name, data-position='top center')
-                          img.ui.avatar.image(src='/public/picture.svg', data-src='/profile_pictures/'+actor.profile.picture)
+                          img.ui.avatar.image.lazy(src='/public/picture.svg', data-src='/profile_pictures/'+actor.profile.picture)
                     .summary
                       a(href='/user/'+best[0].username)=best[0].profile.name
                       if best.length == 1

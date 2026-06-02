@@ -582,7 +582,7 @@ $(window).on('load', async () => {
                 viewTimers.set(postID, { startTime: Date.now(), postCondition: condition });
             }
 
-            } else {
+        } else {
             // Card is leaving (or was never sufficiently visible) — stop timer and report
             if (viewTimers.has(postID)) {
                 const { startTime, postCondition } = viewTimers.get(postID);
@@ -598,7 +598,7 @@ $(window).on('load', async () => {
                 });
                 }
             }
-            }
+        }
         });
     }, {
         threshold: VISIBILITY_THRESHOLD  // fires when crossing the 50% boundary

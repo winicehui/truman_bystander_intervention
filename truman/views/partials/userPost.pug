@@ -7,7 +7,7 @@
   .content
     if val.picture
       .img.post.image
-        img(src='/user_post/'+val.picture)
+        img.lazy(src='/public/picture.svg', data-src='/user_post/'+val.picture)
     .description=val.body
   .ui.bottom.two.attached.icon.buttons
     .ui.reply.button(tabindex='0')
@@ -28,7 +28,7 @@
                 img(src=user.profile.picture)
             else 
               a.avatar(href='/user/'+comment.actor.username)                  
-                img(src='/public/picture.svg', data-src=cdn+"/profile_pictures/"+comment.actor.profile.picture)
+                img.lazy(src='/public/picture.svg', data-src=cdn+"/profile_pictures/"+comment.actor.profile.picture)
             .content
               if comment.new_comment
                 a.author(href='/me') !{user.profile.name || user.username} (me)
@@ -55,7 +55,7 @@
                         img(src=user.profile.picture)
                     else
                       a.avatar
-                        img(src=cdn+'/profile_pictures/'+subcomment.actor.profile.picture)
+                        img.lazy(src='/public/picture.svg', data-src=cdn+'/profile_pictures/'+subcomment.actor.profile.picture)
                     .content
                         if subcomment.new_comment
                           a.author(href='/me') !{user.profile.name || user.username} (me)

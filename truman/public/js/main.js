@@ -101,10 +101,36 @@ $(window).on("load", function() {
         readURL(this);
     });
 
-    // Lazy loading of images on site
-    $(`#content .fluid.card .img img, #content img.ui.avatar.image, #content a.avatar img, .ui.card .image img`).visibility({
-        type: 'image'
-    });
+    
+    // Lazy Load Images on website
+    const loadLazyImage = (img) => {
+        img.src = img.dataset.src;
+        img.removeAttribute('data-src');
+        img.classList.remove('lazy');
+    };
+
+    const observeLazyImages = () => {
+        const images = $('img.lazy[data-src]');
+        if (!images.length) return;
+
+        if ('IntersectionObserver' in window) {
+            if (!window.imageObserver) {
+                window.imageObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (!entry.isIntersecting) return;
+                        loadLazyImage(entry.target);
+                        window.imageObserver.unobserve(entry.target);
+                    });
+                }, { rootMargin: '200px 0px', threshold: 0.01 });
+            }
+            images.forEach((img) => window.imageObserver.observe(img));
+        } else {
+            images.forEach(loadLazyImage);
+        }
+    };
+
+    window.lazyLoadImages = observeLazyImages;
+    observeLazyImages();
 });
 
 $(window).on("beforeunload", function() {
