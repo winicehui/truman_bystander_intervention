@@ -10,6 +10,7 @@
           a.item(href=process.env.POST_SURVEY_WITH_QUALTRICS ? `/signup?ResponseID=${ResponseID || r_id || ''}&Condition=${Condition || ''}`: '/signup') Create Account
         else
           if user.consent && (!trainingConditions.includes(user.experimentalCondition) || user.finishedTraining) && !isTrainingModule
+            a.item(href='/community-guidelines') Community Guidelines
             a.item(href='/notifications') 
               i.big.alarm.icon
           .ui.simple.dropdown.item
@@ -33,6 +34,7 @@
       a.item(href=process.env.POST_SURVEY_WITH_QUALTRICS ? `/signup?ResponseID=${ResponseID || r_id || ''}&Condition=${Condition || ''}`: '/signup') Create Account
     else
       if user.consent && (!trainingConditions.includes(user.experimentalCondition) || user.finishedTraining) && !isTrainingModule
+        a.item(href='/community-guidelines') Guidelines
         a.item(href='/notifications') 
           i.big.alarm.icon
       else 

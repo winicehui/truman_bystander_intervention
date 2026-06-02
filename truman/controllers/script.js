@@ -13,7 +13,29 @@ const MAIN_FEED_CHATBOT_ENABLED_CONDITIONS = ['C2', 'C4'];
 const TRAINING_CHATBOT_ENABLED_CONDITIONS = ['C1', 'C4'];
 const OPENAI_PROMPT_ID = 'pmpt_69e1794d22d081938a69e9538dddaebf0a6a2fd6f73bdb7d';
 const OPENAI_PROMPT_VERSION = '4';
-const CHAT_MESSAGE_CAP = 80; // Max number of user messages allowed in the chat to prevent abuse and manage costs. This does not include messages from the AI.
+const CHAT_THREAD_MESSAGE_CAP = 50; // Per-post chat limit. Only counts user messages.
+const CHAT_TOTAL_MESSAGE_CAP = 250; // Global chat limit across all posts. Only counts user messages.
+
+// Define functions for counting user messages in a chat and checking chat limits before allowing a new message to be added.
+function countUserMessages(messages) {
+    return Array.isArray(messages) ? messages.filter((message) => !message.isAgent).length : 0;
+}
+
+function getChatLimitError(user, chatIndex) {
+    const totalUserMessages = Array.isArray(user.chatAction) ?
+        user.chatAction.reduce((count, chat) => count + countUserMessages(chat.messages), 0) :
+        0;
+
+    if (totalUserMessages >= CHAT_TOTAL_MESSAGE_CAP) {
+        return `You have reached the total chat limit of ${CHAT_TOTAL_MESSAGE_CAP} messages.`;
+    }
+
+    if (chatIndex !== -1 && countUserMessages(user.chatAction[chatIndex].messages) >= CHAT_THREAD_MESSAGE_CAP) {
+        return `You have reached the limit of ${CHAT_THREAD_MESSAGE_CAP} messages for this chat.`;
+    }
+
+    return null;
+}
 
 /**
  * GET /
@@ -448,21 +470,18 @@ exports.postUpdateUserPostFeedAction = async(req, res, next) => {
 exports.postchatAction = async(req, res, next) => {
     try {
         const user = await User.findById(req.user.id).exec();
-        const totalUserMessages = user.chatAction.reduce((count, chat) => {
-            const messages = Array.isArray(chat.messages) ? chat.messages : [];
-            return count + messages.filter(message => !message.isAgent).length;
-        }, 0);
-
-        if (totalUserMessages >= CHAT_MESSAGE_CAP) {
-            return res.status(429).send({
-                result: "limit_reached",
-                message: `You have reached the chat limit of ${CHAT_MESSAGE_CAP} messages.`
-            });
-        }
 
         // Check if user has interacted with the post before.
         //let feedIndex = _.findIndex(user.chatAction, function(o) { return o.post.equals(req.body.chat_id); });
         let feedIndex = _.findIndex(user.chatAction, function(o) { return o.post && o.post.equals(req.body.chat_id); });
+
+        const chatLimitError = getChatLimitError(user, feedIndex);
+        if (chatLimitError) {
+            return res.status(429).send({
+                result: "limit_reached",
+                message: chatLimitError
+            });
+        }
 
         // If the user has not interacted with the post chat before, add the post to user.chatAction.
         if (feedIndex == -1) {
