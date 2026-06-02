@@ -121,6 +121,9 @@ async function openChat(element, force = false, activationFactor = 1) {
  
     // Reveal the continue-chat-button on this specific post
     post.find('.continue-chat-button').removeClass('hidden');
+
+    // Hide the #copilot-chat-toggle since we're now showing the chat for this post
+    $('#copilot-chat-toggle').addClass('hidden');
  
     // Start watching the post for when it leaves the viewport
     activeChatObserver.observe(post[0]);

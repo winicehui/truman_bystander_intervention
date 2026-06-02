@@ -123,9 +123,13 @@ $(window).on("load", function() {
                     });
                 }, { rootMargin: '200px 0px', threshold: 0.01 });
             }
-            images.forEach((img) => window.imageObserver.observe(img));
+            images.each(function(index, element) {
+                window.imageObserver.observe(element);
+            });
         } else {
-            images.forEach(loadLazyImage);
+            images.each(function(index, element) {
+                window.imageObserver.observe(element);
+            });
         }
     };
 

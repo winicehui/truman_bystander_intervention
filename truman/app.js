@@ -279,7 +279,7 @@ app.post('/account/consent', passportConfig.isAuthenticated, userController.post
 app.post('/account/training', passportConfig.isAuthenticated, userController.postFinishedTraining);
 
 app.get('/me', passportConfig.isAuthenticated, userController.getMe);
-app.get('/user/:userId', passportConfig.isAuthenticated, actorsController.getActor);
+app.get('/user/:userId', passportConfig.isAuthenticated, scriptController.getActor);
 app.post('/user', passportConfig.isAuthenticated, actorsController.postBlockReportOrFollow);
 app.get('/actors', passportConfig.isAuthenticated, actorsController.getActors)
 
