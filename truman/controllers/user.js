@@ -308,8 +308,7 @@ exports.postUpdateProfile = async(req, res, next) => {
         user.profile.name = req.body.name.trim() || '';
         user.profile.location = req.body.location.trim() || '';
         user.profile.bio = req.body.bio.trim() || '';
-        console.log(req.body)
-        user.profile.picture = req.body.profile_picture || null;
+        user.profile.picture = req.body.profile_picture || user.profile.picture || null;
 
         await user.save();
         

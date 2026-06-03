@@ -188,6 +188,14 @@ app.use(express.static(path.join(__dirname, 'uploads'), { maxAge: 31557600000 })
 app.use('/post_pictures', express.static(path.join(__dirname, 'post_pictures'), { maxAge: 31557600000 }));
 app.use('/profile_pictures', express.static(path.join(__dirname, 'profile_pictures'), { maxAge: 31557600000 }));
 
+app.use((req, res, next) => {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    res.setHeader('Surrogate-Control', 'no-store');
+    next();
+});
+
 /**
  * Primary app routes.
  */
@@ -207,7 +215,7 @@ app.post('/post/new', userpostupload.single('picinput'), scriptController.newPos
 app.post('/pageLog', passportConfig.isAuthenticated, userController.postPageLog);
 app.post('/pageTimes', passportConfig.isAuthenticated, userController.postPageTime);
 
-app.get('/com', function(req, res) {
+app.get('/com', passportConfig.isAuthenticated, function(req, res) {
     const fromFeed = req.query.feed == "true" ? true : false; //Are we accessing the community rules from the feed?
     res.render('com', {
         title: 'Community Guidelines',
@@ -229,14 +237,14 @@ app.get('/info', passportConfig.isAuthenticated, function(req, res) {
     });
 });
 
-app.get('/training_intro', function(req, res) {
+app.get('/training_intro', passportConfig.isAuthenticated, function(req, res) {
     res.render('training', {
         title: 'Training Module',
         isTrainingModule: true
     });
 });
 
-app.get('/beta_intro', function(req, res) {
+app.get('/beta_intro', passportConfig.isAuthenticated, function(req, res) {
     res.render('beta_intro', {
         title: 'Beta Feature',
         isTrainingModule: true

@@ -2,7 +2,7 @@
 .computer.only.tablet.only.row 
   .ui.borderless.fixed.menu
     .ui.container
-      a.item(href=(!user ? "/" : (!user.consent ? "/com" : (!trainingConditions.includes(user.experimentalCondition) || user.finishedTraining ? "/" : "/training_intro"))))
+      a.item(href=(!user ? `/?ResponseID=${ResponseID || r_id || ''}&Condition=${Condition || ''}` : (!user.consent ? "/com" : (!trainingConditions.includes(user.experimentalCondition) || user.finishedTraining ? "/" : "/training_intro"))))
         img.ui.tiny.image(src=process.env.SITE_LOGO, id='logo')
       .right.menu
         if !user
@@ -28,7 +28,7 @@
               a.item.logoutLink Log Out
 .mobile.only.row
   .ui.fluid.top.fixed.item.menu(class = user ? "four" : "two")
-    a.item(href=(!user ? "/" : (!user.consent ? "/com" : (!trainingConditions.includes(user.experimentalCondition) || user.finishedTraining ? "/" : "/training_intro"))))
+    a.item(href=(!user ? `/?ResponseID=${ResponseID || r_id || ''}&Condition=${Condition || ''}` : (!user.consent ? "/com" : (!trainingConditions.includes(user.experimentalCondition) || user.finishedTraining ? "/" : "/training_intro"))))
       img.ui.tiny.image(src=process.env.SITE_LOGO, id='mobile_logo')
     if !user
       a.item(href=process.env.POST_SURVEY_WITH_QUALTRICS ? `/signup?ResponseID=${ResponseID || r_id || ''}&Condition=${Condition || ''}`: '/signup') Create Account

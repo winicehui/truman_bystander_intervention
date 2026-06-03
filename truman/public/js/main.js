@@ -137,6 +137,16 @@ $(window).on("load", function() {
     observeLazyImages();
 });
 
+window.onunload = function() {};
+window.addEventListener('pageshow', function(event) {
+    const nav = window.performance && window.performance.getEntriesByType && window.performance.getEntriesByType('navigation');
+    const isBackForward = event.persisted || (nav && nav.length > 0 && nav[0].type === 'back_forward') || (window.performance && window.performance.navigation && window.performance.navigation.type === 2);
+    if (isBackForward) {
+        document.documentElement.style.visibility = 'hidden';
+        window.location.replace(window.location.href);
+    }
+});
+
 $(window).on("beforeunload", function() {
     // https: //developer.mozilla.org/en-US/docs/Web/API/Window/beforeunload_event
     if (!window.loggingOut) {
