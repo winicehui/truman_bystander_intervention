@@ -3,15 +3,7 @@ $(window).on("load", function() { //notifications popup on click, show the corre
         const relevantPostNumber = $(this).attr('correspondingPost');
         //show the relevant post in a popup modal
         $(`.ui.small.long.modal[correspondingPost=${relevantPostNumber}]`).modal('show');
-        // lazy load the images
-        $(".ui.small.long.modal .ui.fluid.card img")
-            .visibility({
-                type: 'image',
-                offset: 0,
-                onLoad: function(calculations) {
-                    $('.ui.small.long.modal .ui.fluid.card img').visibility('refresh');
-                }
-            });
+        if (window.lazyLoadImages) window.lazyLoadImages();
     })
 
     $("a, a.ui.avatar.image").on('click', function(event) {

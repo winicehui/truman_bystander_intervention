@@ -1,0 +1,19 @@
+extends ui_layout
+
+block styles
+  link(type='text/css', rel='stylesheet', href='/public/css/com.css')
+
+block content
+  .sixteen.wide.column.centered#com
+    .ui.card
+      .com-header
+        h1 You're all set!
+      .com-content
+          p Great work! You've completed the community training and are now ready to engage with the FreshView community.
+          p You'll be able to browse the feed, interact with other members' posts, and share your own content. 
+          p Click <strong>Enter Feed</strong> to see what the community is up to. Welcome aboard! 🎉
+      .com-footer
+        .com-footer-content
+          img.com-logo(src='/public/favicon.svg', alt='FreshView Logo')
+          .com-enter
+            a.ui.large.primary.button(href='/') Enter Feed

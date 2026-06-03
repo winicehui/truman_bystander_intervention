@@ -14,7 +14,7 @@ html, body {
     min-height: calc(100vh - 20px);
     width: 100vw;
     margin: 0;
-    padding: 0;
+    padding: 6rem 0;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -84,6 +84,10 @@ html, body {
 .com-enter .ui.large.primary.button:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(21, 117, 244, 0.3);
+}
+
+.com-content h3.left-align {
+    text-align: left;
 }
 
 @media (max-width: 768px) {

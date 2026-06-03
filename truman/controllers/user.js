@@ -156,7 +156,7 @@ exports.postSignup = async(req, res, next) => {
 
         const surveyLink = process.env.POST_SURVEY ?
             process.env.POST_SURVEY +
-            (process.env.POST_SURVEY_WITH_QUALTRICS == 'TRUE' && process.env.POST_SURVEY.includes("?r_id=") &&
+            (process.env.POST_SURVEY_WITH_QUALTRICS == 'TRUE' && process.env.POST_SURVEY.includes("?PROLIFIC_PID=") &&
                 responseID != 'null' && responseID && responseID != 'undefined' ? responseID : "") :
             "";
         const currDate = Date.now();
@@ -317,8 +317,7 @@ exports.postUpdateProfile = async(req, res, next) => {
         user.profile.name = req.body.name.trim() || '';
         user.profile.location = req.body.location.trim() || '';
         user.profile.bio = req.body.bio.trim() || '';
-        console.log(req.body)
-        user.profile.picture = req.body.profile_picture || null;
+        user.profile.picture = req.body.profile_picture || user.profile.picture || null;
 
         await user.save();
         

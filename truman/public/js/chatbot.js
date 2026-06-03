@@ -121,6 +121,9 @@ async function openChat(element, force = false, activationFactor = 1) {
  
     // Reveal the continue-chat-button on this specific post
     post.find('.continue-chat-button').removeClass('hidden');
+
+    // Hide the #copilot-chat-toggle since we're now showing the chat for this post
+    $('#copilot-chat-toggle').addClass('hidden');
  
     // Start watching the post for when it leaves the viewport
     activeChatObserver.observe(post[0]);
@@ -303,16 +306,22 @@ $(window).on('load', function () {
                     });
                 }
             
+                try {
+                    await $.post('/chat', {
+                        chat_id: this.chatId,
+                        body: message,
+                        absTime: Date.now(),
+                        name,
+                        isAgent: false,
+                        _csrf: $('meta[name="csrf-token"]').attr('content')
+                    });
+                } catch (err) {
+                    const errorMessage = err?.responseJSON?.message || 'You have reached the chat limit.';
+                    this.addMessageExternal(errorMessage, this.getCurrentTime(), 'Comment Coach', true);
+                    return;
+                }
+
                 this.render(message, this.getCurrentTime(), name, false, false, false);
-            
-                await $.post('/chat', {
-                    chat_id: this.chatId,
-                    body: message,
-                    absTime: Date.now(),
-                    name,
-                    isAgent: false,
-                    _csrf: $('meta[name="csrf-token"]').attr('content')
-                });
             
                 // ── NEW: record message timestamp for net-interaction-time calc ──
                 await logChatTiming(this.chatId, 'message_sent');
@@ -506,6 +515,13 @@ $(window).on('load', function () {
                         openChat(post, false, 1); // activationFactor 1 = viewport dwell
                     }, 3000);
                     postChatState.set(postID, timeout); // store timer ref as value
+                }
+            } else {
+                // Cyberbullying content left viewport before 3s timer fired
+                const state = postChatState.get(postID);
+                if (state && state !== 'open' && state !== 'minimized' && state !== 'closed' && state !== 'pending') {
+                    clearTimeout(state); // cancel the pending 3s timer
+                    postChatState.delete(postID); // reset so timer can restart next time content enters viewport
                 }
             }
         });

@@ -10,9 +10,9 @@ block content
     .four.wide.computer.column
       .ui.message
         h2 Done with Training?
-        .ui.large.primary.button#proceed-btn Proceed to Feed
+        .ui.large.primary.button#proceed-btn Proceed
         .ui.hidden.message#error-msg
-          p You need to interact with the chatbot for more than 5 turns or post a public comment before proceeding.
+          p You need to interact with the Community Assistant for at least 5 message turns or post a public comment before proceeding.
           
   #loading.eight.wide.computer.ten.wide.tablet.sixteen.wide.mobile.column
     img.ui.centered.small.image(src='/public/heart.svg')
@@ -39,7 +39,7 @@ block content
         .content
           .description
             |  End of Posts for the last 24 hours.
-    if user.endSurveyLink
+    if !isTrainingModule && user.endSurveyLink
       a.ui.large.primary.button#proceed-btn(href=user.endSurveyLink) Proceed to Post-Study Survey
   if isTrainingModule   
     .four.wide.computer.column

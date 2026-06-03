@@ -562,88 +562,51 @@ $(window).on('load', async () => {
     //Reply to comment
     $('a.reply').on('click', openCommentReply);
 
-    // Track how long a post is on the screen (borders are defined by image)
-    // Start time: When the entire photo is visible in the viewport.
-    // End time: When the entire photo is no longer visible in the viewport.
-    $('.ui.fluid.card .img.post').visibility({
-        once: false,
-        continuous: false,
-        observeChanges: true,
-        // throttle:100,
-        initialCheck: true,
-        offset: 50,
+    // Track how long a post is on the screen (50% threshold) 
+    const VISIBILITY_THRESHOLD = 0.5;   // 50% of card must be visible to start timer
+    const MIN_VIEW_TIME_MS     = 1500;  // ignore accidental flicks
+    const MAX_VIEW_TIME_MS     = 86400000;
 
-        // Handling scrolling down like normal
-        // Called when bottomVisible turns true (bottom of a picture is visible): bottom can enter from top or bottom of viewport
-        onBottomVisible: function(element) {
-            var startTime = parseInt($(this).siblings(".content").children(".myTimer").text());
-            // Bottom of picture enters from bottom (scrolling down the feed; as normal)
-            if (element.topVisible) { // Scrolling Down AND entire post is visible on the viewport 
-                // If this is the first time bottom is visible
-                if (startTime == 0) {
-                    var startTime = Date.now();
-                }
-            } else { // Scrolling up and this event does not matter, since entire photo isn't visible anyways.
-                var startTime = 0;
+    // Map from postID -> { startTime, postCondition }
+    const viewTimers = new Map();
+
+    const actorPostObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        const card      = entry.target;
+        const postID    = card.getAttribute('postID');
+        const condition = card.getAttribute('postCondition');
+
+        if (entry.isIntersecting && entry.intersectionRatio >= VISIBILITY_THRESHOLD) {
+        // Card just became sufficiently visible — start timer if not already running
+            if (!viewTimers.has(postID)) {
+                viewTimers.set(postID, { startTime: Date.now(), postCondition: condition });
             }
-            $(this).siblings(".content").children(".myTimer").text(startTime);
-        },
 
-        // Element's bottom edge has passed top of the screen (disappearing); happens only when Scrolling Up
-        onBottomPassed: function(element) {
-            var endTime = Date.now();
-            var startTime = parseInt($(this).siblings(".content").children(".myTimer").text());
-            var totalViewTime = endTime - startTime; // TOTAL TIME HERE
+        } else {
+            // Card is leaving (or was never sufficiently visible) — stop timer and report
+            if (viewTimers.has(postID)) {
+                const { startTime, postCondition } = viewTimers.get(postID);
+                const totalViewTime = Date.now() - startTime;
+                viewTimers.delete(postID);
 
-            var parent = $(this).parents(".ui.fluid.card");
-            var postID = parent.attr("postID");
-            var postCondition = parent.attr("postCondition");
-            // If user viewed it for less than 24 hours, but more than 1.5 seconds (just in case)
-            if (totalViewTime < 86400000 && totalViewTime > 1500 && startTime > 0) {
-                $.post("/feed", {
-                    postID: postID,
+                if (totalViewTime > MIN_VIEW_TIME_MS && totalViewTime < MAX_VIEW_TIME_MS) {
+                $.post('/feed', {
+                    postID,
                     viewed: totalViewTime,
-                    postCondition: postCondition,
+                    postCondition,
                     _csrf: $('meta[name="csrf-token"]').attr('content')
                 });
-                // Reset Timer
-                $(this).siblings(".content").children(".myTimer").text(0);
-            }
-        },
-
-        // Handling scrolling up
-        // Element's top edge has passed top of the screen (appearing); happens only when Scrolling Up
-        onTopPassedReverse: function(element) {
-            var startTime = parseInt($(this).siblings(".content").children(".myTimer").text());
-            if (element.bottomVisible && startTime == 0) { // Scrolling Up AND entire post is visible on the viewport 
-                var startTime = Date.now();
-                $(this).siblings(".content").children(".myTimer").text(startTime);
-            }
-        },
-
-        // Called when topVisible turns false (exits from top or bottom)
-        onTopVisibleReverse: function(element) {
-            if (element.topPassed) { // Scrolling Down, disappears on top; this event doesn't matter (since it is when bottom disappears that time is stopped)
-            } else { // False when Scrolling Up (the bottom of photo exits screen.)
-                var endTime = Date.now();
-                var startTime = parseInt($(this).siblings(".content").children(".myTimer").text());
-                var totalViewTime = endTime - startTime;
-
-                var parent = $(this).parents(".ui.fluid.card");
-                var postID = parent.attr("postID");
-                var postCondition = parent.attr("postCondition");
-                // If user viewed it for less than 24 hours, but more than 1.5 seconds (just in case)
-                if (totalViewTime < 86400000 && totalViewTime > 1500 && startTime > 0) {
-                    $.post("/feed", {
-                        postID: postID,
-                        viewed: totalViewTime,
-                        postCondition: postCondition,
-                        _csrf: $('meta[name="csrf-token"]').attr('content')
-                    });
-                    // Reset Timer
-                    $(this).siblings(".content").children(".myTimer").text(0);
                 }
             }
         }
+        });
+    }, {
+        threshold: VISIBILITY_THRESHOLD  // fires when crossing the 50% boundary
+    });
+
+    const actorPosts = $('.ui.fluid.actor.card');
+    // Observe every post card on the page
+    actorPosts.each(function(index, element) {
+        actorPostObserver.observe(element);
     });
 });

@@ -1,5 +1,6 @@
 const Script = require('../models/Script.js');
-const User = require('../models/User');
+const User = require('../models/User.js');
+const Actor = require('../models/Actor.js')
 const Notification = require('../models/Notification');
 const helpers = require('./helpers');
 const _ = require('lodash');
@@ -12,7 +13,30 @@ const TRAINING_POST_CONDITION = ['C1', 'C4'];
 const MAIN_FEED_CHATBOT_ENABLED_CONDITIONS = ['C2', 'C4'];
 const TRAINING_CHATBOT_ENABLED_CONDITIONS = ['C1', 'C4'];
 const OPENAI_PROMPT_ID = 'pmpt_69e1794d22d081938a69e9538dddaebf0a6a2fd6f73bdb7d';
-const OPENAI_PROMPT_VERSION = '3';
+const OPENAI_PROMPT_VERSION = '4';
+const CHAT_THREAD_MESSAGE_CAP = 50; // Per-post chat limit. Only counts user messages.
+const CHAT_TOTAL_MESSAGE_CAP = 250; // Global chat limit across all posts. Only counts user messages.
+
+// Define functions for counting user messages in a chat and checking chat limits before allowing a new message to be added.
+function countUserMessages(messages) {
+    return Array.isArray(messages) ? messages.filter((message) => !message.isAgent).length : 0;
+}
+
+function getChatLimitError(user, chatIndex) {
+    const totalUserMessages = Array.isArray(user.chatAction) ?
+        user.chatAction.reduce((count, chat) => count + countUserMessages(chat.messages), 0) :
+        0;
+
+    if (totalUserMessages >= CHAT_TOTAL_MESSAGE_CAP) {
+        return `You have reached the total chat limit of ${CHAT_TOTAL_MESSAGE_CAP} messages.`;
+    }
+
+    if (chatIndex !== -1 && countUserMessages(user.chatAction[chatIndex].messages) >= CHAT_THREAD_MESSAGE_CAP) {
+        return `You have reached the limit of ${CHAT_THREAD_MESSAGE_CAP} messages for this chat.`;
+    }
+
+    return null;
+}
 
 /**
  * GET /
@@ -81,6 +105,45 @@ exports.getScript = async(req, res, next) => {
             script: finalfeed,
             chatbotEnabled: MAIN_FEED_CHATBOT_ENABLED_CONDITIONS.includes(user.experimentalCondition)
         });
+    } catch (err) {
+        next(err);
+    }
+};
+
+/**
+ * GET /user/:userId
+ * Retrieve the profile and relevant experimental posts of the actor whose username field value matches the query parameter value 'userId'. 
+ * Process the posts with the helper function .getFeed() in ./helpers.js.
+ * Check if the current user has blocked or reported the actor.
+ * Render the actor's profile page along with the relevant data.
+ */
+exports.getActor = async(req, res, next) => {
+    const time_diff = Date.now() - req.user.createdAt;
+    try {
+        const user = await User.findById(req.user.id).exec();
+        const actor = await Actor.findOne({ username: req.params.userId }).exec();
+        if (actor == null) {
+            const myerr = new Error('Actor object not found!');
+            return next(myerr);
+        }
+        const isBlocked = user.blocked.includes(req.params.userId);
+        const isReported = user.reported.includes(req.params.userId);
+        const script_feed = await Script.find({ actor: actor.id, condition: { $nin: TRAINING_POST_CONDITION } })
+            .where('time').lte(time_diff)
+            .sort('-time')
+            .populate('actor')
+            .populate('comments.actor')
+            .exec();
+
+        const finalfeed = helpers.getFeed([], script_feed, user, 'CHRONOLOGICAL', (process.env.REMOVE_FLAGGED_CONTENT == 'TRUE'), false);
+        await user.save();
+        res.render('actor', { 
+            script: finalfeed, 
+            actor: actor, 
+            isBlocked: isBlocked, 
+            isReported: isReported, 
+            chatbotEnabled: MAIN_FEED_CHATBOT_ENABLED_CONDITIONS.includes(user.experimentalCondition),
+            title: actor.profile.name });
     } catch (err) {
         next(err);
     }
@@ -447,18 +510,18 @@ exports.postUpdateUserPostFeedAction = async(req, res, next) => {
 exports.postchatAction = async(req, res, next) => {
     try {
         const user = await User.findById(req.user.id).exec();
-        const scriptPost = await Script.findById(req.body.chat_id).select('condition').lean().exec();
-        const isTrainingChat = scriptPost && scriptPost.condition === TRAINING_POST_CONDITION;
-        const chatbotEnabled = isTrainingChat ?
-            TRAINING_CHATBOT_ENABLED_CONDITIONS.includes(user.experimentalCondition) :
-            MAIN_FEED_CHATBOT_ENABLED_CONDITIONS.includes(user.experimentalCondition);
 
-        if (!chatbotEnabled) {
-            return res.status(403).send({ result: "disabled" });
-        }
         // Check if user has interacted with the post before.
         //let feedIndex = _.findIndex(user.chatAction, function(o) { return o.post.equals(req.body.chat_id); });
         let feedIndex = _.findIndex(user.chatAction, function(o) { return o.post && o.post.equals(req.body.chat_id); });
+
+        const chatLimitError = getChatLimitError(user, feedIndex);
+        if (chatLimitError) {
+            return res.status(429).send({
+                result: "limit_reached",
+                message: chatLimitError
+            });
+        }
 
         // If the user has not interacted with the post chat before, add the post to user.chatAction.
         if (feedIndex == -1) {
@@ -681,10 +744,11 @@ exports.postChatActivation = async (req, res, next) => {
             feedIndex = user.chatAction.push({ post: chat_id }) - 1;
         }
  
-        // Only record the first activation — never overwrite with a later trigger
-        if (user.chatAction[feedIndex].activationFactor === 0) {
-            user.chatAction[feedIndex].activationFactor = Number(activationFactor);
-        }
+        
+        user.chatAction[feedIndex].activationEvents.push({
+            activationFactor: Number(activationFactor),
+            absTime: new Date()
+        });
  
         await user.save();
         res.json({ result: 'success' });
@@ -715,11 +779,17 @@ exports.postChatTiming = async (req, res, next) => {
             }
             entry.lastMessageTime = ts;
         } else if (event === 'minimized' || event === 'closed') {
-            // Nothing to persist yet – the client starts its own timer.
-            // We receive the accumulated duration on 'reopened'.
+            entry.hideEvents.push({
+                event: event,
+                absTime: ts
+            });
         } else if (event === 'reopened') {
-            // Add the duration the chat was hidden to the running total
             const dur = Number(minimizedDuration);
+            entry.hideEvents.push({
+                event: 'reopened',
+                absTime: ts,
+                durationMs: (!isNaN(dur) && dur > 0) ? dur : 0
+            });
             if (!isNaN(dur) && dur > 0) {
                 entry.minimizedDuration = (entry.minimizedDuration || 0) + dur;
             }

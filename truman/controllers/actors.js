@@ -25,39 +25,6 @@ exports.getActors = async(req, res) => {
 };
 
 /**
- * GET /user/:userId
- * Retrieve the profile and relevant experimental posts of the actor whose username field value matches the query parameter value 'userId'. 
- * Process the posts with the helper function .getFeed() in ./helpers.js.
- * Check if the current user has blocked or reported the actor.
- * Render the actor's profile page along with the relevant data.
- */
-exports.getActor = async(req, res, next) => {
-    const time_diff = Date.now() - req.user.createdAt;
-    try {
-        const user = await User.findById(req.user.id).exec();
-        const actor = await Actor.findOne({ username: req.params.userId }).exec();
-        if (actor == null) {
-            const myerr = new Error('Actor object not found!');
-            return next(myerr);
-        }
-        const isBlocked = user.blocked.includes(req.params.userId);
-        const isReported = user.reported.includes(req.params.userId);
-        const script_feed = await Script.find({ actor: actor.id, condition: { "$in": ["", user.experimentalCondition] } })
-            .where('time').lte(time_diff)
-            .sort('-time')
-            .populate('actor')
-            .populate('comments.actor')
-            .exec();
-
-        const finalfeed = helpers.getFeed([], script_feed, user, 'CHRONOLOGICAL', (process.env.REMOVE_FLAGGED_CONTENT == 'TRUE'), false);
-        await user.save();
-        res.render('actor', { script: finalfeed, actor: actor, isBlocked: isBlocked, isReported: isReported, title: actor.profile.name });
-    } catch (err) {
-        next(err);
-    }
-};
-
-/**
  * POST /user
  * Handle post requests to block, unblock, report, follow, and unfollow an actor.
  */
