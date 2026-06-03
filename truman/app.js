@@ -164,6 +164,11 @@ app.disable('x-powered-by');
 app.use((req, res, next) => {
     res.locals.user = req.user;
     res.locals.cdn = process.env.CDN;
+    res.locals.getUserAvatarSrc = (picture) => {
+        if (!picture) return null;
+        if (picture.startsWith('/')) return picture;
+        return `/user_avatar/${picture}`;
+    };
     next();
 });
 
