@@ -13,9 +13,9 @@ const TRAINING_POST_CONDITION = ['C1', 'C4'];
 const MAIN_FEED_CHATBOT_ENABLED_CONDITIONS = ['C2', 'C4'];
 const TRAINING_CHATBOT_ENABLED_CONDITIONS = ['C1', 'C4'];
 const OPENAI_PROMPT_ID = 'pmpt_69e1794d22d081938a69e9538dddaebf0a6a2fd6f73bdb7d';
-const OPENAI_PROMPT_VERSION = '4';
+const OPENAI_PROMPT_VERSION = '13'; // Note: prompt versions are no longer supported after November, 2026; update before that.
 const CHAT_THREAD_MESSAGE_CAP = 50; // Per-post chat limit. Only counts user messages.
-const CHAT_TOTAL_MESSAGE_CAP = 250; // Global chat limit across all posts. Only counts user messages.
+const CHAT_TOTAL_MESSAGE_CAP = 200; // Global chat limit across all posts. Only counts user messages.
 
 // Define functions for counting user messages in a chat and checking chat limits before allowing a new message to be added.
 function countUserMessages(messages) {
