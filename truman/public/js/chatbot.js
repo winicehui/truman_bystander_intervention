@@ -33,6 +33,13 @@ function getCommentContext(post) {
 //   'minimized' — chat is minimized
 //   'closed'    — chat was closed by user (continue-chat-button shown)
 const postChatState = new Map();
+const chatbotConfig = window.chatbotConfig || {};
+const onboardingState = {
+    required: !!chatbotConfig.requireMainFeedChatOnboarding && !chatbotConfig.isTrainingModule,
+    locked: false,
+    completed: !chatbotConfig.requireMainFeedChatOnboarding,
+    requiredChatId: null,
+};
 
 const chatUIState = {
     currentChatId: null,
@@ -40,11 +47,49 @@ const chatUIState = {
 };
 const chatMinimizeTimers = new Map();
 
+function activateOnboardingLock(post, chatId) {
+    if (!onboardingState.required || onboardingState.completed || onboardingState.locked) return;
+
+    onboardingState.locked = true;
+    onboardingState.requiredChatId = chatId;
+    if (post && post.length && post[0] && typeof post[0].scrollIntoView === 'function') {
+        const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 0;
+        const postHeight = post[0].getBoundingClientRect().height;
+        post[0].scrollIntoView({
+            behavior: 'smooth',
+            block: postHeight > viewportHeight * 0.85 ? 'start' : 'center',
+            inline: 'nearest'
+        });
+    }
+    $('body').addClass('chat-onboarding-locked');
+    $('#chatbot-onboarding-overlay, #chatbot-onboarding-bubble, #chatbot-onboarding-dot').removeClass('hidden');
+    $('#copilot-chat, #copilot-chat-toggle').addClass('chat-onboarding-active');
+    post.addClass('chatbot-onboarding-active-post');
+}
+
+function completeOnboardingLock() {
+    onboardingState.locked = false;
+    onboardingState.completed = true;
+    onboardingState.required = false;
+    onboardingState.requiredChatId = null;
+    $('body').removeClass('chat-onboarding-locked');
+    $('#chatbot-onboarding-overlay, #chatbot-onboarding-bubble, #chatbot-onboarding-dot').addClass('hidden');
+    $('#copilot-chat, #copilot-chat-toggle').removeClass('chat-onboarding-active');
+    $('.chatbot-onboarding-active-post').removeClass('chatbot-onboarding-active-post');
+}
+
+function isBlockedByOnboarding(targetChatId) {
+    return onboardingState.locked && onboardingState.requiredChatId && onboardingState.requiredChatId !== targetChatId;
+}
+
 
 const activeChatObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (!entry.isIntersecting) {
             const postID = $(entry.target).attr('postID');
+            if (onboardingState.locked && onboardingState.requiredChatId === postID) {
+                return;
+            }
             resetPostChatState(postID);
             activeChatObserver.unobserve(entry.target); // stop observing once reset
         }
@@ -95,6 +140,7 @@ async function openChat(element, force = false, activationFactor = 1) {
  
     const chatId = post.attr('postID') || post.attr('postid');
     if (!chatId) return;
+    if (isBlockedByOnboarding(chatId)) return;
  
     const state = postChatState.get(chatId);
  
@@ -130,10 +176,12 @@ async function openChat(element, force = false, activationFactor = 1) {
  
     // ── Highlight ─────────────────────────────────────────────────
     if (chatUIState.highlightedElement) {
+        chatUIState.highlightedElement.removeClass('chatbot-onboarding-active-post');
         chatUIState.highlightedElement.removeClass('chat-highlight');
     }
     post.addClass('chat-highlight');
     chatUIState.highlightedElement = post;
+    activateOnboardingLock(post, chatId);
  
     // ── Wire up chat instance ─────────────────────────────────────
     const chat = $('#copilot-chat.container.clearfix').data('chatInstance');
@@ -200,6 +248,8 @@ async function openChat(element, force = false, activationFactor = 1) {
 // Fully resets everything for that post.
 // ─────────────────────────────────────────────────────────────────
 function resetPostChatState(postId) {
+    if (onboardingState.locked && onboardingState.requiredChatId === postId) return;
+
     const state = postChatState.get(postId);
 
     // Cancel pending timer if it exists
@@ -213,6 +263,7 @@ function resetPostChatState(postId) {
 
     // Clear highlight
     if (chatUIState.highlightedElement) {
+        chatUIState.highlightedElement.removeClass('chatbot-onboarding-active-post');
         chatUIState.highlightedElement.removeClass('chat-highlight');
         chatUIState.highlightedElement = null;
     }
@@ -296,6 +347,7 @@ $(window).on('load', function () {
                 const name = 'Me';
                 const message = this.$textarea.val().trim();
                 if (!message) return;
+                if (onboardingState.locked && onboardingState.requiredChatId && onboardingState.requiredChatId !== this.chatId) return;
             
                 // If minimized, expand history first
                 if (!this.$chatHistory.is(':visible')) {
@@ -322,7 +374,11 @@ $(window).on('load', function () {
                 }
 
                 this.render(message, this.getCurrentTime(), name, false, false, false);
-            
+
+                if (onboardingState.locked && onboardingState.requiredChatId === this.chatId) {
+                    completeOnboardingLock();
+                }
+
                 // ── NEW: record message timestamp for net-interaction-time calc ──
                 await logChatTiming(this.chatId, 'message_sent');
                 // ─────────────────────────────────────────────────────────────────
@@ -422,6 +478,11 @@ $(window).on('load', function () {
 
     // ── Minimize button ───────────────────────────────────────────
     $('.chat-minimize').on('click', function (e) {
+        if (onboardingState.locked) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            return;
+        }
         e.stopImmediatePropagation();
         const $history = $('#copilot-chat .chat-history');
         $history.slideToggle(300, 'swing', function () {
@@ -447,6 +508,11 @@ $(window).on('load', function () {
 
     // ── Close button ──────────────────────────────────────────────
     $('.chat-close').on('click', function (e) {
+        if (onboardingState.locked) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            return;
+        }
         e.preventDefault();
         e.stopImmediatePropagation();
     
@@ -466,12 +532,15 @@ $(window).on('load', function () {
     // ── Continue chat button (re-open after close) ────────────────
     $('.continue-chat-button').on('click', function () {
         const post = $(this).closest('.ui.fluid.card');
+        const postId = post.attr('postID') || post.attr('postid');
+        if (isBlockedByOnboarding(postId)) return;
         openChat(post, true);
     });
 
     // ── Toggle chat button (re-open when clicked) ────────────────
     $('#copilot-chat-toggle').on('click', function () {
         if (!chatUIState.currentChatId) return;
+        if (isBlockedByOnboarding(chatUIState.currentChatId)) return;
         $(this).addClass('hidden');
     
         // ── NEW: accumulate hidden time ──
@@ -532,5 +601,9 @@ $(window).on('load', function () {
 
     cyberbullyingContent.each(function(index, element) {
         cyberbullyingObserver.observe(element);
+    });
+    $('#chatbot-onboarding-overlay').on('click', function (e) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
     });
 });
