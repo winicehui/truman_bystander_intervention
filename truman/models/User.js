@@ -18,8 +18,12 @@ const userSchema = new mongoose.Schema({
     numComments: { type: Number, default: -1 }, // Indicates the # of comments on (user and actor) posts the user has made. This value is used for indexing and the commentID of user comments on (user and actor) posts. Count begins at 0.
     numActorReplies: { type: Number, default: -1 }, // Indicates the # of actor replies on user posts, it is used for indexing and the commentID of actor comments on user posts. Count begins at 0.
 
-    numPostLikes: { type: Number, default: 0 }, // Indicates the # of actor posts liked. Count begins at 1.
-    numCommentLikes: { type: Number, default: 0 }, // Indicates the # of actor comments liked. Count begins at 1.
+    numPostLikes: { type: Number, default: 0 }, // Indicates the # of actor and user posts liked. Count begins at 1.
+    numCommentLikes: { type: Number, default: 0 }, // Indicates the # of actor and user comments liked. Count begins at 1.
+    numPostFlags: { type: Number, default: 0 }, // Indicates the # of actor and user posts flagged. Count begins at 1.
+    numCommentFlags: { type: Number, default: 0 }, // Indicates the # of actor and user comments flagged. Count begins at 1.
+
+    numChatTurns: { type: Number, default: 0 }, // Indicates the # of message turns the user has had with the Community Assistant. Count begins at 0.
 
     lastNotifyVisit: Date, // Absolute Time; Indicates the most recent visit to /notifications. First initialization is at account creation.
     createdAt: Date, // Absolute Time the user was created

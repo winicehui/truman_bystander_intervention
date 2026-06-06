@@ -9,9 +9,9 @@ dotenv.config({ path: '.env' }); // See the file .env.example for the structure 
 const OpenAI = require('openai');
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-const TRAINING_POST_CONDITION = ['C1', 'C4'];
-const MAIN_FEED_CHATBOT_ENABLED_CONDITIONS = ['C2', 'C4'];
-const TRAINING_CHATBOT_ENABLED_CONDITIONS = ['C1', 'C4'];
+const TRAINING_POST_CONDITION = ['C1'];
+const MAIN_FEED_CHATBOT_ENABLED_CONDITIONS = ['C2'];
+const TRAINING_CHATBOT_ENABLED_CONDITIONS = ['C1'];
 const OPENAI_PROMPT_ID = 'pmpt_69e1794d22d081938a69e9538dddaebf0a6a2fd6f73bdb7d';
 const OPENAI_PROMPT_VERSION = '4';
 const CHAT_THREAD_MESSAGE_CAP = 50; // Per-post chat limit. Only counts user messages.
@@ -61,8 +61,11 @@ exports.getScript = async(req, res, next) => {
             .populate('chatAction.post')
             .exec();
 
-        // If the user is no longer active, sign the user out.
-        if (!user.active) {
+        if (!user.consent) {
+            res.redirect('/com');
+        } else if (!user.finishedTraining && TRAINING_POST_CONDITION.includes(user.experimentalCondition)) {
+            res.redirect('/training_intro');
+        } else if (!user.active) {
             req.logout((err) => {
                 if (err) console.log('Error : Failed to logout.', err);
                 req.session.destroy((err) => {
@@ -319,7 +322,7 @@ exports.postUpdateFeedAction = async(req, res, next) => {
                 const like = req.body.like;
                 user.feedAction[feedIndex].comments[commentIndex].likeTime.push(like);
                 user.feedAction[feedIndex].comments[commentIndex].liked = true;
-                if (req.body.isUserComment != 'true') user.numCommentLikes++;
+                user.numCommentLikes++;
             }
 
             // User unliked the comment.
@@ -327,7 +330,7 @@ exports.postUpdateFeedAction = async(req, res, next) => {
                 const unlike = req.body.unlike;
                 user.feedAction[feedIndex].comments[commentIndex].unlikeTime.push(unlike);
                 user.feedAction[feedIndex].comments[commentIndex].liked = false;
-                if (req.body.isUserComment != 'true') user.numCommentLikes--;
+                user.numCommentLikes--;
             }
 
             // User flagged the comment.
@@ -335,6 +338,7 @@ exports.postUpdateFeedAction = async(req, res, next) => {
                 const flag = req.body.flag;
                 user.feedAction[feedIndex].comments[commentIndex].flagTime.push(flag);
                 user.feedAction[feedIndex].comments[commentIndex].flagged = true;
+                user.numCommentFlags++;
             }
 
             // User unflagged the comment.
@@ -342,6 +346,7 @@ exports.postUpdateFeedAction = async(req, res, next) => {
                 const unflag = req.body.unflag;
                 user.feedAction[feedIndex].comments[commentIndex].unflagTime.push(unflag);
                 user.feedAction[feedIndex].comments[commentIndex].flagged = false;
+                user.numCommentFlags--;
             }
         }
         // User interacted with the post.
@@ -351,6 +356,7 @@ exports.postUpdateFeedAction = async(req, res, next) => {
                 const flag = req.body.flag;
                 user.feedAction[feedIndex].flagTime.push(flag);
                 user.feedAction[feedIndex].flagged = true;
+                user.numPostFlags++;
             }
 
             // User unflagged the post.
@@ -358,6 +364,7 @@ exports.postUpdateFeedAction = async(req, res, next) => {
                 const unflag = req.body.unflag;
                 user.feedAction[feedIndex].unflagTime.push(unflag);
                 user.feedAction[feedIndex].flagged = false;
+                user.numPostFlags--;
             }
 
             // User liked the post.
@@ -548,6 +555,10 @@ exports.postchatAction = async(req, res, next) => {
             isAgent: req.body.isAgent
         };
         user.chatAction[feedIndex].messages.push(cat);
+
+        if (req.body.isAgent === "false") {
+            user.numChatTurns++;
+        }
 
         await user.save();
         let returningJson = { result: "success" };
@@ -740,6 +751,60 @@ exports.getTrainingStatus = async(req, res, next) => {
         next(err);
     }
 };
+
+/**
+ * GET /feed_status
+ * Return feed progress for the current user.
+ */
+exports.getFeedStatus = async(req, res, next) => {
+    try {
+        const user = await User.findById(req.user.id)
+            .populate('posts.comments.actor')
+            .populate('feedAction.post')
+            .populate('chatAction.post')
+            .exec();
+
+        // TO DO: userActions currently includes actions done in training module. Need to calculate and substract. Or rework counting workflow.
+
+        // For simplicity, we define feed progress as the total number of user actions (posts, comments, likes, flags, and chat turns) taken by the user.
+        const numUserActions = 
+            (user.numPosts + 1) + (user.numComments + 1) + user.numPostLikes + user.numPostFlags + user.numCommentLikes + user.numCommentFlags + user.numChatTurns;
+
+        // Calculate active time spent on the main feed /
+        let feedTimeMs = 0;
+
+        if (Array.isArray(user.pageLog) && user.pageLog.length > 0) {
+            const log = user.pageLog
+                .slice()
+                .sort((a, b) => new Date(a.time) - new Date(b.time));
+
+            for (let i = 0; i < log.length; i += 1) {
+                if (log[i].page !== '/') continue;
+
+                const currentTime = new Date(log[i].time).getTime();
+                const nextEntry = log[i + 1];
+                if (nextEntry) {
+                    const nextTime = new Date(nextEntry.time).getTime();
+                    if (nextTime > currentTime) {
+                        feedTimeMs += nextTime - currentTime;
+                    }
+                } else {
+                    // If this is the last pageLog entry and it is the feed page,
+                    // assume the user is currently still on the feed.
+                    feedTimeMs += Date.now() - currentTime;
+                }
+            }
+        }
+
+        res.json({
+            numUserActions: numUserActions,
+            feedTimeMs: feedTimeMs
+        });
+    } catch (err) {
+        next(err);
+    }
+};
+
 exports.postChatActivation = async (req, res, next) => {
     console.log('postChatActivation called', req.body);
     try {

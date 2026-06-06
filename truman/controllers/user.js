@@ -85,12 +85,13 @@ exports.postLogin = (req, res, next) => {
  * Handles user log out.
  */
 exports.logout = (req, res) => {
+    const postSurveyLink = req.user.endSurveyLink;
     req.logout((err) => {
         if (err) console.log('Error : Failed to logout.', err);
         req.session.destroy((err) => {
             if (err) console.log('Error : Failed to destroy the session during logout.', err);
             req.user = null;
-            res.redirect('/');
+            res.redirect(postSurveyLink || '/login');
         });
     });
 };
@@ -164,7 +165,7 @@ exports.postSignup = async(req, res, next) => {
 
         // const existingUser = await User.findOne({ $or: [{ email: req.body.email }, { mturkID: req.body.mturkID }] }).exec();
         const existingUser = await User.findOne({ ResponseID: ResponseID }).exec();
-        console.log(existingUser)
+        
         if (existingUser) {
             existingUser.username = req.body.username;
             existingUser.profile.picture = normalizeProfilePicture(req.body.profile_picture);

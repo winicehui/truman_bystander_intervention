@@ -236,12 +236,6 @@ app.get('/community-guidelines', passportConfig.isAuthenticated, function(req, r
     });
 });
 
-app.get('/info', passportConfig.isAuthenticated, function(req, res) {
-    res.render('info', {
-        title: 'User Docs'
-    });
-});
-
 app.get('/training_intro', passportConfig.isAuthenticated, function(req, res) {
     res.render('training', {
         title: 'Training Module',
@@ -296,6 +290,7 @@ app.get('/user/:userId', passportConfig.isAuthenticated, scriptController.getAct
 app.post('/user', passportConfig.isAuthenticated, actorsController.postBlockReportOrFollow);
 app.get('/actors', passportConfig.isAuthenticated, actorsController.getActors)
 
+app.get('/feed_status', passportConfig.isAuthenticated, scriptController.getFeedStatus);
 app.get('/chat', passportConfig.isAuthenticated, scriptController.getChat);
 app.post('/chat', passportConfig.isAuthenticated, scriptController.postchatAction);
 app.get('/feed', passportConfig.isAuthenticated, scriptController.getScript);
