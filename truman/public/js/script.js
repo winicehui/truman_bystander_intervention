@@ -26,4 +26,26 @@ $(window).on("load", function() {
             $('.actions .ui.button').val('Posting...');
         }
     });
+
+    $("#proceed-btn").on('click', async function() {
+        try {
+            if (window.location.pathname == "/") {
+                const response = await fetch('/feed_status');
+                const data = await response.json();
+                const canProceed = data.numUserActions >= 1 || data.feedTimeMs >= 180000;
+
+                if (canProceed) {
+                    resetActiveTimer(true);
+                } else {
+                    $('#error-msg').transition('slide down');
+                }
+            }
+        } catch (err) {
+            console.error('Error fetching feed status:', err);
+            $('#error-msg').transition('slide down');
+            setTimeout(function() {
+                $('#error-msg').transition('slide up');
+            }, 5000);
+        }
+    });
 });

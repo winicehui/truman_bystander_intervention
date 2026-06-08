@@ -18,13 +18,26 @@ const userSchema = new mongoose.Schema({
     numComments: { type: Number, default: -1 }, // Indicates the # of comments on (user and actor) posts the user has made. This value is used for indexing and the commentID of user comments on (user and actor) posts. Count begins at 0.
     numActorReplies: { type: Number, default: -1 }, // Indicates the # of actor replies on user posts, it is used for indexing and the commentID of actor comments on user posts. Count begins at 0.
 
-    numPostLikes: { type: Number, default: 0 }, // Indicates the # of actor posts liked. Count begins at 1.
-    numCommentLikes: { type: Number, default: 0 }, // Indicates the # of actor comments liked. Count begins at 1.
+    numPostLikes: { type: Number, default: 0 }, // Indicates the total # of actor and user posts liked. Includes training module. Count begins at 1.
+    numCommentLikes: { type: Number, default: 0 }, // Indicates the total # of actor and user comments liked. Includes training module. Count begins at 1.
+    numPostFlags: { type: Number, default: 0 }, // Indicates the total # of actor and user posts flagged. Includes training module. Count begins at 1.
+    numCommentFlags: { type: Number, default: 0 }, // Indicates the total # of actor and user comments flagged. Includes training module. Count begins at 1.
+
+    numChatTurns: { type: Number, default: 0 }, // Indicates the # of message turns the user has had with the Community Assistant. Count begins at 0.
+
+    numTrainingPostComments: { type: Number, default: -1 }, // Indicates the # of training module comments made. Count begins at 0.
+    
+    numTrainingPostLikes: { type: Number, default: 0 }, // Indicates the # of training module posts liked. Count begins at 0. Maximum should be 1 in this codebase.
+    numTrainingPostFlags: { type: Number, default: 0 }, // Indicates the # of training module posts flagged. Count begins at 0. Maximum should be 1 in this codebase.
+    numTrainingCommentLikes: { type: Number, default: 0 }, // Indicates the # of training module comments liked. Count begins at 0. Maximum should be 1 in this codebase.
+    numTrainingCommentFlags: { type: Number, default: 0 }, // Indicates the # of training module comments flagged. Count begins at 0. Maximum should be 1 in this codebase.
+
+    numTrainingChatTurns: { type: Number, default: 0 }, // Indicates the # of message turns the user has had with the Community Assistant in the training module. Count begins at 0.
 
     lastNotifyVisit: Date, // Absolute Time; Indicates the most recent visit to /notifications. First initialization is at account creation.
     createdAt: Date, // Absolute Time the user was created
     consent: { type: Boolean, default: false }, // Indicates if user has proceeded through the Welcome & community rule pages
-    finishedTraining: {type: Boolean, default: false}, // Indicates if user has finished training (applicable to C1 and C4)
+    finishedTraining: {type: Boolean, default: false}, // Indicates if user has finished training (applicable to C1 only)
 
     // mturkID: { type: String, unique: false }, // MTurkID
     ResponseID: { type: String, unique: true }, // Qualtric's ResponseID
@@ -112,7 +125,7 @@ const userSchema = new mongoose.Schema({
     // List of actions made on actor-made posts
     feedAction: [new Schema({
         post: { type: Schema.ObjectId, ref: 'Script' }, // The unique ID for the post within the database, the post the user interacted with
-        postCondition: String, // Indicates the type of post. Used for post classification purposes.
+        condition: { type: [String], default: [] }, // Indicates the type of post. Used for post classification purposes.
         mostRecentTime: Date, // Absolute Time, indicates the most recent time the post was viewed
         rereadTimes: { type: Number, default: 0 }, // Indicates the # of times the post has been viewed by user.
 
@@ -126,6 +139,8 @@ const userSchema = new mongoose.Schema({
 
         comments: [new Schema({
             comment: { type: Schema.ObjectId }, // The unique ID for the comment within the post within the database, the comment the user interacted with
+            condition: { type: [String], default: [] }, // Indicates the type of comment. Used for comment classification purposes.
+            
             liked: { type: Boolean, default: false }, // Indicates if the user has liked the comment
             flagged: { type: Boolean, default: false }, // Indicates if the user has flagged the comment
             likeTime: [Date], // List of absolute times when the user has liked the comment

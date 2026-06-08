@@ -242,7 +242,7 @@ function addComment(e) {
     const form = target.parents(".ui.form");
     const text = form.find("textarea.replyToPost").val().trim();
     const card = target.parents(".ui.fluid.card");
-    let comments = card.find(".ui.comments").not(".icon");;
+    let comments = card.find(".ui.comments").not(".icon");
     const postCondition = target.closest(".ui.fluid.card").attr("postCondition");
     // no comments area - add it
     if (!comments.length) {
@@ -396,6 +396,7 @@ function addCommentToComment(e) {
         const date = Date.now();
         const postID = card.attr("postID");
         const postClass = card.attr("postClass");
+        const postCondition = target.closest(".ui.fluid.card").attr("postCondition");
         const commentID = script.numComments + 1 + 78; // TO DO: Change this to the actual commentID returned from the backend once that is implemented. The +77 is to ensure reply_to/parent_comment functionality don't coincide with actor replies.
         
         const reply_to = orig_comment.children(".content").children("a.author").hasClass('/me') ? orig_comment.attr('commentID') : orig_comment.attr('index');
@@ -434,7 +435,6 @@ function addCommentToComment(e) {
                 postID: postID,
                 new_comment: date,
                 comment_text: text,
-                postClass: postClass,
                 reply_to: reply_to,
                 parent_comment: parent_comment,
                 _csrf: $('meta[name="csrf-token"]').attr('content')
@@ -446,7 +446,7 @@ function addCommentToComment(e) {
                 postID: postID,
                 new_comment: date,
                 comment_text: text,
-                postClass: postClass,
+                postCondition: postCondition,
                 reply_to: reply_to,
                 parent_comment: parent_comment,
                 _csrf: $('meta[name="csrf-token"]').attr('content')

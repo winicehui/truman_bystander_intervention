@@ -35,7 +35,7 @@ block content
       $.post('/account/consent', { _csrf: $('meta[name="csrf-token"]').attr('content') })
         .done(function(json) {
           if (json["result"] === "success") {
-            window.location.href = !{JSON.stringify((user.experimentalCondition === 'C1' || user.experimentalCondition === 'C4') ? '/training_intro' : (user.experimentalCondition === 'C2' ? '/beta_intro' : '/'))};
+            window.location.href = !{JSON.stringify((user.experimentalCondition === 'C1') ? '/training_intro' : (user.experimentalCondition === 'C2' ? '/beta_intro' : '/'))};
           }
         })
         .fail(function() {
