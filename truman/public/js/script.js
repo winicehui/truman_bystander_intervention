@@ -32,7 +32,7 @@ $(window).on("load", function() {
             if (window.location.pathname == "/") {
                 const response = await fetch('/feed_status');
                 const data = await response.json();
-                const canProceed = data.numUserActions > 1 || data.feedTimeMs >= 180000;
+                const canProceed = data.numUserActions >= 1 || data.feedTimeMs >= 180000;
 
                 if (canProceed) {
                     resetActiveTimer(true);
