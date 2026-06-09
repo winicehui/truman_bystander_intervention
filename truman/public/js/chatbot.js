@@ -426,7 +426,12 @@ $(window).on('load', function () {
                         
                     const match = replyText.match(/FINAL COMMENT:\s*(.+)/);
                     if (match) {
-                        post.find('textarea.replyToPost').val(match[1].trim()).focus().scrollIntoView({ behavior: 'smooth' });;
+                        const $replyBox = post.find('textarea.replyToPost');
+                        $replyBox.val(match[1].trim()).focus();
+                        const replyBoxEl = $replyBox.get(0);
+                        if (replyBoxEl && typeof replyBoxEl.scrollIntoView === 'function') {
+                            replyBoxEl.scrollIntoView({ behavior: 'smooth' });
+                        }
                         setTimeout(() => $('#copilot-chat .chat').slideUp(200), 2000);
                     }
                 } catch (err) {

@@ -3,6 +3,8 @@ const User = require('../models/User.js');
 const Actor = require('../models/Actor.js')
 const Notification = require('../models/Notification');
 const helpers = require('./helpers');
+const fs = require('fs');
+const path = require('path');
 const _ = require('lodash');
 const dotenv = require('dotenv');
 dotenv.config({ path: '.env' }); // See the file .env.example for the structure of .env
@@ -12,8 +14,10 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const TRAINING_POST_CONDITION = ['C1'];
 const MAIN_FEED_CHATBOT_ENABLED_CONDITIONS = ['C2'];
 const TRAINING_CHATBOT_ENABLED_CONDITIONS = ['C1'];
-const OPENAI_PROMPT_ID = 'pmpt_69e1794d22d081938a69e9538dddaebf0a6a2fd6f73bdb7d';
-const OPENAI_PROMPT_VERSION = '13'; // Note: prompt versions are no longer supported after November, 2026; update before that.
+const COMMENT_COACH_SYSTEM_PROMPT = fs.readFileSync(
+    path.join(__dirname, '../prompts/commentCoachPrompt.md'),
+    'utf8'
+).trim();
 const CHAT_THREAD_MESSAGE_CAP = 50; // Per-post chat limit. Only counts user messages.
 const CHAT_TOTAL_MESSAGE_CAP = 200; // Global chat limit across all posts. Only counts user messages.
 
@@ -646,28 +650,29 @@ exports.postAIChat = async (req, res, next) => {
         const contextPrompt = `Context for this conversation:\n${contextParts.join('\n\n')}`;
 
         const conversationInput = [
+            { role: 'system', content: COMMENT_COACH_SYSTEM_PROMPT },
             { role: 'user', content: contextPrompt },
             ...(messages.length === 0
                 ? [{ role: 'user', content: 'The user opened the chatbot for this post. Begin the conversation.' }]
                 : messages)
         ];
 
-        // Call OpenAI using the reusable prompt template configured in the dashboard.
         const response = await openai.responses.create({
-            prompt: {
-                id: OPENAI_PROMPT_ID,
-                version: OPENAI_PROMPT_VERSION
-            },
+            model: 'gpt-4.1-nano',
             input: conversationInput,
+            text: {
+                format: {
+                    type: 'text'
+                }
+            },
+            temperature: 0,
             max_output_tokens: 300,
-            reasoning: {
-                summary: "auto"
-            }
+            top_p: 1,
+            store: true
         });
         
         const replyText = response.output_text;
-        // reasoning summary for each message
-        const reasoningItem = response.output.find(item => item.type === "reasoning");
+        const reasoningItem = response.output?.find((item) => item.type === 'reasoning');
         const reasoningSummary = reasoningItem?.summary?.[0]?.text ?? null;
 
         // const reply = {
@@ -681,7 +686,7 @@ exports.postAIChat = async (req, res, next) => {
             absTime: new Date(),
             name: 'Comment Coach',
             isAgent: true,
-            reasoning: reasoningSummary ?? null,
+            reasoning: reasoningSummary,
         });
 
         await user.save();
