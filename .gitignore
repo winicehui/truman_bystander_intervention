@@ -16,18 +16,18 @@ tmp
 public/css/main.css
 
 #user_uploads
-uploads/user_post
-uploads/user_avatar
+truman/uploads/user_post
+truman/uploads/user_avatar
 
 #data-exports
-outputFiles
+truman/outputFiles
 
 # API keys and secrets
-.env
+truman/.env
 
 # Dependency directory
-node_modules
-bower_components
+truman/node_modules
+truman/bower_components
 
 # Editors
 .idea
