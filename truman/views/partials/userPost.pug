@@ -16,7 +16,7 @@
     .ui.labeled.button(tabindex='0')
       .ui.like.button(class=val.liked ? "red" : null)
         i.heart.icon
-        |  Like
+        span.label=(val.liked ? " Liked" : " Like")
       a.ui.basic.red.left.pointing.label.count=val.likes+(val.liked ? 1 : 0)      
   if val.comments.length > 0
     .content

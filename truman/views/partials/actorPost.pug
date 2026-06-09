@@ -6,19 +6,7 @@
       img.ui.avatar.image.lazy(src='/public/picture.svg', data-src=cdn+"/profile_pictures/"+val.actor.profile.picture)
       span.username=val.actor.profile.name
     .time.meta= (user.createdAt.getTime() + val.time)
-  //- .content.dimmable(class=val.flagged ? "dimmed": "")
   .content
-    //- .ui.dimmer.flag(class=val.flagged ? "active": "")
-    //-   .content
-    //-     .center
-    //-       h2.ui.inverted.icon.header
-    //-         i.red.flag.icon
-    //-         | You've flagged this!
-    //-         h3.ui.inverted.header
-    //-             span="The admins will review this post further. We are sorry you had this experience."
-          //- .ui.inverted.unflag.button(tabindex='0')
-          //-   i.flag.icon
-          //-   |  Unflag
     if val.picture
       .img.post.image
         img.lazy(src='/public/picture.svg', data-src=cdn+"/post_pictures/"+val.picture, style="max-width:100%; width:100%;")

@@ -346,6 +346,10 @@ $(window).on('load', function () {
             async sendMessage() {
                 const name = 'Me';
                 const message = this.$textarea.val().trim();
+                const post = $(`[postid="${this.chatId}"]`);
+                const postContext = post.find('.description').first().text().trim();
+                const commentContext = getCommentContext(post);
+
                 if (!message) return;
                 if (onboardingState.locked && onboardingState.requiredChatId && onboardingState.requiredChatId !== this.chatId) return;
             
@@ -364,6 +368,7 @@ $(window).on('load', function () {
                         body: message,
                         absTime: Date.now(),
                         name,
+                        postCondition: post.attr('postcondition') || '',
                         isAgent: false,
                         _csrf: $('meta[name="csrf-token"]').attr('content')
                     });
@@ -392,9 +397,6 @@ $(window).on('load', function () {
                     if (body) messages.push({ role: isAgent ? 'assistant' : 'user', content: body });
                 });
             
-                const post = $(`[postid="${this.chatId}"]`);
-                const postContext = post.find('.description').first().text().trim();
-                const commentContext = getCommentContext(post);
                 try {
                     const response = await fetch('/chat/ai', {
                         method: 'POST',
@@ -404,8 +406,7 @@ $(window).on('load', function () {
                         },
                         body: JSON.stringify({
                             chat_id: this.chatId,
-                            postCondition: post.attr('postcondition') || '',
-                            messages,
+                            messages: messages,
                             postContext: postContext,
                             commentContext: commentContext
                         })

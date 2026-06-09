@@ -9,9 +9,9 @@ dotenv.config({ path: '.env' }); // See the file .env.example for the structure 
 const OpenAI = require('openai');
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-const TRAINING_POST_CONDITION = ['C1', 'C4'];
-const MAIN_FEED_CHATBOT_ENABLED_CONDITIONS = ['C2', 'C4'];
-const TRAINING_CHATBOT_ENABLED_CONDITIONS = ['C1', 'C4'];
+const TRAINING_POST_CONDITION = ['C1'];
+const MAIN_FEED_CHATBOT_ENABLED_CONDITIONS = ['C2'];
+const TRAINING_CHATBOT_ENABLED_CONDITIONS = ['C1'];
 const OPENAI_PROMPT_ID = 'pmpt_69e1794d22d081938a69e9538dddaebf0a6a2fd6f73bdb7d';
 const OPENAI_PROMPT_VERSION = '13'; // Note: prompt versions are no longer supported after November, 2026; update before that.
 const CHAT_THREAD_MESSAGE_CAP = 50; // Per-post chat limit. Only counts user messages.
@@ -44,6 +44,16 @@ function hasUserSentAnyChatMessage(user) {
     );
 }
 
+const arraysEqualIgnoreOrder = (a, b) => {
+  if (a.length !== b.length) return false;
+  
+  // Create shallow copies first to avoid mutating the original arrays
+  const sortedA = [...a].sort();
+  const sortedB = [...b].sort();
+  
+  return sortedA.every((val, index) => val === sortedB[index]);
+};
+
 /**
  * GET /
  * Fetch and render newsfeed.
@@ -61,8 +71,11 @@ exports.getScript = async(req, res, next) => {
             .populate('chatAction.post')
             .exec();
 
-        // If the user is no longer active, sign the user out.
-        if (!user.active) {
+        if (!user.consent) {
+            res.redirect('/com');
+        } else if (!user.finishedTraining && TRAINING_POST_CONDITION.includes(user.experimentalCondition)) {
+            res.redirect('/training_intro');
+        } else if (!user.active) {
             req.logout((err) => {
                 if (err) console.log('Error : Failed to logout.', err);
                 req.session.destroy((err) => {
@@ -192,7 +205,6 @@ exports.getChat = async(req, res, next) => {
     }
 };
 
-
 /*
  * Post /post/new
  * Record a new user-made post. Include any actor replies (comments) that go along with it.
@@ -267,11 +279,12 @@ exports.postUpdateFeedAction = async(req, res, next) => {
         //let feedIndex = _.findIndex(user.feedAction, function(o) { return o.post.equals(req.body.postID); });
         let feedIndex = _.findIndex(user.feedAction, function(o) { return o.post && o.post.equals(req.body.postID); });
 
+        const condition = JSON.parse(req.body.postCondition || '[]');
         // If the user has not interacted with the post before, add the post to user.feedAction.
         if (feedIndex == -1) {
             const cat = {
                 post: req.body.postID,
-                postCondition: req.body.postCondition,
+                condition: condition // Store the post's experimental condition(s) for later analysis.
             };
             feedIndex = user.feedAction.push(cat) - 1;
         }
@@ -292,6 +305,9 @@ exports.postUpdateFeedAction = async(req, res, next) => {
                 parent_comment: req.body.parent_comment
             }
             user.feedAction[feedIndex].comments.push(cat);
+            if (arraysEqualIgnoreOrder(condition, TRAINING_POST_CONDITION)) {
+                user.numTrainingPostComments++;
+            }
         }
         // User interacted with a comment on the post.
         else if (req.body.commentID) {
@@ -319,7 +335,10 @@ exports.postUpdateFeedAction = async(req, res, next) => {
                 const like = req.body.like;
                 user.feedAction[feedIndex].comments[commentIndex].likeTime.push(like);
                 user.feedAction[feedIndex].comments[commentIndex].liked = true;
-                if (req.body.isUserComment != 'true') user.numCommentLikes++;
+                user.numCommentLikes++;
+                if (arraysEqualIgnoreOrder(condition, TRAINING_POST_CONDITION)) {
+                    user.numTrainingCommentLikes++;
+                }
             }
 
             // User unliked the comment.
@@ -327,7 +346,10 @@ exports.postUpdateFeedAction = async(req, res, next) => {
                 const unlike = req.body.unlike;
                 user.feedAction[feedIndex].comments[commentIndex].unlikeTime.push(unlike);
                 user.feedAction[feedIndex].comments[commentIndex].liked = false;
-                if (req.body.isUserComment != 'true') user.numCommentLikes--;
+                user.numCommentLikes--;
+                if (arraysEqualIgnoreOrder(condition, TRAINING_POST_CONDITION)) {
+                    user.numTrainingCommentLikes--;
+                }
             }
 
             // User flagged the comment.
@@ -335,6 +357,10 @@ exports.postUpdateFeedAction = async(req, res, next) => {
                 const flag = req.body.flag;
                 user.feedAction[feedIndex].comments[commentIndex].flagTime.push(flag);
                 user.feedAction[feedIndex].comments[commentIndex].flagged = true;
+                user.numCommentFlags++;
+                if (arraysEqualIgnoreOrder(condition, TRAINING_POST_CONDITION)) {
+                    user.numTrainingCommentFlags++;
+                }
             }
 
             // User unflagged the comment.
@@ -342,6 +368,10 @@ exports.postUpdateFeedAction = async(req, res, next) => {
                 const unflag = req.body.unflag;
                 user.feedAction[feedIndex].comments[commentIndex].unflagTime.push(unflag);
                 user.feedAction[feedIndex].comments[commentIndex].flagged = false;
+                user.numCommentFlags--;
+                if (arraysEqualIgnoreOrder(condition, TRAINING_POST_CONDITION)) {
+                    user.numTrainingCommentFlags--;
+                }
             }
         }
         // User interacted with the post.
@@ -351,6 +381,10 @@ exports.postUpdateFeedAction = async(req, res, next) => {
                 const flag = req.body.flag;
                 user.feedAction[feedIndex].flagTime.push(flag);
                 user.feedAction[feedIndex].flagged = true;
+                user.numPostFlags++;
+                if (arraysEqualIgnoreOrder(condition, TRAINING_POST_CONDITION)) {
+                    user.numTrainingPostFlags++;
+                }
             }
 
             // User unflagged the post.
@@ -358,6 +392,10 @@ exports.postUpdateFeedAction = async(req, res, next) => {
                 const unflag = req.body.unflag;
                 user.feedAction[feedIndex].unflagTime.push(unflag);
                 user.feedAction[feedIndex].flagged = false;
+                user.numPostFlags--;
+                if (arraysEqualIgnoreOrder(condition, TRAINING_POST_CONDITION)) {
+                    user.numTrainingPostFlags--;
+                }
             }
 
             // User liked the post.
@@ -366,6 +404,9 @@ exports.postUpdateFeedAction = async(req, res, next) => {
                 user.feedAction[feedIndex].likeTime.push(like);
                 user.feedAction[feedIndex].liked = true;
                 user.numPostLikes++;
+                if (arraysEqualIgnoreOrder(condition, TRAINING_POST_CONDITION)) {
+                    user.numTrainingPostLikes++;
+                }
             }
             // User unliked the post.
             else if (req.body.unlike) {
@@ -373,6 +414,9 @@ exports.postUpdateFeedAction = async(req, res, next) => {
                 user.feedAction[feedIndex].unlikeTime.push(unlike);
                 user.feedAction[feedIndex].liked = false;
                 user.numPostLikes--;
+                if (arraysEqualIgnoreOrder(condition, TRAINING_POST_CONDITION)) {
+                    user.numTrainingPostLikes--;
+                }
             }
             // User read the post.
             else if (req.body.viewed) {
@@ -480,18 +524,22 @@ exports.postUpdateUserPostFeedAction = async(req, res, next) => {
             // User liked the comment.
             else if (req.body.like) {
                 user.posts[feedIndex].comments[commentIndex].liked = true;
+                user.numCommentLikes++;
             }
             // User unliked the comment. 
             else if (req.body.unlike) {
                 user.posts[feedIndex].comments[commentIndex].liked = false;
+                user.numCommentLikes--;
             }
             // User flagged the comment.
             else if (req.body.flag) {
                 user.posts[feedIndex].comments[commentIndex].flagged = true;
+                user.numCommentFlags++;
             }
             // User unflagged the comment.
             else if (req.body.unflag) {
                 user.posts[feedIndex].comments[commentIndex].flagged = false;
+                user.numCommentFlags--;
             }
         }
         // User interacted with the post. 
@@ -499,10 +547,12 @@ exports.postUpdateUserPostFeedAction = async(req, res, next) => {
             // User liked the post.
             if (req.body.like) {
                 user.posts[feedIndex].liked = true;
+                user.numPostLikes++;
             }
             // User unliked the post.
             if (req.body.unlike) {
                 user.posts[feedIndex].liked = false;
+                user.numPostLikes--;
             }
         }
         await user.save();
@@ -514,10 +564,11 @@ exports.postUpdateUserPostFeedAction = async(req, res, next) => {
 
 /**
  * POST /chat
- * Add actions with chats.
+ * Logs the user chat response into user.chatAction.
  */
 exports.postchatAction = async(req, res, next) => {
     try {
+        console.log(req.body);
         const user = await User.findById(req.user.id).exec();
 
         // Check if user has interacted with the post before.
@@ -535,8 +586,7 @@ exports.postchatAction = async(req, res, next) => {
         // If the user has not interacted with the post chat before, add the post to user.chatAction.
         if (feedIndex == -1) {
             const cat = {
-                post: req.body.chat_id,
-                postCondition: req.body.postCondition,
+                post: req.body.chat_id
             };
             feedIndex = user.chatAction.push(cat) - 1;
         }
@@ -548,6 +598,15 @@ exports.postchatAction = async(req, res, next) => {
             isAgent: req.body.isAgent
         };
         user.chatAction[feedIndex].messages.push(cat);
+
+        if (req.body.isAgent === "false") {
+            user.numChatTurns++;
+        }
+
+        const condition = JSON.parse(req.body.postCondition || '[]');
+        if (arraysEqualIgnoreOrder(condition, TRAINING_POST_CONDITION)) {
+            user.numTrainingChatTurns++;
+        }
 
         await user.save();
         let returningJson = { result: "success" };
@@ -561,12 +620,12 @@ exports.postchatAction = async(req, res, next) => {
 /**
  * POST /chat/ai
  * Send a message to the OpenAI chatbot for a specific post.
- * Logs both the user message and AI reply into user.chatAction.
+ * Logs the AI reply into user.chatAction.
  */
 exports.postAIChat = async (req, res, next) => {
     try {
         const user = await User.findById(req.user.id).exec();
-        const { chat_id, postCondition, messages, postContext, commentContext } = req.body;
+        const { chat_id, messages, postContext, commentContext } = req.body;
 
         // Ensure chatAction entry exists for this post
         // let feedIndex = _.findIndex(user.chatAction, function(o) {
@@ -715,31 +774,78 @@ exports.getTrainingStatus = async(req, res, next) => {
             .populate('chatAction.post')
             .exec();
         
-        const trainingPostId = await Script.find({
-                //condition: TRAINING_POST_CONDITION
-                condition: { $in: TRAINING_POST_CONDITION }
-            }).exec()._id;
-
-        let userTurns = 0;
-
-        const chatObject = user.chatAction.find(chat => chat.post.equals(trainingPostId));
-
-        if (chatObject) {
-            chatObject.messages.forEach((message) => {
-                if (!message.isAgent) {
-                    userTurns++;
-                }
-            });
-        }
-
         res.json({
-            numComments: user.numComments + 1, // +1 to account for numComments start at -1
-            userTurns: userTurns
+            numComments: user.numTrainingPostComments + 1, // +1 to account for numComments start at -1
+            userTurns: user.numTrainingChatTurns
         });
     } catch (err) {
         next(err);
     }
 };
+
+/**
+ * GET /feed_status
+ * Return feed progress for the current user.
+ */
+exports.getFeedStatus = async(req, res, next) => {
+    try {
+        const user = await User.findById(req.user.id)
+            .populate('posts.comments.actor')
+            .populate('feedAction.post')
+            .populate('chatAction.post')
+            .exec();
+
+        // TO DO: userActions currently includes actions done in training module. Need to calculate and substract. Or rework counting workflow.
+
+        // For simplicity, we define feed progress as the total number of user actions (posts, comments, likes, flags, and chat turns) taken by the user.
+        const numUserActions = 
+            (user.numPosts + 1) + 
+            (user.numComments - user.numTrainingPostComments + 1) + 
+            (user.numPostLikes - user.numTrainingPostLikes) + 
+            (user.numPostFlags - user.numTrainingPostFlags) + 
+            (user.numCommentLikes - user.numTrainingCommentLikes) + 
+            (user.numCommentFlags - user.numTrainingCommentFlags) + 
+            (user.numChatTurns - user.numTrainingChatTurns);
+
+        // Calculate active time spent on the main feed /
+        let feedTimeMs = 0;
+
+        if (Array.isArray(user.pageLog) && user.pageLog.length > 0) {
+            const log = user.pageLog
+                .slice()
+                .sort((a, b) => new Date(a.time) - new Date(b.time));
+
+            for (let i = 0; i < log.length; i += 1) {
+                if (log[i].page !== '/') continue;
+
+                const currentTime = new Date(log[i].time).getTime();
+                const nextEntry = log[i + 1];
+                if (nextEntry) {
+                    const nextTime = new Date(nextEntry.time).getTime();
+                    if (nextTime > currentTime) {
+                        feedTimeMs += nextTime - currentTime;
+                    }
+                } else {
+                    // If this is the last pageLog entry and it is the feed page,
+                    // assume the user is currently still on the feed.
+                    feedTimeMs += Date.now() - currentTime;
+                }
+            }
+        }
+
+        res.json({
+            numUserActions: numUserActions,
+            feedTimeMs: feedTimeMs
+        });
+    } catch (err) {
+        next(err);
+    }
+};
+
+/**
+ * POST /chat/activation
+ * Record user's activation events related to a chat, such as opening the chat and the activation factor (e.g. button click, comment highlight, etc.)
+*/
 exports.postChatActivation = async (req, res, next) => {
     console.log('postChatActivation called', req.body);
     try {
@@ -767,6 +873,10 @@ exports.postChatActivation = async (req, res, next) => {
     }
 };
 
+/**
+ * POST /chat/timing
+ * Record user's timing events related to a chat, such as sending messages and minimizing/closing the chat.
+ */
 exports.postChatTiming = async (req, res, next) => {
     try {
         const user = await User.findById(req.user.id).exec();
