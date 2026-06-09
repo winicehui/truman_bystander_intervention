@@ -795,16 +795,15 @@ exports.getFeedStatus = async(req, res, next) => {
             .populate('chatAction.post')
             .exec();
 
-        // TO DO: userActions currently includes actions done in training module. Need to calculate and substract. Or rework counting workflow.
-
-        // For simplicity, we define feed progress as the total number of user actions (posts, comments, likes, flags, and chat turns) taken by the user.
-        const numUserActions = 
-            (user.numPosts + 1) + 
-            (user.numComments - user.numTrainingPostComments + 1) + 
-            (user.numPostLikes - user.numTrainingPostLikes) + 
-            (user.numPostFlags - user.numTrainingPostFlags) + 
-            (user.numCommentLikes - user.numTrainingCommentLikes) + 
-            (user.numCommentFlags - user.numTrainingCommentFlags) + 
+        // For the post-survey gate, use the existing aggregate action counters,
+        // but avoid the extra +1 on comments which can create a false positive at zero actions.
+        const numUserActions =
+            (user.numPosts + 1) +
+            (user.numComments - user.numTrainingPostComments) +
+            (user.numPostLikes - user.numTrainingPostLikes) +
+            (user.numPostFlags - user.numTrainingPostFlags) +
+            (user.numCommentLikes - user.numTrainingCommentLikes) +
+            (user.numCommentFlags - user.numTrainingCommentFlags) +
             (user.numChatTurns - user.numTrainingChatTurns);
 
         // Calculate active time spent on the main feed /
@@ -835,6 +834,7 @@ exports.getFeedStatus = async(req, res, next) => {
 
         res.json({
             numUserActions: numUserActions,
+            mainFeedActionTaken: numUserActions >= 1,
             feedTimeMs: feedTimeMs
         });
     } catch (err) {
