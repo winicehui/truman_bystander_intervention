@@ -311,6 +311,14 @@ $(window).on('load', function () {
                 this.$button.on('click', this.sendMessage.bind(this));
                 this.$textarea.on('keydown', this.handleKeydown.bind(this));
             },
+            
+            formatMessageOutput(body) {
+                if (!body || typeof body !== 'string') return body;
+                return body
+                    .replace(/FINAL COMMENT:(.+)/g, '<strong>FINAL COMMENT:$1</strong>')
+                    .replace(/\*\*([\s\S]+?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\n/g, '<br/><br/>');
+            },
 
             render(body, absTime, name, isAgent, isExternalMessage, isTypingAnimation) {
                 if (this.typingTimeout != null) {
@@ -326,7 +334,7 @@ $(window).on('load', function () {
                     );
                     const context = {
                         name,
-                        messageOutput: body,
+                        messageOutput: this.formatMessageOutput(body),
                         time: absTime,
                         addProfilePhoto: this.mostRecentMessenger !== name,
                         isTypingAnimation,
@@ -415,10 +423,10 @@ $(window).on('load', function () {
                     const data = await response.json();
                     const replyText = data.message.content;
                     this.addMessageExternal(replyText, this.getCurrentTime(), 'Comment Coach', true);
-            
-                    const match = replyText.match(/FINAL_COMMENT:\s*(.+?)(?=\n✅|\n\n|✅|$)/s);
+                        
+                    const match = replyText.match(/FINAL COMMENT:\s*(.+)/);
                     if (match) {
-                        post.find('textarea.replyToPost').val(match[1].trim()).focus();
+                        post.find('textarea.replyToPost').val(match[1].trim()).focus().scrollIntoView({ behavior: 'smooth' });;
                         setTimeout(() => $('#copilot-chat .chat').slideUp(200), 2000);
                     }
                 } catch (err) {

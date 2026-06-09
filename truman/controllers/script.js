@@ -664,6 +664,7 @@ exports.postAIChat = async (req, res, next) => {
                 summary: "auto"
             }
         });
+        
         const replyText = response.output_text;
         // reasoning summary for each message
         const reasoningItem = response.output.find(item => item.type === "reasoning");
