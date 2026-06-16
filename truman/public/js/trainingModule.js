@@ -1,7 +1,9 @@
 $(window).on('load', function() {
     setTimeout(function() {
         const post = $('.ui.fluid.card');
-            openChat(post);
+            if (typeof openChat === 'function') {
+                openChat(post);
+            }
     }, 1000);
 
     $("#proceed-btn").on('click', async function() {

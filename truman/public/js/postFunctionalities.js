@@ -59,7 +59,9 @@ function likePost(e) {
     //     openChat(post);
     // }
     if (post.find(".description.cyberbullying").length > 0) {
-        openChat(post, false, 2); // 2 = like
+        if (typeof openChat === 'function') {
+            openChat(post, false, 2); // 2 = like
+        }
     }
 }
 
@@ -101,7 +103,9 @@ function flagPost(e) {
     //     openChat(post);
     // }
     if (post.find(".description.cyberbullying").length > 0) {
-        openChat(post, false, 4); // 4 = flag
+        if (typeof openChat === 'function') {
+            openChat(post, false, 4); // 4 = flag
+        }
     }
 }
 
@@ -167,7 +171,9 @@ function likeComment(e) {
     //     openChat(comment);
     // }
     if (comment.hasClass("cyberbullying")) {
-        openChat(comment, false, 2); // 2 = like
+        if (typeof openChat === 'function') {
+            openChat(comment, false, 2); // 2 = like
+        }
     }
 
 }
@@ -232,7 +238,9 @@ function flagComment(e) {
     //     openChat(commentElement);
     // }
     if (commentElement.hasClass("cyberbullying")) {
-        openChat(commentElement, false, 4); // 4 = flag
+        if (typeof openChat === 'function') {
+            openChat(commentElement, false, 4); // 4 = flag
+        }
     }
     
 }
@@ -301,7 +309,9 @@ function addComment(e) {
     //     openChat(card);
     // }
     if (card.find(".description.cyberbullying").length > 0) {
-        openChat(card, false, 3); // 3 = comment
+        if (typeof openChat === 'function') {
+            openChat(card, false, 3); // 3 = comment
+        }
     }
 }
 
@@ -357,7 +367,9 @@ function openCommentReply(e) {
     //     openChat($(e.target).closest(".comment"));
     // }
     if ($(e.target).closest(".comment").hasClass("cyberbullying")) {
-        openChat($(e.target).closest(".comment"), false, 3); // 3 = comment
+        if (typeof openChat === 'function') {
+            openChat($(e.target).closest(".comment"), false, 3); // 3 = comment
+        }
     }
 }
 
@@ -457,8 +469,10 @@ function addCommentToComment(e) {
     // if ($(e.target).closest(".comment").hasClass("cyberbullying")) {
     //     openChat($(e.target).closest(".comment"));
     // }
-    if ($(e.target).closest(".comment").hasClass("cyberbullying")) {
-        openChat($(e.target).closest(".comment"), false, 3); // 3 = comment
+        if ($(e.target).closest(".comment").hasClass("cyberbullying")) {
+        if (typeof openChat === 'function') {
+            openChat($(e.target).closest(".comment"), false, 3); // 3 = comment
+        }
     }
 }
 
