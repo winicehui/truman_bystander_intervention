@@ -34,6 +34,7 @@ function getCommentContext(post) {
 //   'closed'    — chat was closed by user (continue-chat-button shown)
 const postChatState = new Map();
 const chatbotConfig = window.chatbotConfig || {};
+const CHAT_MESSAGE_CHAR_CAP = 2000;
 const onboardingState = {
     required: !!chatbotConfig.requireMainFeedChatOnboarding && !chatbotConfig.isTrainingModule,
     locked: false,
@@ -359,6 +360,10 @@ $(window).on('load', function () {
                 const commentContext = getCommentContext(post);
 
                 if (!message) return;
+                if (Array.from(message).length > CHAT_MESSAGE_CHAR_CAP) {
+                    this.addMessageExternal(`Message is too long. Please keep it under ${CHAT_MESSAGE_CHAR_CAP} characters.`, this.getCurrentTime(), 'Comment Coach', true);
+                    return;
+                }
                 if (onboardingState.locked && onboardingState.requiredChatId && onboardingState.requiredChatId !== this.chatId) return;
             
                 // If minimized, expand history first

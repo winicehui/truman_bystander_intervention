@@ -18,6 +18,7 @@ const COMMENT_COACH_SYSTEM_PROMPT = fs.readFileSync(
     path.join(__dirname, '../prompts/commentCoachPrompt.md'),
     'utf8'
 ).trim();
+const CHAT_MESSAGE_CHAR_CAP = 2000; // Per-message character limit for user messages.
 const CHAT_THREAD_MESSAGE_CAP = 50; // Per-post chat limit. Only counts user messages.
 const CHAT_TOTAL_MESSAGE_CAP = 200; // Global chat limit across all posts. Only counts user messages.
 
@@ -37,6 +38,16 @@ function getChatLimitError(user, chatIndex) {
 
     if (chatIndex !== -1 && countUserMessages(user.chatAction[chatIndex].messages) >= CHAT_THREAD_MESSAGE_CAP) {
         return `You have reached the limit of ${CHAT_THREAD_MESSAGE_CAP} messages for this chat.`;
+    }
+
+    return null;
+}
+
+function getChatMessageLengthError(body) {
+    const messageLength = Array.from((body || '').trim()).length;
+
+    if (messageLength > CHAT_MESSAGE_CHAR_CAP) {
+        return `Message is too long. Please keep it under ${CHAT_MESSAGE_CHAR_CAP} characters.`;
     }
 
     return null;
@@ -574,6 +585,14 @@ exports.postchatAction = async(req, res, next) => {
     try {
         console.log(req.body);
         const user = await User.findById(req.user.id).exec();
+        const messageLengthError = getChatMessageLengthError(req.body.body);
+
+        if (messageLengthError) {
+            return res.status(400).send({
+                result: "invalid_message",
+                message: messageLengthError
+            });
+        }
 
         // Check if user has interacted with the post before.
         //let feedIndex = _.findIndex(user.chatAction, function(o) { return o.post.equals(req.body.chat_id); });
