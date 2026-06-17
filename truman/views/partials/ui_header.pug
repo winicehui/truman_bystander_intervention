@@ -25,7 +25,6 @@
                   a.item(href='/completed') Study Progress
                   a.item(href='/actors') Simulation (Actors)
                 //- a.item(href='/com?feed=true') View Community Guildelnes
-              a.item.logoutLink Log Out
 .mobile.only.row
   .ui.fluid.top.fixed.item.menu(class = user ? "four" : "two")
     a.item(href=(!user ? `/?ResponseID=${ResponseID || r_id || ''}&Condition=${Condition || ''}` : (!user.consent ? "/com" : (!trainingConditions.includes(user.experimentalCondition) || user.finishedTraining ? "/" : "/training_intro"))))
@@ -51,4 +50,3 @@
               a.item(href='/completed') Study Progress
               a.item(href='/actors') Simulation (Actors)
             //- a.item(href='/com?feed=true') View Community Guildelnes 
-          a.item.logoutLink Log Out
