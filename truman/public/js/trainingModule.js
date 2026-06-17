@@ -23,6 +23,11 @@ $(window).on('load', function() {
                         .fail(function() {
                             alert('Error setting consent. Please try again.');
                     });
+                } else {
+                    $('#error-msg').transition('slide down');
+                    setTimeout(function() {
+                        $('#error-msg').transition('slide up');
+                    }, 5000);
                 }
             }
         } catch (err) {
