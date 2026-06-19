@@ -216,9 +216,11 @@ async function openChat(element, force = false, activationFactor = 1) {
  
     // ── AI greeting (only if no history) ─────────────────────────
     if (existingMessages.length === 0) {
-        const postContext = post.find('.description').first().text().trim();
+        const postAuthor = post.attr('actor_name') || post.find('span.username').first().text().trim();
+        const postBody = post.find('.description').first().text().trim();
+        const postContext = postAuthor ? `${postAuthor}: ${postBody}` : postBody;
         const commentContext = getCommentContext(post);
- 
+
         chat.addTypingAnimationExternal('Comment Coach');
         try {
             const response = await fetch('/chat/ai', {
@@ -356,7 +358,9 @@ $(window).on('load', function () {
                 const name = 'Me';
                 const message = this.$textarea.val().trim();
                 const post = $(`[postid="${this.chatId}"]`);
-                const postContext = post.find('.description').first().text().trim();
+                const postAuthor = post.attr('actor_name') || post.find('span.username').first().text().trim();
+                const postBody = post.find('.description').first().text().trim();
+                const postContext = postAuthor ? `${postAuthor}: ${postBody}` : postBody;
                 const commentContext = getCommentContext(post);
 
                 if (!message) return;
