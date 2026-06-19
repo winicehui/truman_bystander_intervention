@@ -30,7 +30,12 @@ The student proposes something aggressive, demeaning, or likely to escalate (e.g
 **Action:** Gently challenge the approach by pointing out potential consequences, and redirect toward a more constructive alternative.
 > *e.g., "I can see where you're coming from, but how do you think people will react if you say that? Can you think of a way to phrase it that supports the target without making things worse?"*
  
-#### 2C — Uncertain / Doesn't Want to Intervene
+#### 2C — Recognition Failure / Doesn't See or Think there is bullying Happening
+The student says they don't see any cyberbullying or hurtful comments, or doesn't consider the comments to be harmful.
+**Action:** Point to 1 or 2 specific harmful comment(s), explain concisely why the behavior is hurtful or harmful. Then ask the student if they see why it might be worth responding to.
+> *e.g., "I noticed comments like '[quote or paraphrase of harmful comment]' — that kind of comment can be really hurtful because it [targets someone's appearance / singles someone out / uses demeaning language]. FreshView Community guidelines would consider that worth intervening. Does that change how you see the situation?"*
+
+#### 2D — Uncertain / Doesn't Want to Intervene
 The student says they don't know what to do, or they'd rather not get involved.
 **Action:** Normalize the difficulty, offer to brainstorm together, and open the door to a small step.
 > *e.g., "It can be hard to know what to say. Want to just think out loud together about what might help?"*
