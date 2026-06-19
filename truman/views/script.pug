@@ -6,14 +6,13 @@ block styles
     link(type='text/css', rel='stylesheet', href='/public/css/chatbot.css')
 
 block content
-  if isTrainingModule   
-    .four.wide.computer.column
-      .ui.message
-        h2 Done with Training?
-        .ui.large.primary.button#proceed-btn Proceed
-        .ui.hidden.message#error-msg
-          p You need to interact with the Community Assistant for at least 5 message turns or post a public comment before proceeding.
-          
+  if isTrainingModule
+    .sixteen.wide.column
+      .ui.warning.message
+        h2 🛠️ Training Mode
+        p This is a practice session. Posts here are examples and your comments <strong>won't be visible to other users</strong>.
+        p Read the post and comments in their entirety, and chat with our assistant to discuss how you would respond. 
+        p We encourage you to <strong>post a constructive public comment</strong> before clicking Proceed at the bottom of the page.
   #loading.eight.wide.computer.ten.wide.tablet.sixteen.wide.mobile.column
     img.ui.centered.small.image(src='/public/heart.svg')
   #content.eight.wide.computer.ten.wide.tablet.sixteen.wide.mobile.column.hidden
@@ -45,8 +44,6 @@ block content
         .header
           p You need to spend at least 3 minutes on the feed and interact within the community before proceeding.
       a.ui.large.primary.button#proceed-btn Proceed to Post-Study Survey
-  if isTrainingModule   
-    .four.wide.computer.column
   if chatbotEnabled
     include partials/chatbot
     

@@ -27,7 +27,7 @@
     .content
       .ui.comments
         each comment in val.comments
-          .comment(commentID=comment.new_comment ? comment.commentID : comment.id, class=(comment.class || "") + (comment.flagged ? " flagged" : ""), index=comment.commentID)
+          .comment(commentID=comment.new_comment ? comment.commentID : comment.id, class=(comment.class || "") + (comment.flagged ? " flagged" : "") + (isTrainingModule && comment.class === "cyberbullying" ? " flagged" : ""), index=comment.commentID)
             if comment.new_comment
               a.avatar(href='/me')
                 img(src=user.profile.picture)
@@ -87,3 +87,11 @@
           img.ui.image.rounded(src=user.gravatar(60))
         textarea.replyToPost(name='replyToPost' type='text' placeholder='Add a Comment...' rows='1' data-autoresize)
         i.big.send.link.icon.replyToPost
+  if isTrainingModule
+    .extra.content
+      .ui.hidden.small.message#error-msg
+        p You need to interact with the Community Assistant for at least 5 message turns before proceeding.
+      .ui.right.aligned
+        div(style="display:flex; align-items:center; justify-content:flex-end; gap:12px;")
+          h3.ui.inline.header(style="margin:0") Done with Training? 👉
+          .ui.large.primary.button#proceed-btn Proceed
