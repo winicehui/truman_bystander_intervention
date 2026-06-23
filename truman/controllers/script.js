@@ -944,7 +944,7 @@ exports.getFeedStatus = async(req, res, next) => {
 
         res.json({
             numUserActions: numUserActions,
-            mainFeedActionTaken: numUserActions >= 1,
+            mainFeedActionTaken: numUserActions >= 3,
             feedTimeMs: feedTimeMs
         });
     } catch (err) {

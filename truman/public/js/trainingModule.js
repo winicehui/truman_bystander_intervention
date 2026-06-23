@@ -11,7 +11,7 @@ $(window).on('load', function() {
             if (window.location.pathname == '/training_module') {
                 const response = await fetch('/training_status');
                 const data = await response.json();
-                const canProceed = data.userTurns >= 5;
+                const canProceed = data.userTurns >= 7;
 
                 if (canProceed) {
                     $.post('/account/training', { _csrf: $('meta[name="csrf-token"]').attr('content') })
