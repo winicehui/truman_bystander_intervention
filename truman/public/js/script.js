@@ -30,10 +30,19 @@ $(window).on("load", function() {
     $("#proceed-btn").on('click', async function() {
         try {
             if (window.location.pathname == "/") {
+                // Flush current active time before checking so a continuously active user's time is counted
+                if (isActive && window.isLoggedIn) {
+                    const now = Date.now();
+                    await $.post('/pageTimes', {
+                        time: now - activeStartTime,
+                        pathname: window.location.pathname,
+                        _csrf: $('meta[name="csrf-token"]').attr('content')
+                    });
+                    activeStartTime = now; // avoid double-counting when resetActiveTimer runs after
+                }
                 const response = await fetch('/feed_status');
                 const data = await response.json();
-                // Check if user has performed at least 1 action and has spent at least 3 minutes on the feed
-                const canProceed = data.numUserActions >= 1&& data.feedTimeMs >= 180000;
+                const canProceed = data.numUserActions >= 3 && data.feedTimeMs >= 180000;
 
                 if (canProceed) {
                     window.loggingOut = true; // Set the flag to indicate that the user is logging out
