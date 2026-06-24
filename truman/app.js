@@ -80,26 +80,26 @@ mongoose.connection.on('error', (err) => {
  * Cron Jobs:
  * Check if users are still active every 8 hours (at 4:30am, 12:30pm, and 20:30pm).
  */
-const rule1 = new schedule.RecurrenceRule();
-rule1.hour = 4;
-rule1.minute = 30;
-const j = schedule.scheduleJob(rule1, function() {
-    userController.stillActive();
-});
+// const rule1 = new schedule.RecurrenceRule();
+// rule1.hour = 4;
+// rule1.minute = 30;
+// const j = schedule.scheduleJob(rule1, function() {
+//     userController.stillActive();
+// });
 
-const rule2 = new schedule.RecurrenceRule();
-rule2.hour = 12;
-rule2.minute = 30;
-const j2 = schedule.scheduleJob(rule2, function() {
-    userController.stillActive();
-});
+// const rule2 = new schedule.RecurrenceRule();
+// rule2.hour = 12;
+// rule2.minute = 30;
+// const j2 = schedule.scheduleJob(rule2, function() {
+//     userController.stillActive();
+// });
 
-const rule3 = new schedule.RecurrenceRule();
-rule3.hour = 20;
-rule3.minute = 30;
-const j3 = schedule.scheduleJob(rule3, function() {
-    userController.stillActive();
-});
+// const rule3 = new schedule.RecurrenceRule();
+// rule3.hour = 20;
+// rule3.minute = 30;
+// const j3 = schedule.scheduleJob(rule3, function() {
+//     userController.stillActive();
+// });
 
 /**
  * Express configuration.
