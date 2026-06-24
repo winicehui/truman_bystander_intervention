@@ -34,6 +34,7 @@ function getCommentContext(post) {
 //   'closed'    — chat was closed by user (continue-chat-button shown)
 const postChatState = new Map();
 const chatbotConfig = window.chatbotConfig || {};
+const CHAT_MESSAGE_CHAR_CAP = 2000;
 const onboardingState = {
     required: !!chatbotConfig.requireMainFeedChatOnboarding && !chatbotConfig.isTrainingModule,
     locked: false,
@@ -215,9 +216,11 @@ async function openChat(element, force = false, activationFactor = 1) {
  
     // ── AI greeting (only if no history) ─────────────────────────
     if (existingMessages.length === 0) {
-        const postContext = post.find('.description').first().text().trim();
+        const postAuthor = post.attr('actor_name') || post.find('span.username').first().text().trim();
+        const postBody = post.find('.description').first().text().trim();
+        const postContext = postAuthor ? `${postAuthor}: ${postBody}` : postBody;
         const commentContext = getCommentContext(post);
- 
+
         chat.addTypingAnimationExternal('Comment Coach');
         try {
             const response = await fetch('/chat/ai', {
@@ -355,10 +358,16 @@ $(window).on('load', function () {
                 const name = 'Me';
                 const message = this.$textarea.val().trim();
                 const post = $(`[postid="${this.chatId}"]`);
-                const postContext = post.find('.description').first().text().trim();
+                const postAuthor = post.attr('actor_name') || post.find('span.username').first().text().trim();
+                const postBody = post.find('.description').first().text().trim();
+                const postContext = postAuthor ? `${postAuthor}: ${postBody}` : postBody;
                 const commentContext = getCommentContext(post);
 
                 if (!message) return;
+                if (Array.from(message).length > CHAT_MESSAGE_CHAR_CAP) {
+                    this.addMessageExternal(`Message is too long. Please keep it under ${CHAT_MESSAGE_CHAR_CAP} characters.`, this.getCurrentTime(), 'Comment Coach', true);
+                    return;
+                }
                 if (onboardingState.locked && onboardingState.requiredChatId && onboardingState.requiredChatId !== this.chatId) return;
             
                 // If minimized, expand history first

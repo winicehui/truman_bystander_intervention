@@ -241,6 +241,11 @@ app.get('/beta_intro', passportConfig.isAuthenticated, function(req, res) {
         isTrainingModule: true
     });
 });
+app.get('/feed_intro', passportConfig.isAuthenticated, function(req, res) {
+    res.render('feed_intro', {
+        title: 'Getting Started'
+    });
+});
 app.get('/training_module', passportConfig.isAuthenticated, scriptController.getTrainingModule);
 app.get('/training_complete', passportConfig.isAuthenticated, function(req, res) {
     if (!req.user.finishedTraining) {
@@ -252,7 +257,13 @@ app.get('/training_complete', passportConfig.isAuthenticated, function(req, res)
     });
 });
 app.get('/training_status', passportConfig.isAuthenticated, scriptController.getTrainingStatus);
-app.get('/tos', function(req, res) { res.render('tos', { title: 'Terms of Service' }); });
+app.get('/tos', function(req, res) {
+    res.render('tos', {
+        title: 'Terms of Service',
+        ResponseID: req.query.ResponseID || req.query.r_id,
+        Condition: req.query.Condition || req.query.condition
+    });
+});
 
 app.get('/completed', passportConfig.isAuthenticated, userController.userTestResults);
 

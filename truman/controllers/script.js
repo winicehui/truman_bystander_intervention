@@ -14,10 +14,13 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const TRAINING_POST_CONDITION = ['C1'];
 const MAIN_FEED_CHATBOT_ENABLED_CONDITIONS = ['C2'];
 const TRAINING_CHATBOT_ENABLED_CONDITIONS = ['C1'];
+const CYBERBULLYING_POST_CLASS = 'cyberbullying';
+const CYBERBULLYING_POST_SLOTS = [2, 6, 11, 15];
 const COMMENT_COACH_SYSTEM_PROMPT = fs.readFileSync(
     path.join(__dirname, '../prompts/commentCoachPrompt.md'),
     'utf8'
 ).trim();
+const CHAT_MESSAGE_CHAR_CAP = 2000; // Per-message character limit for user messages.
 const CHAT_THREAD_MESSAGE_CAP = 50; // Per-post chat limit. Only counts user messages.
 const CHAT_TOTAL_MESSAGE_CAP = 200; // Global chat limit across all posts. Only counts user messages.
 
@@ -42,6 +45,16 @@ function getChatLimitError(user, chatIndex) {
     return null;
 }
 
+function getChatMessageLengthError(body) {
+    const messageLength = Array.from((body || '').trim()).length;
+
+    if (messageLength > CHAT_MESSAGE_CHAR_CAP) {
+        return `Message is too long. Please keep it under ${CHAT_MESSAGE_CHAR_CAP} characters.`;
+    }
+
+    return null;
+}
+
 function hasUserSentAnyChatMessage(user) {
     return Array.isArray(user.chatAction) && user.chatAction.some((chatEntry) =>
         Array.isArray(chatEntry.messages) && chatEntry.messages.some((message) => !message.isAgent)
@@ -57,6 +70,79 @@ const arraysEqualIgnoreOrder = (a, b) => {
   
   return sortedA.every((val, index) => val === sortedB[index]);
 };
+
+function getOrCreateCbPostOrder(user, actorPosts) {
+    const cyberbullyingPostIDs = actorPosts
+        .filter((post) => post.class === CYBERBULLYING_POST_CLASS)
+        .map((post) => post.postID);
+
+    // if number of cb posts do not match number of slots, return empty order and do not update user document (will try again next time user views feed)
+    if (cyberbullyingPostIDs.length !== CYBERBULLYING_POST_SLOTS.length) {
+        return { cbPostOrder: [], updated: false };
+    } 
+
+    // if user already has an order and it is valid, return that order and do not update user document. 
+    if (Array.isArray(user.cbPostOrder) &&
+        user.cbPostOrder.length === CYBERBULLYING_POST_SLOTS.length &&
+        arraysEqualIgnoreOrder(user.cbPostOrder, cyberbullyingPostIDs)) {
+        return { cbPostOrder: user.cbPostOrder, updated: false };
+    }
+
+    // otherwise, create a new random order, return it, and update user document.
+    return {
+        cbPostOrder: _.shuffle(cyberbullyingPostIDs),
+        updated: true
+    };
+}
+
+function applyCbSlotOrder(finalfeed, cbPostOrder) {
+    // Skip reordering unless we have a complete 4-post assignment.
+    if (!Array.isArray(cbPostOrder) || cbPostOrder.length !== CYBERBULLYING_POST_SLOTS.length) {
+        return finalfeed;
+    }
+
+    // Slots are defined over actor posts only; user-authored posts stay where they are.
+    const actorPosts = finalfeed.filter((post) => post.type !== 'user_post');
+    if (actorPosts.length < CYBERBULLYING_POST_SLOTS[CYBERBULLYING_POST_SLOTS.length - 1]) {
+        return finalfeed;
+    }
+
+    // Split actor posts into target cyberbullying posts and all remaining posts.
+    const cbPostsByID = new Map();
+    const otherPosts = [];
+    for (const post of actorPosts) {
+        if (post.class === CYBERBULLYING_POST_CLASS) {
+            cbPostsByID.set(post.postID, post);
+        } else {
+            otherPosts.push(post);
+        }
+    }
+
+    if (cbPostsByID.size !== cbPostOrder.length) {
+        return finalfeed;
+    }
+
+    // Build the actor-only order by filling the fixed slots with cb posts
+    // and all other actor positions with the original non-cyberbullying posts.
+    const slottedPositions = new Set(CYBERBULLYING_POST_SLOTS.map((slot) => slot - 1));
+    const reorderedActorPosts = actorPosts.map((_, index) => {
+        if (slottedPositions.has(index)) {
+            return cbPostsByID.get(cbPostOrder[CYBERBULLYING_POST_SLOTS.indexOf(index + 1)]);
+        }
+        return otherPosts.shift();
+    });
+
+    if (reorderedActorPosts.some((post) => !post)) {
+        return finalfeed;
+    }
+
+    // Merge the reordered actor posts back into the full feed without moving user posts.
+    let actorIndex = 0;
+    return finalfeed.map((post) => {
+        if (post.type === 'user_post') return post;
+        return reorderedActorPosts[actorIndex++];
+    });
+}
 
 /**
  * GET /
@@ -121,7 +207,17 @@ exports.getScript = async(req, res, next) => {
         });
 
         // Get the newsfeed and render it.
-        const finalfeed = helpers.getFeed(user_posts, script_feed, user, process.env.FEED_ORDER, (process.env.REMOVE_FLAGGED_CONTENT == 'TRUE'), false);
+        let finalfeed = helpers.getFeed(user_posts, script_feed, user, process.env.FEED_ORDER, (process.env.REMOVE_FLAGGED_CONTENT == 'TRUE'), false);
+        const { cbPostOrder, updated } = getOrCreateCbPostOrder(user, finalfeed.filter((post) => post.type !== 'user_post'));
+        if (updated) {
+            user.cbPostOrder = cbPostOrder;
+            shouldSaveUser = true;
+        }
+        finalfeed = applyCbSlotOrder(finalfeed, user.cbPostOrder);
+
+        if (shouldSaveUser) {
+            await user.save();
+        }
 
         console.log("Script Size is now: " + finalfeed.length);
         const chatbotEnabled = MAIN_FEED_CHATBOT_ENABLED_CONDITIONS.includes(user.experimentalCondition);
@@ -574,6 +670,14 @@ exports.postchatAction = async(req, res, next) => {
     try {
         console.log(req.body);
         const user = await User.findById(req.user.id).exec();
+        const messageLengthError = getChatMessageLengthError(req.body.body);
+
+        if (messageLengthError) {
+            return res.status(400).send({
+                result: "invalid_message",
+                message: messageLengthError
+            });
+        }
 
         // Check if user has interacted with the post before.
         //let feedIndex = _.findIndex(user.chatAction, function(o) { return o.post.equals(req.body.chat_id); });

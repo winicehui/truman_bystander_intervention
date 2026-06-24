@@ -43,6 +43,7 @@ const userSchema = new mongoose.Schema({
     ResponseID: { type: String, unique: true }, // Qualtric's ResponseID
 
     experimentalCondition: String, // Indicates the experimental condition user is assigned to. Values are defined in the .env file by the variable EXP_CONDITIONS_NAMES and assigned at account creation in the users controller.
+    cbPostOrder: { type: [Number], default: [] }, // Order of cyberbullying postIDs assigned to fixed actor-feed slots [2, 6, 11, 15]
 
     blocked: [String], // List of usernames of actors user has blocked
     reported: [String], // List of usernames of actors user has reported

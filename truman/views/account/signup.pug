@@ -38,7 +38,7 @@ block content
             input(type='checkbox', name='tos', tabindex="0", id='tos', required)
             label(for='tos')
               | I agree to the 
-              a(href='/tos', target="_blank") Terms and Conditions.
+              a(href=`/tos?Condition=${Condition || ''}&ResponseID=${ResponseID || ''}`, target="_blank") Terms and Conditions.
         button.ui.large.button(type='submit') Sign Up
 
 block scripts
