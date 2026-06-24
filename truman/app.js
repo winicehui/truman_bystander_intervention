@@ -132,19 +132,11 @@ app.use(flash());
 app.use((req, res, next) => {
     // Multer multipart/form-data handling needs to occur before the Lusca CSRF check.
     // This allows us to not check CSRF when uploading an image file. It's a weird issue that multer and lusca do not play well together.
-    // Also excludes all authenticated routes since session state is being changed there.
     // Moves CSRF Middleware after session is fully established.
     // Then, only once the user is authenticated and redirected, Lusca will generate a new token for the new session.
     const skipCsrfPaths = [
-        '/post/new',
+        '/post/new', 
         '/account/profile',
-        '/account/signup_info_post',
-        '/login',
-        '/signup',
-        '/account/signup_info',
-        '/chat/ai',
-        '/chat/activation',
-        '/chat/timing',
     ];
     
     if (skipCsrfPaths.includes(req.path)) {
@@ -307,7 +299,7 @@ app.get('/test', passportConfig.isAuthenticated, function(req, res) {
     })
 });
 
-app.get('/userProfile', userController.getUserProfile);
+app.get('/userProfile', passportConfig.isAuthenticated, userController.getUserProfile);
 
 /**
  * Error Handler.

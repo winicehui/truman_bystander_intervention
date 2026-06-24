@@ -1,25 +1,58 @@
-//Before Page load:
+// Before Page load:
 $('#content').hide();
 $('#loading').show();
 let isActive = false;
 let activeStartTime;
 
-function resetActiveTimer(loggingOut) {
-    if (isActive) {
-        const currentTime = new Date();
-        const activeDuration = currentTime - activeStartTime;
-        if (window.location.pathname !== '/login' && window.location.pathname !== '/signup' && window.location.pathname !== '/forgot') {
-            $.post("/pageTimes", {
-                time: activeDuration,
-                _csrf: $('meta[name="csrf-token"]').attr('content')
-            }).then(function() {
-                if (loggingOut) {
-                    window.loggingOut = true;
-                    window.location.href = '/logout';
-                }
-            })
+// Called when user is inactive for about 1 minute, when user logs out of the website, when user changes the page (beforeunload).
+// Logs the active time duration to the database and resets active timer.
+// If loggingOut is true, redirects user to logout route after logging active time.
+// If fromIdle is true, subtracts 1 minute from active duration to account for idle time.
+async function sendActiveTime(activeDuration, pathname) {
+    const data = {
+        time: activeDuration,
+        pathname: pathname,
+        _csrf: $('meta[name="csrf-token"]').attr('content')
+    };
+
+    const body = $.param(data);
+
+    if (navigator.sendBeacon) {
+        const blob = new Blob([body], { type: 'application/x-www-form-urlencoded;charset=UTF-8' });
+        return navigator.sendBeacon('/pageTimes', blob);
+    }
+
+    let success = false;
+    await $.ajax({
+        type: 'POST',
+        url: '/pageTimes',
+        data: body,
+        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+        async: false,
+        success: function() {
+            success = true;
+        },
+        error: function() {
+            success = false;
         }
-        isActive = false;
+    });
+    return success;
+}
+
+function resetActiveTimer(loggingOut, fromIdle) {
+    // Compute active duration only if user was active; allow logging out even when not active.
+    const activeDuration = isActive ? Date.now() - activeStartTime - (fromIdle ? 30000 : 0) : 0;
+    isActive = false;
+    
+    // if (window.isLoggedIn && activeDuration > 0) {
+    if (window.isLoggedIn) {
+        sendActiveTime(activeDuration, window.location.pathname);
+    }
+
+    if (loggingOut) {
+        // Mark that we're logging out so unload handlers don't double-run logout logic.
+        window.loggingOut = true;
+        window.location.href = '/logout';
     }
 }
 
@@ -27,12 +60,9 @@ $(window).on("load", function() {
     /**
      * Recording user's active time on website:
      */
-    // From the first answer from https://stackoverflow.com/questions/667555/how-to-detect-idle-time-in-javascript
     let idleTime = 0;
-    // Definition of an active user: mouse movement, clicks etc.
-    // idleTime is reset to 0 whenever mouse movement occurs.
+
     $('#pagegrid').on('mousemove keypress scroll mousewheel', function() {
-        //If there hasn't been a "start time" for activity, set it. We use session storage so we can track activity when pages changes too.
         if (!isActive) {
             activeStartTime = Date.now();
             isActive = true;
@@ -40,22 +70,30 @@ $(window).on("load", function() {
         idleTime = 0;
     });
 
-    // Every 15 seconds, increase idleTime by 1. If idleTime is greater than 4 (i.e. there has been inactivity for about 60-74 seconds, log the duration of activity and reset the active timer)
+    // Every 15 seconds, check if user has been idle for about 30 seconds
     setInterval(function() {
         idleTime += 1;
-        if (idleTime > 4) { // 60.001-74.999 seconds (idle time)
-            resetActiveTimer(false);
+        if (idleTime > 2 && isActive) { // 15 seconds * 2 = 30 seconds
+            resetActiveTimer(false, true);
         }
     }, 15000);
 
-    // When a user logs out of the website, log the duration of activity and reset the active timer).
     $('a.item.logoutLink').on('click', function() {
-        resetActiveTimer(true);
+        window.loggingOut = true; // Set the flag to indicate that the user is logging out
+        resetActiveTimer(true, false);
     });
+
+    if (window.isLoggedIn) {
+        $.post("/pageLog", {
+            path: window.location.pathname,
+            _csrf: $('meta[name="csrf-token"]').attr('content')
+        });
+    }
 
     /**
      * Other site functionalities:
      */
+
     // Close loading dimmer on content load.
     $('#loading').hide();
     $('#content').fadeIn('slow');
@@ -64,92 +102,92 @@ $(window).on("load", function() {
     $('.message .close').on('click', function() {
         $(this).closest('.message').transition('fade');
     });
+
     // Fomantic UI: Enable checkboxes
     $('.checkbox').checkbox();
 
     // Check if user has any notifications every 5 seconds.
-    const skipNotifications = ['/login', '/signup', '/forgot', '/training_intro', '/training_module', '/training_complete', '/com' ];
-    if (window.location.pathname !== '/login' && window.location.pathname !== '/signup' && window.location.pathname !== '/forgot') {
-        $.post("/pageLog", {
-            path: window.location.pathname,
-            _csrf: $('meta[name="csrf-token"]').attr('content')
-        });
-        if (window.location.pathname !== '/notifications') {
-            setInterval(function() {
-                // method to be executed;
-                $.getJSON("/notifications", { bell: true }, function(json) {
-                    if (json.count != 0) {
-                        $("i.big.alarm.icon").replaceWith('<i class="big icons"><i class="red alarm icon"></i><i class="corner yellow lightning icon"></i></i>');
-                    }
-                });
-            }, 5000);
-        }
-    };
+    // List of authenticated pages to skip checking for notifications on.
+    const skipNotifications = [
+        '/tos',
+        '/com',
+        '/training_intro',
+        '/beta_intro',
+        '/training_module',
+        '/training_complete',
+        '/notifications',
+        '/account',
+        '/account/signup_info'
+    ];
 
-    // Picture Preview on Image Selection (Used for: uploading new post, updating profile)
-    function readURL(input) {
-        if (input.files && input.files[0]) {
-            let reader = new FileReader();
-            reader.onload = function(e) {
-                $('#imgInp').attr('src', e.target.result);
-            }
-            reader.readAsDataURL(input.files[0]);
-        }
+    if (window.isLoggedIn && !skipNotifications.includes(window.location.pathname)) {
+        setInterval(function() {
+            $.getJSON("/notifications", { bell: true }, function(json) {
+                if (json.count != 0) {
+                    $("i.big.alarm.icon").replaceWith('<i class="big icons"><i class="red alarm icon"></i><i class="corner yellow lightning icon"></i></i>');
+                }
+            });
+        }, 5000);
     }
 
+    // Picture preview on image selection (used for: uploading new post, updating profile)
     $("#picinput").change(function() {
-        readURL(this);
+        if (!this.files || !this.files[0]) return;
+        let reader = new FileReader();
+        reader.onload = function(e) {
+            $('#imgInp').attr('src', e.target.result);
+        };
+        reader.readAsDataURL(this.files[0]);
     });
 
-    
-    // Lazy Load Images on website
-    const loadLazyImage = (img) => {
+    // Lazy load images on website
+    function loadLazyImage(img) {
         img.src = img.dataset.src;
         img.removeAttribute('data-src');
         img.classList.remove('lazy');
-    };
+    }
 
-    const observeLazyImages = () => {
+    function observeLazyImages() {
         const images = $('img.lazy[data-src]');
         if (!images.length) return;
 
-        if ('IntersectionObserver' in window) {
-            if (!window.imageObserver) {
-                window.imageObserver = new IntersectionObserver((entries) => {
-                    entries.forEach(entry => {
-                        if (!entry.isIntersecting) return;
-                        loadLazyImage(entry.target);
-                        window.imageObserver.unobserve(entry.target);
-                    });
-                }, { rootMargin: '200px 0px', threshold: 0.01 });
-            }
-            images.each(function(index, element) {
-                window.imageObserver.observe(element);
+        if (!('IntersectionObserver' in window)) {
+            images.each(function(index, img) {
+                loadLazyImage(img);
             });
-        } else {
-            images.each(function(index, element) {
-                window.imageObserver.observe(element);
-            });
+            return;
         }
-    };
+
+        if (!window.imageObserver) {
+            window.imageObserver = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (!entry.isIntersecting) return;
+                    loadLazyImage(entry.target);
+                    window.imageObserver.unobserve(entry.target);
+                });
+            }, { rootMargin: '200px 0px', threshold: 0.01 });
+        }
+
+        images.each(function(index, img) {
+            window.imageObserver.observe(img);
+        });
+    }
 
     window.lazyLoadImages = observeLazyImages;
     observeLazyImages();
 });
 
-window.onunload = function() {};
 window.addEventListener('pageshow', function(event) {
-    const nav = window.performance && window.performance.getEntriesByType && window.performance.getEntriesByType('navigation');
-    const isBackForward = event.persisted || (nav && nav.length > 0 && nav[0].type === 'back_forward') || (window.performance && window.performance.navigation && window.performance.navigation.type === 2);
-    if (isBackForward) {
+    // Only reload if page was loaded from back/forward cache (persisted = true).
+    // This prevents running twice since the reload sets persisted = false on the next fire.
+    if (event.persisted) {
         document.documentElement.style.visibility = 'hidden';
         window.location.replace(window.location.href);
     }
 });
 
-$(window).on("beforeunload", function() {
-    // https: //developer.mozilla.org/en-US/docs/Web/API/Window/beforeunload_event
-    if (!window.loggingOut) {
-        resetActiveTimer(false);
+$(window).on("pagehide", function(event) {
+    if (!event.persisted && !window.loggingOut) {
+        resetActiveTimer(false, false);
     }
 });

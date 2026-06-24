@@ -23,14 +23,17 @@ $(window).on('load', function() {
                         .fail(function() {
                             alert('Error setting consent. Please try again.');
                     });
+                } else {
+                    if (!$('#error-msg').is(':visible')) {
+                        $('#error-msg').transition('slide down');
+                    }
                 }
             }
         } catch (err) {
             console.error('Error fetching training status:', err);
-            $('#error-msg').transition('slide down');
-            setTimeout(function() {
-                $('#error-msg').transition('slide up');
-            }, 5000);
+            if (!$('#error-msg').is(':visible')) {
+                $('#error-msg').transition('slide down');
+            }
         }
     });
 });

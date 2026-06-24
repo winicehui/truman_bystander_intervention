@@ -48,10 +48,7 @@ $(window).on('load', function () {
                     }
                     // Update header profile picture
                     if (response.picture) {
-                      console.log(response.picture)
-                      console.log($('.ui.borderless.fixed.menu img.ui.mini.spaced.circular.image, .ui.fluid.top.fixed.item.menu img.ui.mini.spaced.circular.image'))
-                      $('.ui.borderless.fixed.menu img.ui.mini.spaced.circular.image, .ui.fluid.top.fixed.item.menu img.ui.mini.spaced.circular.image')
-                          .attr('src', response.picture);
+                        $('.ui.borderless.fixed.menu img.ui.mini.spaced.circular.image, .ui.fluid.top.fixed.item.menu img.ui.mini.spaced.circular.image').attr('src', response.picture);
                     }
                     setButtonSuccess();
                 }

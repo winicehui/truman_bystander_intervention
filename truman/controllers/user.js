@@ -85,12 +85,18 @@ exports.postLogin = (req, res, next) => {
  * Handles user log out.
  */
 exports.logout = (req, res) => {
-    const postSurveyLink = req.user.endSurveyLink;
+    const postSurveyLink = req.user ? req.user.endSurveyLink : null;
     req.logout((err) => {
         if (err) console.log('Error : Failed to logout.', err);
         req.session.destroy((err) => {
             if (err) console.log('Error : Failed to destroy the session during logout.', err);
             req.user = null;
+            // Clear session cookie on client to ensure browsers don't keep old session.
+            try {
+                res.clearCookie('connect.sid', { path: '/' });
+            } catch (e) {
+                console.log('Error clearing cookie:', e);
+            }
             res.redirect(postSurveyLink || '/login');
         });
     });
@@ -387,11 +393,11 @@ exports.postPageLog = async(req, res, next) => {
 exports.postPageTime = async(req, res, next) => {
     try {
         const user = await User.findById(req.user.id).exec();
-        // What day in the study is the user in? 
-        const one_day = 86400000; // number of milliseconds in a day
-        const time_diff = Date.now() - user.createdAt; // Time difference between now and account creation.
-        const current_day = Math.floor(time_diff / one_day);
-        user.pageTimes[current_day] += parseInt(req.body.time);
+        const log = {
+            time: req.body.time,
+            page: req.body.pathname,
+        }
+        user.pageTimes.push(log);
         await user.save();
         res.set('Content-Type', 'application/json; charset=UTF-8');
         res.send({ result: "success" });

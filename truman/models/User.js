@@ -108,10 +108,10 @@ const userSchema = new mongoose.Schema({
         page: String // URL
     })],
 
-    pageTimes: { // Indicates how much time the user spent on the website per day where index 0 corresponds to the first day, index 1 corresopnds to the second day, etc.
-        type: [Number],
-        default: Array(parseInt(process.env.NUM_DAYS)).fill(0)
-    },
+    pageTimes: [new Schema({ // How much time the user spent on a page
+        time: Number, //in millliseconds
+        page: String //URL
+    })],
 
     postStats: { // Statistics about the user
         SiteVisits: Number, // Total number of times the user has logged into the website

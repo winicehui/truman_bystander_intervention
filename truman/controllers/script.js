@@ -725,22 +725,10 @@ exports.getTrainingModule = async(req, res, next) => {
             });
             return;
         }
-
-        // if (user.experimentalCondition !== TRAINING_POST_CONDITION) {
-        //     return res.redirect('/');
-        // }
+        
         if (!TRAINING_POST_CONDITION.includes(user.experimentalCondition)) {
             return res.redirect('/');
         }
-
-        // const trainingFeed = await Script.find({
-        //         condition: TRAINING_POST_CONDITION
-        //     })
-        //     .sort('-time')
-        //     .populate('actor')
-        //     .populate('comments.actor')
-        //     .populate('comments.subcomments.actor')
-        //     .exec();
         
         const trainingFeed = await Script.find({
                 condition: { $in: TRAINING_POST_CONDITION }
@@ -750,8 +738,6 @@ exports.getTrainingModule = async(req, res, next) => {
             .populate('comments.actor')
             .populate('comments.subcomments.actor')
             .exec();
-
-
 
         if (!trainingFeed || trainingFeed.length === 0) {
             req.flash('errors', { msg: 'No training post available yet.' });
@@ -812,35 +798,11 @@ exports.getFeedStatus = async(req, res, next) => {
             (user.numCommentFlags - user.numTrainingCommentFlags) +
             (user.numChatTurns - user.numTrainingChatTurns);
 
-        // Calculate active time spent on the main feed /
-        let feedTimeMs = 0;
-
-        if (Array.isArray(user.pageLog) && user.pageLog.length > 0) {
-            const log = user.pageLog
-                .slice()
-                .sort((a, b) => new Date(a.time) - new Date(b.time));
-
-            for (let i = 0; i < log.length; i += 1) {
-                if (log[i].page !== '/') continue;
-
-                const currentTime = new Date(log[i].time).getTime();
-                const nextEntry = log[i + 1];
-                if (nextEntry) {
-                    const nextTime = new Date(nextEntry.time).getTime();
-                    if (nextTime > currentTime) {
-                        feedTimeMs += nextTime - currentTime;
-                    }
-                } else {
-                    // If this is the last pageLog entry and it is the feed page,
-                    // assume the user is currently still on the feed.
-                    feedTimeMs += Date.now() - currentTime;
-                }
-            }
-        }
-
+        const mainFeedPageTimes = user.pageTimes.filter(element => element.page === '/');
+        const feedTimeMs = mainFeedPageTimes.reduce((total, pt) => total + pt.time, 0);
+        
         res.json({
             numUserActions: numUserActions,
-            mainFeedActionTaken: numUserActions >= 1,
             feedTimeMs: feedTimeMs
         });
     } catch (err) {
@@ -853,7 +815,6 @@ exports.getFeedStatus = async(req, res, next) => {
  * Record user's activation events related to a chat, such as opening the chat and the activation factor (e.g. button click, comment highlight, etc.)
 */
 exports.postChatActivation = async (req, res, next) => {
-    console.log('postChatActivation called', req.body);
     try {
         const user = await User.findById(req.user.id).exec();
         const { chat_id, activationFactor } = req.body;

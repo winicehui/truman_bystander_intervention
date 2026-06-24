@@ -32,20 +32,23 @@ $(window).on("load", function() {
             if (window.location.pathname == "/") {
                 const response = await fetch('/feed_status');
                 const data = await response.json();
-                const canProceed = data.mainFeedActionTaken === true && data.feedTimeMs >= 180000;
+                // Check if user has performed at least 1 action and has spent at least 3 minutes on the feed
+                const canProceed = data.numUserActions >= 1&& data.feedTimeMs >= 180000;
 
                 if (canProceed) {
-                    resetActiveTimer(true);
+                    window.loggingOut = true; // Set the flag to indicate that the user is logging out
+                    resetActiveTimer(true, false);
                 } else {
-                    $('#error-msg').transition('slide down');
+                    if (!$('#error-msg').is(':visible')) {
+                        $('#error-msg').transition('slide down');
+                    }
                 }
             }
         } catch (err) {
             console.error('Error fetching feed status:', err);
-            $('#error-msg').transition('slide down');
-            setTimeout(function() {
-                $('#error-msg').transition('slide up');
-            }, 5000);
+            if (!$('#error-msg').is(':visible')) {
+                $('#error-msg').transition('slide down');
+            }
         }
     });
 });
