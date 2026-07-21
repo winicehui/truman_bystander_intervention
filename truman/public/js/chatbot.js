@@ -441,7 +441,18 @@ $(window).on('load', function () {
                         if (replyBoxEl && typeof replyBoxEl.scrollIntoView === 'function') {
                             replyBoxEl.scrollIntoView({ behavior: 'smooth' });
                         }
-                        setTimeout(() => $('#copilot-chat .chat').slideUp(200), 2000);
+                        if (!chatbotConfig.isTrainingModule) {
+                            setTimeout(() => {
+                                $('#copilot-chat .chat').slideUp(200, () => {
+                                    $('#copilot-chat .chat').addClass('hidden');
+                                    if (chatUIState.currentChatId) {
+                                        chatMinimizeTimers.set(chatUIState.currentChatId, Date.now());
+                                        postChatState.set(chatUIState.currentChatId, 'closed');
+                                    }
+                                    $('#copilot-chat-toggle').removeClass('hidden');
+                                });
+                            }, 2000);
+                        }
                     }
                 } catch (err) {
                     console.error('sendMessage error:', err);
